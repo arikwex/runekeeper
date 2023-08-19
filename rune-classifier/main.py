@@ -1,5 +1,6 @@
 from __future__ import print_function
 import argparse
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -41,40 +42,39 @@ from torch.optim.lr_scheduler import StepLR
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.5)
-        PATCH_FEATURES = 16
-        PATCH_FEATURES_DEEP = 16
+        self.dropout1 = nn.Dropout(0.1)
+        self.dropout2 = nn.Dropout(0.1)
+        PATCH_FEATURES = 10 #20
+        PATCH_FEATURES_DEEP = 10 #20
         OUTPUT_CLASSES = 10
-        self.fc1 = nn.Linear(7*7, PATCH_FEATURES)
-        self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP)
-        self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES)
+        self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
+        self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
+        self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
 
     def forward(self, x):
-        x11 = self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7))
-        x12 = self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7))
-        x13 = self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7))
-        x14 = self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7))
-        x21 = self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7))
-        x22 = self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7))
-        x23 = self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7))
-        x24 = self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7))
-        x31 = self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7))
-        x32 = self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7))
-        x33 = self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7))
-        x34 = self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7))
-        x41 = self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7))
-        x42 = self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7))
-        x43 = self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7))
-        x44 = self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7))
+        x11 = F.relu(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
+        x12 = F.relu(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
+        x13 = F.relu(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
+        x14 = F.relu(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
+        x21 = F.relu(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
+        x22 = F.relu(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
+        x23 = F.relu(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
+        x24 = F.relu(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
+        x31 = F.relu(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
+        x32 = F.relu(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
+        x33 = F.relu(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
+        x34 = F.relu(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
+        x41 = F.relu(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
+        x42 = F.relu(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
+        x43 = F.relu(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
+        x44 = F.relu(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
         
-        y11 = self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1)))
-        y12 = self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1)))
-        y21 = self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1)))
-        y22 = self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1)))
+        y11 = F.relu(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
+        y12 = F.relu(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
+        y21 = F.relu(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
+        y22 = F.relu(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        z = self.fc3(self.dropout2(F.relu(torch.cat((y11, y12, y21, y22), dim=1))))
-        # z = F.relu(z)
+        z = F.relu(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
         output = F.log_softmax(z, dim=1)
         return output
 
@@ -86,7 +86,6 @@ def train(args, model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
-        # loss = F.mse_loss(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
@@ -115,13 +114,114 @@ def test(model, device, test_loader):
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
+def test_raw(model, test_loader):
+    model.eval()
+    correct = 0
+    count = 0
+    quantized_params = get_quantized_params(model)
+    for data, target in test_loader:
+        for i in range(data.shape[0]):
+            output = run_model_raw(quantized_params, data[i])
+            pred = output.argmax(keepdim=True)
+            correct += pred.eq(target[i].view_as(pred)).sum().item()
+            count += 1
+            if count % 1000 == 0:
+                print(f'...{count}')
+
+    print('\Raw Test set: Accuracy: {}/{} ({:.0f}%)\n'.format(
+        correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset)))
+
+def get_quantized_params(model):
+    model_params = list(model.parameters())
+    def quantize_weights(w):
+        original_dim = w.shape
+        w = w.reshape(-1)
+        new_weights = torch.zeros(w.shape[0])
+        QUANTIZATION = 64
+        for i in range(w.shape[0]):
+            quantized_value = round(float(w[i]) * QUANTIZATION / 2 + QUANTIZATION / 2)
+            integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
+            new_weights[i] = (integer_weight - QUANTIZATION / 2.0) * 2.0 / QUANTIZATION
+        return new_weights.reshape(original_dim).tolist()
+    fc1_w = quantize_weights(model_params[0])
+    fc1_b = quantize_weights(model_params[1])
+    fc2_w = quantize_weights(model_params[2])
+    fc2_b = quantize_weights(model_params[3])
+    fc3_w = quantize_weights(model_params[4])
+    fc3_b = quantize_weights(model_params[5])
+    return [fc1_w, fc1_b, fc2_w, fc2_b, fc3_w, fc3_b]
+
+def run_model_raw(quantized_params, data):
+    [fc1_w, fc1_b, fc2_w, fc2_b, fc3_w, fc3_b] = quantized_params
+    img = data.view(28 * 28).tolist()
+    
+    def receptive_field(z, size, x0, y0, span, weight, bias):
+        num_outputs = len(weight)
+        num_inputs = len(weight[0])
+        outputs = [0] * num_outputs
+        for i in range(num_outputs):
+            acc = 0
+            for j in range(num_inputs):
+                input_index = x0 + j % span + size * (y0 + math.floor(j / span))
+                acc += weight[i][j] * z[input_index]
+            outputs[i] = max(0, bias[i] + acc)
+        return outputs
+
+    def receptive_field_flat(z, weight, bias):
+        num_outputs = len(weight)
+        num_inputs = len(weight[0])
+        outputs = [0] * num_outputs
+        for i in range(num_outputs):
+            acc = 0
+            for j in range(num_inputs):
+                acc += weight[i][j] * z[j]
+            outputs[i] = max(0, bias[i] + acc)
+        return outputs
+    
+    x11 = receptive_field(img, 28, 0, 0, 7, fc1_w, fc1_b)
+    x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
+    x13 = receptive_field(img, 28, 14, 0, 7, fc1_w, fc1_b)
+    x14 = receptive_field(img, 28, 21, 0, 7, fc1_w, fc1_b)
+    
+    x21 = receptive_field(img, 28, 0, 7, 7, fc1_w, fc1_b)
+    x22 = receptive_field(img, 28, 7, 7, 7, fc1_w, fc1_b)
+    x23 = receptive_field(img, 28, 14, 7, 7, fc1_w, fc1_b)
+    x24 = receptive_field(img, 28, 21, 7, 7, fc1_w, fc1_b)
+    
+    x31 = receptive_field(img, 28, 0, 14, 7, fc1_w, fc1_b)
+    x32 = receptive_field(img, 28, 7, 14, 7, fc1_w, fc1_b)
+    x33 = receptive_field(img, 28, 14, 14, 7, fc1_w, fc1_b)
+    x34 = receptive_field(img, 28, 21, 14, 7, fc1_w, fc1_b)
+    
+    x41 = receptive_field(img, 28, 0, 21, 7, fc1_w, fc1_b)
+    x42 = receptive_field(img, 28, 7, 21, 7, fc1_w, fc1_b)
+    x43 = receptive_field(img, 28, 14, 21, 7, fc1_w, fc1_b)
+    x44 = receptive_field(img, 28, 21, 21, 7, fc1_w, fc1_b)
+    
+    y11 = receptive_field_flat(x11 + x12 + x21 + x22, fc2_w, fc2_b)
+    y12 = receptive_field_flat(x13 + x14 + x23 + x24, fc2_w, fc2_b)
+    y21 = receptive_field_flat(x31 + x32 + x41 + x42, fc2_w, fc2_b)
+    y22 = receptive_field_flat(x33 + x34 + x43 + x44, fc2_w, fc2_b)
+    
+    z11 = receptive_field_flat(y11 + y12 + y21 + y22, fc3_w, fc3_b)
+    
+    # Softmax
+    softmaxes = [0] * len(z11)
+    total = 0
+    for i in range(len(z11)):
+        val = math.exp(z11[i])
+        softmaxes[i] = val
+        total += val
+    for i in range(len(z11)):
+        softmaxes[i] = math.log(softmaxes[i] / total)
+    return torch.tensor(softmaxes)
 
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=200, metavar='N')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
+    parser.add_argument('--test-batch-size', type=int, default=100, metavar='N')
     parser.add_argument('--epochs', type=int, default=100, metavar='N',
                         help='number of epochs to train (default: 100)')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
@@ -156,7 +256,7 @@ def main():
     train_kwargs = {'batch_size': args.batch_size}
     test_kwargs = {'batch_size': args.test_batch_size}
     if use_cuda:
-        cuda_kwargs = {'num_workers': 1,
+        cuda_kwargs = {'num_workers': 8,
                        'pin_memory': True,
                        'shuffle': True}
         train_kwargs.update(cuda_kwargs)
@@ -164,6 +264,7 @@ def main():
 
     transform=transforms.Compose([
         transforms.ToTensor(),
+        transforms.RandomRotation(30)
         # transforms.Normalize((0.1307,), (0.3081,))
         ])
     dataset1 = datasets.MNIST('../data', train=True, download=True,
@@ -177,18 +278,15 @@ def main():
     
     # Count the total number of weights and bias parameters
     total_params = sum(p.numel() for p in model.parameters())
-    total_weights = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    total_biases = total_params - total_weights
     print(f"Total parameters: {total_params}")
-    print(f"Total weights: {total_weights}")
-    print(f"Total biases: {total_biases}")
-    
+    # test_raw(model, test_loader)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
+        test_raw(model, test_loader)
         torch.save(model.state_dict(), "model.pt")
         scheduler.step()
 

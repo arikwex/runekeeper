@@ -8,44 +8,13 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
-
-# class Net(nn.Module):
-#     def __init__(self):
-#         super(Net, self).__init__()
-#         self.conv1 = nn.Conv2d(1, 16, 3, 1)
-#         self.conv2 = nn.Conv2d(16, 16, 3, 1)
-#         self.dropout1 = nn.Dropout(0.1)
-#         self.dropout2 = nn.Dropout(0.1)
-#         self.dropout3 = nn.Dropout(0.1)
-#         self.fc1 = nn.Linear(144, 16)
-#         self.fc2 = nn.Linear(16, 10)
-
-#     def forward(self, x):
-#         x = self.conv1(x)
-#         x = F.relu(x)
-#         x = F.max_pool2d(x, 2)
-#         x = self.dropout1(x)
-        
-#         x = self.conv2(x)
-#         x = F.relu(x)
-#         x = F.max_pool2d(x, 3)
-#         x = self.dropout2(x)
-        
-#         x = torch.flatten(x, 1)
-#         x = self.fc1(x)
-#         x = F.relu(x)
-#         x = self.fc2(x)
-#         x = F.relu(x)
-#         output = F.log_softmax(x, dim=1)
-#         return output
-
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.dropout1 = nn.Dropout(0.1)
-        self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 10 #20
-        PATCH_FEATURES_DEEP = 10 #20
+        self.dropout1 = nn.Dropout(0.25)
+        self.dropout2 = nn.Dropout(0.25)
+        PATCH_FEATURES = 32
+        PATCH_FEATURES_DEEP = 16
         OUTPUT_CLASSES = 10
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -135,14 +104,17 @@ def test_raw(model, test_loader):
 def get_quantized_params(model):
     model_params = list(model.parameters())
     def quantize_weights(w):
+        return w.tolist()
         original_dim = w.shape
         w = w.reshape(-1)
         new_weights = torch.zeros(w.shape[0])
         QUANTIZATION = 64
+        MAX_RANGE = 10
         for i in range(w.shape[0]):
-            quantized_value = round(float(w[i]) * QUANTIZATION / 2 + QUANTIZATION / 2)
-            integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
-            new_weights[i] = (integer_weight - QUANTIZATION / 2.0) * 2.0 / QUANTIZATION
+            # quantized_value = round(float(w[i]) * QUANTIZATION / MAX_RANGE + QUANTIZATION / 2)
+            # integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
+            # new_weights[i] = (integer_weight - QUANTIZATION / 2.0) * MAX_RANGE / QUANTIZATION
+            new_weights[i] = float(w[i])
         return new_weights.reshape(original_dim).tolist()
     fc1_w = quantize_weights(model_params[0])
     fc1_b = quantize_weights(model_params[1])
@@ -167,17 +139,6 @@ def run_model_raw(quantized_params, data):
                 acc += weight[i][j] * z[input_index]
             outputs[i] = max(0, bias[i] + acc)
         return outputs
-
-    def receptive_field_flat(z, weight, bias):
-        num_outputs = len(weight)
-        num_inputs = len(weight[0])
-        outputs = [0] * num_outputs
-        for i in range(num_outputs):
-            acc = 0
-            for j in range(num_inputs):
-                acc += weight[i][j] * z[j]
-            outputs[i] = max(0, bias[i] + acc)
-        return outputs
     
     x11 = receptive_field(img, 28, 0, 0, 7, fc1_w, fc1_b)
     x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
@@ -199,12 +160,12 @@ def run_model_raw(quantized_params, data):
     x43 = receptive_field(img, 28, 14, 21, 7, fc1_w, fc1_b)
     x44 = receptive_field(img, 28, 21, 21, 7, fc1_w, fc1_b)
     
-    y11 = receptive_field_flat(x11 + x12 + x21 + x22, fc2_w, fc2_b)
-    y12 = receptive_field_flat(x13 + x14 + x23 + x24, fc2_w, fc2_b)
-    y21 = receptive_field_flat(x31 + x32 + x41 + x42, fc2_w, fc2_b)
-    y22 = receptive_field_flat(x33 + x34 + x43 + x44, fc2_w, fc2_b)
+    y11 = receptive_field(x11 + x12 + x21 + x22, 0, 0, 0, 100, fc2_w, fc2_b)
+    y12 = receptive_field(x13 + x14 + x23 + x24, 0, 0, 0, 100, fc2_w, fc2_b)
+    y21 = receptive_field(x31 + x32 + x41 + x42, 0, 0, 0, 100, fc2_w, fc2_b)
+    y22 = receptive_field(x33 + x34 + x43 + x44, 0, 0, 0, 100, fc2_w, fc2_b)
     
-    z11 = receptive_field_flat(y11 + y12 + y21 + y22, fc3_w, fc3_b)
+    z11 = receptive_field(y11 + y12 + y21 + y22, 0, 0, 0, 100, fc3_w, fc3_b)
     
     # Softmax
     softmaxes = [0] * len(z11)
@@ -220,32 +181,22 @@ def run_model_raw(quantized_params, data):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=200, metavar='N')
-    parser.add_argument('--test-batch-size', type=int, default=100, metavar='N')
-    parser.add_argument('--epochs', type=int, default=100, metavar='N',
-                        help='number of epochs to train (default: 100)')
-    parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
-                        help='learning rate (default: 1.0)')
-    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
-                        help='Learning rate step gamma (default: 0.7)')
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
-    parser.add_argument('--no-mps', action='store_true', default=False,
-                        help='disables macOS GPU training')
-    parser.add_argument('--dry-run', action='store_true', default=False,
-                        help='quickly check a single pass')
-    parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
-    parser.add_argument('--save-model', action='store_true', default=False,
-                        help='For Saving the current Model')
+    parser.add_argument('--batch-size', type=int, default=400, metavar='N')
+    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
+    parser.add_argument('--epochs', type=int, default=4, metavar='N')
+    parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
+    parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
+    parser.add_argument('--no-cuda', action='store_true', default=False)
+    parser.add_argument('--no-mps', action='store_true', default=False)
+    parser.add_argument('--dry-run', action='store_true', default=False)
+    parser.add_argument('--seed', type=int, default=1, metavar='S')
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N')
+    parser.add_argument('--save-model', action='store_true', default=False)
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     use_mps = not args.no_mps and torch.backends.mps.is_available()
 
     torch.manual_seed(args.seed)
-
     if use_cuda:
         device = torch.device("cuda")
     elif use_mps:
@@ -256,21 +207,17 @@ def main():
     train_kwargs = {'batch_size': args.batch_size}
     test_kwargs = {'batch_size': args.test_batch_size}
     if use_cuda:
-        cuda_kwargs = {'num_workers': 8,
-                       'pin_memory': True,
-                       'shuffle': True}
+        cuda_kwargs = {'num_workers': 8, 'pin_memory': True, 'shuffle': True}
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
 
     transform=transforms.Compose([
         transforms.ToTensor(),
-        transforms.RandomRotation(30)
+        transforms.RandomRotation(20)
         # transforms.Normalize((0.1307,), (0.3081,))
-        ])
-    dataset1 = datasets.MNIST('../data', train=True, download=True,
-                       transform=transform)
-    dataset2 = datasets.MNIST('../data', train=False,
-                       transform=transform)
+    ])
+    dataset1 = datasets.MNIST('../data', train=True, download=True, transform=transform)
+    dataset2 = datasets.MNIST('../data', train=False, transform=transform)
     train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
@@ -279,19 +226,16 @@ def main():
     # Count the total number of weights and bias parameters
     total_params = sum(p.numel() for p in model.parameters())
     print(f"Total parameters: {total_params}")
-    # test_raw(model, test_loader)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
-        test_raw(model, test_loader)
         torch.save(model.state_dict(), "model.pt")
         scheduler.step()
-
-    # if args.save_model:
-    # torch.save(model.state_dict(), "model.pt")
+    
+    test_raw(model, test_loader)
 
 if __name__ == '__main__':
     main()

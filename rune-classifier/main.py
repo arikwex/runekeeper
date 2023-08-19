@@ -104,17 +104,15 @@ def test_raw(model, test_loader):
 def get_quantized_params(model):
     model_params = list(model.parameters())
     def quantize_weights(w):
-        return w.tolist()
         original_dim = w.shape
         w = w.reshape(-1)
         new_weights = torch.zeros(w.shape[0])
-        QUANTIZATION = 64
-        MAX_RANGE = 10
+        QUANTIZATION = 16
+        MAX_RANGE = 2
         for i in range(w.shape[0]):
-            # quantized_value = round(float(w[i]) * QUANTIZATION / MAX_RANGE + QUANTIZATION / 2)
-            # integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
-            # new_weights[i] = (integer_weight - QUANTIZATION / 2.0) * MAX_RANGE / QUANTIZATION
-            new_weights[i] = float(w[i])
+            quantized_value = round(float(w[i]) * QUANTIZATION / MAX_RANGE + QUANTIZATION / 2)
+            integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
+            new_weights[i] = (integer_weight - QUANTIZATION / 2.0) * MAX_RANGE / QUANTIZATION
         return new_weights.reshape(original_dim).tolist()
     fc1_w = quantize_weights(model_params[0])
     fc1_b = quantize_weights(model_params[1])
@@ -160,12 +158,12 @@ def run_model_raw(quantized_params, data):
     x43 = receptive_field(img, 28, 14, 21, 7, fc1_w, fc1_b)
     x44 = receptive_field(img, 28, 21, 21, 7, fc1_w, fc1_b)
     
-    y11 = receptive_field(x11 + x12 + x21 + x22, 0, 0, 0, 100, fc2_w, fc2_b)
-    y12 = receptive_field(x13 + x14 + x23 + x24, 0, 0, 0, 100, fc2_w, fc2_b)
-    y21 = receptive_field(x31 + x32 + x41 + x42, 0, 0, 0, 100, fc2_w, fc2_b)
-    y22 = receptive_field(x33 + x34 + x43 + x44, 0, 0, 0, 100, fc2_w, fc2_b)
+    y11 = receptive_field(x11 + x12 + x21 + x22, 0, 0, 0, 10000, fc2_w, fc2_b)
+    y12 = receptive_field(x13 + x14 + x23 + x24, 0, 0, 0, 10000, fc2_w, fc2_b)
+    y21 = receptive_field(x31 + x32 + x41 + x42, 0, 0, 0, 10000, fc2_w, fc2_b)
+    y22 = receptive_field(x33 + x34 + x43 + x44, 0, 0, 0, 10000, fc2_w, fc2_b)
     
-    z11 = receptive_field(y11 + y12 + y21 + y22, 0, 0, 0, 100, fc3_w, fc3_b)
+    z11 = receptive_field(y11 + y12 + y21 + y22, 0, 0, 0, 10000, fc3_w, fc3_b)
     
     # Softmax
     softmaxes = [0] * len(z11)

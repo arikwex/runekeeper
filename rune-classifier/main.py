@@ -8,29 +8,74 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
 
+# class Net(nn.Module):
+#     def __init__(self):
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv2d(1, 16, 3, 1)
+#         self.conv2 = nn.Conv2d(16, 16, 3, 1)
+#         self.dropout1 = nn.Dropout(0.1)
+#         self.dropout2 = nn.Dropout(0.1)
+#         self.dropout3 = nn.Dropout(0.1)
+#         self.fc1 = nn.Linear(144, 16)
+#         self.fc2 = nn.Linear(16, 10)
+
+#     def forward(self, x):
+#         x = self.conv1(x)
+#         x = F.relu(x)
+#         x = F.max_pool2d(x, 2)
+#         x = self.dropout1(x)
+        
+#         x = self.conv2(x)
+#         x = F.relu(x)
+#         x = F.max_pool2d(x, 3)
+#         x = self.dropout2(x)
+        
+#         x = torch.flatten(x, 1)
+#         x = self.fc1(x)
+#         x = F.relu(x)
+#         x = self.fc2(x)
+#         x = F.relu(x)
+#         output = F.log_softmax(x, dim=1)
+#         return output
+
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
+        PATCH_FEATURES = 16
+        PATCH_FEATURES_DEEP = 16
+        OUTPUT_CLASSES = 10
+        self.fc1 = nn.Linear(7*7, PATCH_FEATURES)
+        self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP)
+        self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES)
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = F.log_softmax(x, dim=1)
+        x11 = self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7))
+        x12 = self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7))
+        x13 = self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7))
+        x14 = self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7))
+        x21 = self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7))
+        x22 = self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7))
+        x23 = self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7))
+        x24 = self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7))
+        x31 = self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7))
+        x32 = self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7))
+        x33 = self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7))
+        x34 = self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7))
+        x41 = self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7))
+        x42 = self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7))
+        x43 = self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7))
+        x44 = self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7))
+        
+        y11 = self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1)))
+        y12 = self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1)))
+        y21 = self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1)))
+        y22 = self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1)))
+        
+        z = self.fc3(self.dropout2(F.relu(torch.cat((y11, y12, y21, y22), dim=1))))
+        # z = F.relu(z)
+        output = F.log_softmax(z, dim=1)
         return output
 
 
@@ -41,6 +86,7 @@ def train(args, model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
+        # loss = F.mse_loss(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
@@ -73,12 +119,11 @@ def test(model, device, test_loader):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                        help='input batch size for training (default: 64)')
+    parser.add_argument('--batch-size', type=int, default=200, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=14, metavar='N',
-                        help='number of epochs to train (default: 14)')
+    parser.add_argument('--epochs', type=int, default=100, metavar='N',
+                        help='number of epochs to train (default: 100)')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                         help='learning rate (default: 1.0)')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
@@ -119,7 +164,7 @@ def main():
 
     transform=transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
+        # transforms.Normalize((0.1307,), (0.3081,))
         ])
     dataset1 = datasets.MNIST('../data', train=True, download=True,
                        transform=transform)
@@ -129,17 +174,26 @@ def main():
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     model = Net().to(device)
+    
+    # Count the total number of weights and bias parameters
+    total_params = sum(p.numel() for p in model.parameters())
+    total_weights = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total_biases = total_params - total_weights
+    print(f"Total parameters: {total_params}")
+    print(f"Total weights: {total_weights}")
+    print(f"Total biases: {total_biases}")
+    
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
+        torch.save(model.state_dict(), "model.pt")
         scheduler.step()
 
-    if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
-
+    # if args.save_model:
+    # torch.save(model.state_dict(), "model.pt")
 
 if __name__ == '__main__':
     main()

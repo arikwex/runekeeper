@@ -42,7 +42,7 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn) => {
 const drawNoisyPath = (ctx, path) => {
     ctx.beginPath();
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.random() * 3 + 3;
+    ctx.lineWidth = Math.random() * 3 + 4;
     const squashX = 1 - Math.random() * 0.2;
     const squashY = 1 - Math.random() * 0.2;
     const skewX = (Math.random() - 0.5) * 0.25;
@@ -191,10 +191,39 @@ const drawHailRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawLightningRune = (ctx) => {
+    const path = [];
+    
+    const cx0 = SIZE/2 - 20 - Math.random() * 12;
+    const cy0 = 12 + Math.random() * 5;
+    const cx1 = SIZE/2 + 20 + Math.random() * 12;
+    const cy1 = 12 + Math.random() * 5;
+    const cx2 = SIZE/2 - 15 - Math.random() * 8;
+    const cy2 = SIZE / 2 + Math.random() * 6 - 3;
+    const cx3 = SIZE/2 + 15 + Math.random() * 8;
+    const cy3 = SIZE / 2 + Math.random() * 6 - 3;
+    const cx4 = SIZE/2 + Math.random() * 10 - 5;
+    const cy4 = SIZE - 12 - Math.random() * 6;
+    if (Math.random() > 0.5) {
+        addLineToPath(path, cx0, cy0, cx1, cy1);
+        addLineToPath(path, cx1, cy1, cx2, cy2);
+        addLineToPath(path, cx2, cy2, cx3, cy3);
+        addLineToPath(path, cx3, cy3, cx4, cy4);
+    } else {
+        addLineToPath(path, SIZE-cx0, cy0, SIZE-cx1, cy1);
+        addLineToPath(path, SIZE-cx1, cy1, SIZE-cx2, cy2);
+        addLineToPath(path, SIZE-cx2, cy2, SIZE-cx3, cy3);
+        addLineToPath(path, SIZE-cx3, cy3, SIZE-cx4, cy4);
+    }
+
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
 // generateRuneDataset('dragon', canvas, ctx, drawDragonRune);
 // generateRuneDataset('ice', canvas, ctx, drawIceRune);
 // generateRuneDataset('frost', canvas, ctx, drawFrostRune);
-generateRuneDataset('hail', canvas, ctx, drawHailRune);
+// generateRuneDataset('hail', canvas, ctx, drawHailRune);
+generateRuneDataset('lightning', canvas, ctx, drawLightningRune);

@@ -219,6 +219,24 @@ const drawLightningRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawTornadoRune = (ctx) => {
+    const path = [];
+    const phase = Math.random() * Math.PI * 2;
+    let omega = 1.5 + Math.random() * 0.5;
+    if (Math.random() > 0.5) {
+        omega = -omega;
+    }
+    for (let i = 0; i < 29 + Math.random() * 7; i++) {
+        const angle = i / 32.0 * Math.PI * 2.0 + phase;
+        const R = SIZE * 0.43 * i / 34.0;
+        path.push({
+            x: Math.cos(angle * omega) * R + SIZE/2,
+            y: Math.sin(angle * omega) * R + SIZE/2,
+        });
+    }
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
@@ -226,4 +244,5 @@ const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('ice', canvas, ctx, drawIceRune);
 // generateRuneDataset('frost', canvas, ctx, drawFrostRune);
 // generateRuneDataset('hail', canvas, ctx, drawHailRune);
-generateRuneDataset('lightning', canvas, ctx, drawLightningRune);
+// generateRuneDataset('lightning', canvas, ctx, drawLightningRune);
+generateRuneDataset('tornado', canvas, ctx, drawTornadoRune);

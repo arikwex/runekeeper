@@ -142,8 +142,59 @@ const drawIceRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawFrostRune = (ctx) => {
+    const path = [];
+    
+    const cxBL = (Math.random() - 0.5) * 5 + SIZE/2 - 7;
+    const cyBL = SIZE - (Math.random() * 4 + 12);
+    const cxL = 10 + Math.random() * 10;
+    const cyL = SIZE - (Math.random() * 5 + 28);
+    
+    const cxML = (Math.random() - 0.5) * 6 + SIZE/2 - 8;
+    const cyML = SIZE - (Math.random() * 6 + 40);
+    const cxM = (Math.random() - 0.5) * 7 + SIZE/2;
+    const cyM = 12 + (Math.random() * 7);
+    const cxMR = (Math.random() - 0.5) * 6 + SIZE/2 + 8;
+    const cyMR = SIZE - (Math.random() * 6 + 40);
+
+    const cxR = SIZE - (10 + Math.random() * 10);
+    const cyR = SIZE - (Math.random() * 5 + 28);
+    const cxBR = (Math.random() - 0.5) * 5 + SIZE/2 + 7;
+    const cyBR = SIZE - (Math.random() * 4 + 12);
+    
+    addLineToPath(path, cxBL, cyBL, cxL, cyL);
+    addLineToPath(path, cxL, cyL, cxML, cyML);
+    addLineToPath(path, cxML, cyML, cxM, cyM);
+    addLineToPath(path, cxM, cyM, cxMR, cyMR);
+    addLineToPath(path, cxMR, cyMR, cxR, cyR);
+    addLineToPath(path, cxR, cyR, cxBR, cyBR);
+
+    drawNoisyPath(ctx, path);
+}
+
+const drawHailRune = (ctx) => {
+    const path = [];
+    
+    const cxT = 12 + Math.random() * 6;
+    const cyT = 12 + Math.random() * 6;
+    const cxR = SIZE - (12 + Math.random() * 6);
+    const cyR = SIZE - (12 + Math.random() * 6);
+    const cxB = SIZE - (12 + Math.random() * 6);
+    const cyB = 12 + Math.random() * 6;
+    const cxL = 12 + Math.random() * 6;
+    const cyL = SIZE - (12 + Math.random() * 6);
+    addLineToPath(path, cxT, cyT, cxR, cyR);
+    addLineToPath(path, cxR, cyR, cxB, cyB);
+    addLineToPath(path, cxB, cyB, cxL, cyL);
+    addLineToPath(path, cxL, cyL, cxT, cyT);
+
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
 // generateRuneDataset('dragon', canvas, ctx, drawDragonRune);
-generateRuneDataset('ice', canvas, ctx, drawIceRune);
+// generateRuneDataset('ice', canvas, ctx, drawIceRune);
+// generateRuneDataset('frost', canvas, ctx, drawFrostRune);
+generateRuneDataset('hail', canvas, ctx, drawHailRune);

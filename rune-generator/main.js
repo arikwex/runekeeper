@@ -61,6 +61,16 @@ const drawNoisyPath = (ctx, path) => {
     ctx.stroke();
 }
 
+const addLineToPath = (path, x0, x1, y0, y1) => {
+    for (let i = 0; i < 6; i++) {
+        const p = i / 5;
+        path.push({ 
+            x: x1 * p + x0 * (1-p),
+            y: y1 * p + y0 * (1-p),
+        });
+    }
+}
+
 const drawFireballRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
@@ -105,34 +115,10 @@ const drawDragonRune = (ctx) => {
     const topRight = 12 + Math.random() * 8;
     const bottom = 7 + Math.random() * 16;
     const top = SIZE/2 - Math.random() * 15 + 8;
-    for (let i = 0; i < 6; i++) {
-        const p = 1.0 - i / 5;
-        path.push({ 
-            x: 12 * p + (SIZE/2) * (1-p),
-            y: topLeft * p + (SIZE-bottom) * (1-p),
-        });
-    }
-    for (let i = 0; i < 6; i++) {
-        const p = i / 5;
-        path.push({ 
-            x: (SIZE-12) * p + (SIZE/2) * (1-p),
-            y: topRight * p + (SIZE-bottom) * (1-p),
-        });
-    }
-    for (let i = 0; i < 5; i++) {
-        const p = 1.0 - i / 4;
-        path.push({ 
-            x: (SIZE-12) * p + (SIZE/2) * (1-p),
-            y: topRight * p + (top) * (1-p),
-        });
-    }
-    for (let i = 0; i < 5; i++) {
-        const p = i / 4;
-        path.push({ 
-            x: 12 * p + (SIZE/2) * (1-p),
-            y: topLeft * p + (top) * (1-p),
-        });
-    }
+    addLineToPath(path, 12, SIZE/2, topLeft, SIZE-bottom);
+    addLineToPath(path, SIZE/2, SIZE-12, SIZE-bottom, topRight);
+    addLineToPath(path, SIZE-bottom, SIZE/2, topRight, top);
+    addLineToPath(path, SIZE/2, 12, top, topLeft);
 
     drawNoisyPath(ctx, path);
 }

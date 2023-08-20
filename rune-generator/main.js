@@ -61,7 +61,7 @@ const drawNoisyPath = (ctx, path) => {
     ctx.stroke();
 }
 
-const addLineToPath = (path, x0, x1, y0, y1) => {
+const addLineToPath = (path, x0, y0, x1, y1) => {
     for (let i = 0; i < 6; i++) {
         const p = i / 5;
         path.push({ 
@@ -115,10 +115,29 @@ const drawDragonRune = (ctx) => {
     const topRight = 12 + Math.random() * 8;
     const bottom = 7 + Math.random() * 16;
     const top = SIZE/2 - Math.random() * 15 + 8;
-    addLineToPath(path, 12, SIZE/2, topLeft, SIZE-bottom);
-    addLineToPath(path, SIZE/2, SIZE-12, SIZE-bottom, topRight);
-    addLineToPath(path, SIZE-bottom, SIZE/2, topRight, top);
-    addLineToPath(path, SIZE/2, 12, top, topLeft);
+    addLineToPath(path, 12, topLeft, SIZE/2, SIZE-bottom);
+    addLineToPath(path, SIZE/2, SIZE-bottom, SIZE-12, topRight);
+    addLineToPath(path, SIZE-bottom, topRight, SIZE/2, top);
+    addLineToPath(path, SIZE/2, top, 12, topLeft);
+
+    drawNoisyPath(ctx, path);
+}
+
+const drawIceRune = (ctx) => {
+    const path = [];
+    
+    const cxT = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cyT = Math.random() * 4 + 12;
+    const cxR = SIZE - 10 - Math.random() * 7;
+    const cyR = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cxB = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cyB = SIZE - (Math.random() * 4 + 12);
+    const cxL = 10 + Math.random() * 7;
+    const cyL = (Math.random() - 0.5) * 12 + SIZE/2;
+    addLineToPath(path, cxT, cyT, cxR, cyR);
+    addLineToPath(path, cxR, cyR, cxB, cyB);
+    addLineToPath(path, cxB, cyB, cxL, cyL);
+    addLineToPath(path, cxL, cyL, cxT, cyT);
 
     drawNoisyPath(ctx, path);
 }
@@ -126,4 +145,5 @@ const drawDragonRune = (ctx) => {
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
-generateRuneDataset('dragon', canvas, ctx, drawDragonRune);
+// generateRuneDataset('dragon', canvas, ctx, drawDragonRune);
+generateRuneDataset('ice', canvas, ctx, drawIceRune);

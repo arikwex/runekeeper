@@ -98,6 +98,46 @@ const drawMeteorRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawDragonRune = (ctx) => {
+    const path = [];
+    
+    const topLeft = 12 + Math.random() * 8;
+    const topRight = 12 + Math.random() * 8;
+    const bottom = 7 + Math.random() * 16;
+    const top = SIZE/2 - Math.random() * 15 + 8;
+    for (let i = 0; i < 6; i++) {
+        const p = 1.0 - i / 5;
+        path.push({ 
+            x: 12 * p + (SIZE/2) * (1-p),
+            y: topLeft * p + (SIZE-bottom) * (1-p),
+        });
+    }
+    for (let i = 0; i < 6; i++) {
+        const p = i / 5;
+        path.push({ 
+            x: (SIZE-12) * p + (SIZE/2) * (1-p),
+            y: topRight * p + (SIZE-bottom) * (1-p),
+        });
+    }
+    for (let i = 0; i < 5; i++) {
+        const p = 1.0 - i / 4;
+        path.push({ 
+            x: (SIZE-12) * p + (SIZE/2) * (1-p),
+            y: topRight * p + (top) * (1-p),
+        });
+    }
+    for (let i = 0; i < 5; i++) {
+        const p = i / 4;
+        path.push({ 
+            x: 12 * p + (SIZE/2) * (1-p),
+            y: topLeft * p + (top) * (1-p),
+        });
+    }
+
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
-generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
+// generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
+generateRuneDataset('dragon', canvas, ctx, drawDragonRune);

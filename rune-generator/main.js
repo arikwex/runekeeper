@@ -50,8 +50,8 @@ const drawNoisyPath = (ctx, path) => {
     for (let i = 0; i < path.length; i++) {
         let xi = (path[i].x - SIZE / 2) * squashX;
         let yi = (path[i].y - SIZE / 2) * squashY;
-        let x0 = (xi + yi * skewX) + SIZE / 2 + (Math.random() - 0.5) * 5;
-        let y0 = (yi + xi * skewY) + SIZE / 2 + (Math.random() - 0.5) * 5;
+        let x0 = (xi + yi * skewX) + SIZE / 2 + (Math.random() - 0.5) * 4;
+        let y0 = (yi + xi * skewY) + SIZE / 2 + (Math.random() - 0.5) * 4;
         if (i == 0) {
             ctx.moveTo(x0, y0);
         } else {
@@ -74,5 +74,30 @@ const drawFireballRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawMeteorRune = (ctx) => {
+    const path = [];
+    
+    path.push({ x: 12, y: 12 });
+    path.push({ x: 22, y: 12 });
+    path.push({ x: 32, y: 12 });
+
+    const hookSize = Math.random() * 25 + 15;
+    const hookDepth = Math.random() * 10 + 25;
+    for (let i = 0; i < 21; i++) {
+        const angle = i / 20.0 * Math.PI - Math.PI;
+        path.push({
+            x: (Math.cos(angle) * hookSize + SIZE/2),
+            y: (-Math.sin(angle) * hookDepth + SIZE / 2),
+        });
+    }
+    
+    path.push({ x: 100-32, y: 12 });
+    path.push({ x: 100-22, y: 12 });
+    path.push({ x: 100-12, y: 12 });
+
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
-generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
+// generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
+generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);

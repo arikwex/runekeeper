@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const { createCanvas, loadImage } = require('canvas');
 
 const SIZE = 100;
@@ -23,6 +24,19 @@ const saveCanvas = (canvas, destFile = '../rune-data/out.png') =>{
     scaledCtx.drawImage(canvas, 0, 0, SIZE, SIZE, 0, 0, OUT_SIZE, OUT_SIZE);
     const buffer = scaledCanvas.toBuffer('image/png');
     fs.writeFileSync(destFile, buffer);
+}
+
+const generateRuneDataset = (name, canvas, ctx, runeDrawFn) => {
+    const outFolder = `../rune-data/${name}/`
+    if (!fs.existsSync(outFolder)) {
+        fs.mkdirSync(outFolder, { recursive: true });
+    }
+    const N = 10;
+    for (let i = 0; i < N; i++) {
+        clearContext(ctx);
+        runeDrawFn(ctx);
+        saveCanvas(canvas, path.join(outFolder, `r_${i}.png`));
+    }
 }
 
 const drawNoisyPath = (ctx, path) => {
@@ -50,7 +64,7 @@ const drawNoisyPath = (ctx, path) => {
 const drawFireballRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    for (let i = 0; i < 28 + Math.random() * 7; i++) {
+    for (let i = 0; i < 29 + Math.random() * 7; i++) {
         const angle = i / 32.0 * Math.PI * 2.0 + phase;
         path.push({
             x: Math.cos(angle) * SIZE * 0.35 + SIZE/2,
@@ -61,6 +75,4 @@ const drawFireballRune = (ctx) => {
 }
 
 const {canvas, ctx} = generateCanvas();
-clearContext(ctx);
-drawFireballRune(ctx);
-saveCanvas(canvas);
+generateRuneDataset('fireball', canvas, ctx, drawFireballRune);

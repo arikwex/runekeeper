@@ -8,14 +8,13 @@ def get_quantized_encoding(model):
     model_params = list(model.parameters())
     def quantize_weights(w):
         w = w.reshape(-1)
-        # new_weights = torch.zeros(w.shape[0], dtype=torch.int8)
-        new_weights = torch.zeros(w.shape[0])
+        new_weights = torch.zeros(w.shape[0], dtype=torch.int8)
         QUANTIZATION = 16
         MAX_RANGE = 2.2
         for i in range(w.shape[0]):
             quantized_value = round(float(w[i]) * QUANTIZATION / MAX_RANGE + QUANTIZATION / 2)
             integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
-            new_weights[i] = w[i]#integer_weight
+            new_weights[i] = integer_weight
         return new_weights.tolist()
     fc1_w = quantize_weights(model_params[0])
     fc1_b = quantize_weights(model_params[1])
@@ -104,11 +103,14 @@ def main():
     model = Net()
     model.load_state_dict(torch.load("model.pt"))
     weights = get_quantized_encoding(model)
-    # packed_weights = pack_bytes(weights)
-    # base64_encoded = base64.b64encode(bytes(packed_weights)).decode('utf-8')
+    packed_weights = pack_bytes(weights)
+    base64_encoded = base64.b64encode(bytes(packed_weights)).decode('utf-8')
     # print(base64_encoded)
     # print(len(base64_encoded))
-    print(weights)
+    
+    model.eval()
+    x11 = torch.nn.functional.relu(model.fc1(torch.ones(1, 49)))
+    print(x11)
     # print(min(packed_weights))
     # print(max(packed_weights))
     # print(min(weights))

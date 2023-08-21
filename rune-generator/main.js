@@ -281,6 +281,25 @@ const drawVineRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawShockwaveRune = (ctx) => {
+    const path = [];
+    
+    const cxT = SIZE / 2 + Math.random() * 8 - 4;
+    const cyT = 8 + Math.random() * 6;
+    const cxB = SIZE / 2 + Math.random() * 8 - 4;
+    const cyB = SIZE - (12 + Math.random() * 6);
+    const cxR = (12 + Math.random() * 6);
+    const cyR = SIZE / 2 + Math.random() * 8 - 4;
+    const cxL = SIZE - (12 + Math.random() * 6);
+    const cyL = SIZE / 2 + Math.random() * 8 - 4;
+    addLineToPath(path, cxT, cyT, cxB, cyB);
+    addLineToPath(path, cxB, cyB, cxL, cyL);
+    addLineToPath(path, cxL, cyL, cxR, cyR);
+    addLineToPath(path, cxR, cyR, cxB, cyB);
+
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
@@ -292,4 +311,5 @@ const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('tornado', canvas, ctx, drawTornadoRune);
 // generateRuneDataset('windwalk', canvas, ctx, drawWindwalkRune);
 // generateRuneDataset('transfusion', canvas, ctx, drawTransfusionRune);
-generateRuneDataset('vine', canvas, ctx, drawVineRune);
+// generateRuneDataset('vine', canvas, ctx, drawVineRune);
+generateRuneDataset('shockwave', canvas, ctx, drawShockwaveRune);

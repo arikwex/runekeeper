@@ -26,12 +26,12 @@ const saveCanvas = (canvas, destFile = '../rune-data/out.png') =>{
     fs.writeFileSync(destFile, buffer);
 }
 
-const generateRuneDataset = (name, canvas, ctx, runeDrawFn) => {
+const generateRuneDataset = (name, canvas, ctx, runeDrawFn, N=10) => {
     const outFolder = `../rune-data/${name}/`
     if (!fs.existsSync(outFolder)) {
         fs.mkdirSync(outFolder, { recursive: true });
     }
-    const N = 10;
+    console.log(`Generating N=${N} for ${name}`);
     for (let i = 0; i < N; i++) {
         clearContext(ctx);
         runeDrawFn(ctx);
@@ -317,17 +317,22 @@ const drawGarbageRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const {canvas, ctx} = generateCanvas();
-// generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
-// generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
-// generateRuneDataset('dragon', canvas, ctx, drawDragonRune);
-// generateRuneDataset('ice', canvas, ctx, drawIceRune);
-// generateRuneDataset('frost', canvas, ctx, drawFrostRune);
-// generateRuneDataset('hail', canvas, ctx, drawHailRune);
-// generateRuneDataset('lightning', canvas, ctx, drawLightningRune);
-// generateRuneDataset('tornado', canvas, ctx, drawTornadoRune);
-// generateRuneDataset('windwalk', canvas, ctx, drawWindwalkRune);
-// generateRuneDataset('transfusion', canvas, ctx, drawTransfusionRune);
-// generateRuneDataset('vine', canvas, ctx, drawVineRune);
-// generateRuneDataset('shockwave', canvas, ctx, drawShockwaveRune);
-generateRuneDataset('garbage', canvas, ctx, drawGarbageRune);
+const generateSet = (name, N=10) => {
+    const {canvas, ctx} = generateCanvas();
+    generateRuneDataset(`${name}/fireball`, canvas, ctx, drawFireballRune, N);
+    generateRuneDataset(`${name}/meteor`, canvas, ctx, drawMeteorRune, N);
+    generateRuneDataset(`${name}/dragon`, canvas, ctx, drawDragonRune, N);
+    generateRuneDataset(`${name}/ice`, canvas, ctx, drawIceRune, N);
+    generateRuneDataset(`${name}/frost`, canvas, ctx, drawFrostRune, N);
+    generateRuneDataset(`${name}/hail`, canvas, ctx, drawHailRune, N);
+    generateRuneDataset(`${name}/lightning`, canvas, ctx, drawLightningRune, N);
+    generateRuneDataset(`${name}/tornado`, canvas, ctx, drawTornadoRune, N);
+    generateRuneDataset(`${name}/windwalk`, canvas, ctx, drawWindwalkRune, N);
+    generateRuneDataset(`${name}/transfusion`, canvas, ctx, drawTransfusionRune, N);
+    generateRuneDataset(`${name}/vine`, canvas, ctx, drawVineRune, N);
+    generateRuneDataset(`${name}/shockwave`, canvas, ctx, drawShockwaveRune, N);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N);
+}
+
+generateSet('train', N=6000);
+generateSet('test', N=1000);

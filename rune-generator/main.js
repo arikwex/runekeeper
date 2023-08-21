@@ -42,7 +42,7 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn) => {
 const drawNoisyPath = (ctx, path) => {
     ctx.beginPath();
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.random() * 3 + 4;
+    ctx.lineWidth = Math.random() * 5 + 4;
     const squashX = 1 - Math.random() * 0.2;
     const squashY = 1 - Math.random() * 0.2;
     const skewX = (Math.random() - 0.5) * 0.25;
@@ -265,6 +265,22 @@ const drawTransfusionRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawVineRune = (ctx) => {
+    const path = [];
+    const phase = Math.random() * Math.PI * 2;
+    let AMP = Math.random() * 15 + 18;
+    let PACE = Math.random() * 0.3 + 0.7;
+    for (let i = 0; i < 33; i++) {
+        const angle = i / 32.0 * Math.PI * 2.0;
+        const p = i / 32.0;
+        path.push({
+            x: 12 + i * (SIZE - 24) / 33.0 - Math.sin(angle * 2) * PACE * 24 * p * (1 - p) * 4,
+            y: Math.cos(angle * 2) * AMP + SIZE/2,
+        });
+    }
+    drawNoisyPath(ctx, path);
+}
+
 const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('fireball', canvas, ctx, drawFireballRune);
 // generateRuneDataset('meteor', canvas, ctx, drawMeteorRune);
@@ -275,4 +291,5 @@ const {canvas, ctx} = generateCanvas();
 // generateRuneDataset('lightning', canvas, ctx, drawLightningRune);
 // generateRuneDataset('tornado', canvas, ctx, drawTornadoRune);
 // generateRuneDataset('windwalk', canvas, ctx, drawWindwalkRune);
-generateRuneDataset('transfusion', canvas, ctx, drawTransfusionRune);
+// generateRuneDataset('transfusion', canvas, ctx, drawTransfusionRune);
+generateRuneDataset('vine', canvas, ctx, drawVineRune);

@@ -16,9 +16,9 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.25)
-        PATCH_FEATURES = 25
-        PATCH_FEATURES_DEEP = 25
-        OUTPUT_CLASSES = 10
+        PATCH_FEATURES = 13
+        PATCH_FEATURES_DEEP = 13
+        OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
         self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
@@ -126,7 +126,7 @@ def test_raw(model, test_loader):
             if count % 1000 == 0:
                 print(f'...{count}')
 
-    print('\Raw Test set: Accuracy: {}/{} ({:.0f}%)\n'.format(
+    print('Raw Test set: Accuracy: {}/{} ({:.0f}%)\n'.format(
         correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
@@ -248,7 +248,7 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=400, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=20, metavar='N')
+    parser.add_argument('--epochs', type=int, default=300, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -276,11 +276,11 @@ def main():
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
 
-    transform=transforms.Compose([
-        transforms.ToTensor(),
-        transforms.RandomRotation(20)
-        # transforms.Normalize((0.1307,), (0.3081,))
-    ])
+    # transform=transforms.Compose([
+    #     transforms.ToTensor(),
+    #     transforms.RandomRotation(20)
+    #     # transforms.Normalize((0.1307,), (0.3081,))
+    # ])
     # dataset1 = datasets.MNIST('../data', train=True, download=True, transform=transform)
     # dataset2 = datasets.MNIST('../data', train=False, transform=transform)
     # train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)

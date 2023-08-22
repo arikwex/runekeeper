@@ -2,6 +2,8 @@ import math
 import os
 import base64
 import torch
+from PIL import Image
+from torchvision import transforms
 from main import Net
 
 def get_quantized_encoding(model):
@@ -108,8 +110,14 @@ def main():
     # print(base64_encoded)
     # print(len(base64_encoded))
     
+    transform = transforms.Compose([ transforms.ToTensor() ])
+    image_path = "../rune-data/test/dragon/r_1.png"
+    image = Image.open(image_path).convert("L")
+    image = transform(image)
+    print(image.reshape(-1).tolist())
+    
     model.eval()
-    x11 = torch.nn.functional.relu(model.fc1(torch.ones(1, 49)))
+    x11 = torch.nn.functional.relu(model.fc1(image[:,0:7,0:7].reshape(49)))
     print(x11)
     # print(min(packed_weights))
     # print(max(packed_weights))

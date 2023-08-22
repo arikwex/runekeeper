@@ -107,7 +107,7 @@ def main():
     weights = get_quantized_encoding(model)
     packed_weights = pack_bytes(weights)
     base64_encoded = base64.b64encode(bytes(packed_weights)).decode('utf-8')
-    # print(base64_encoded)
+    print(base64_encoded)
     # print(len(base64_encoded))
     
     # Test image
@@ -118,8 +118,8 @@ def main():
     
     model.eval()
     # tx = torch.nn.functional.relu(model.fc2(image[:,0:7,21:28].reshape(49)))
-    _, tx = model(image.reshape(1, 1, 28, 28))
-    print(tx)
+    # _, tx = model(image.reshape(1, 1, 28, 28))
+    # print(tx)
     # print(min(packed_weights))
     # print(max(packed_weights))
     # print(min(weights))

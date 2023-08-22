@@ -14,68 +14,41 @@ from torch.optim.lr_scheduler import StepLR
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.25)
-        PATCH_FEATURES = 13
-        PATCH_FEATURES_DEEP = 13
+        self.dropout1 = nn.Dropout(0.1)
+        self.dropout2 = nn.Dropout(0.1)
+        PATCH_FEATURES = 14
+        PATCH_FEATURES_DEEP = 16
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
         self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
 
     def forward(self, x):
-        x11 = F.relu(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
-        x12 = F.relu(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
-        x13 = F.relu(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
-        x14 = F.relu(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
-        x21 = F.relu(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
-        x22 = F.relu(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
-        x23 = F.relu(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
-        x24 = F.relu(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
-        x31 = F.relu(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
-        x32 = F.relu(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
-        x33 = F.relu(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
-        x34 = F.relu(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
-        x41 = F.relu(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
-        x42 = F.relu(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
-        x43 = F.relu(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
-        x44 = F.relu(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
+        x11 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
+        x12 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
+        x13 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
+        x14 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
+        x21 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
+        x22 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
+        x23 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
+        x24 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
+        x31 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
+        x32 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
+        x33 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
+        x34 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
+        x41 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
+        x42 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
+        x43 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
+        x44 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
         
-        y11 = F.relu(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
-        y12 = F.relu(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
-        y21 = F.relu(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
-        y22 = F.relu(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
+        y11 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
+        y12 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
+        y21 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
+        y22 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        z = F.relu(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        z = F.leaky_relu(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
         output = F.log_softmax(z, dim=1)
-        return output, z
-
-# class Net(nn.Module):
-#     def __init__(self):
-#         super(Net, self).__init__()
-#         self.conv1 = nn.Conv2d(1, 16, 5, 2)
-#         self.conv2 = nn.Conv2d(16, 16, 3, 1)
-#         self.dropout1 = nn.Dropout(0.25)
-#         self.dropout2 = nn.Dropout(0.25)
-#         self.fc1 = nn.Linear(64, 13)
-
-#     def forward(self, x):
-#         x = self.conv1(x)
-#         x = F.relu(x)
-#         x = F.max_pool2d(x, 2)
-#         x = self.dropout1(x)
-        
-#         x = self.conv2(x)
-#         x = F.relu(x)
-#         x = F.max_pool2d(x, 2)
-#         x = self.dropout2(x)
-        
-#         x = torch.flatten(x, 1)
-#         x = self.fc1(x)
-        
-#         output = F.log_softmax(x, dim=1)
-#         return output
-
+        return output
 
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
@@ -137,7 +110,7 @@ def get_quantized_params(model):
         w = w.reshape(-1)
         new_weights = torch.zeros(w.shape[0])
         QUANTIZATION = 16
-        MAX_RANGE = 2
+        MAX_RANGE = 2.2
         for i in range(w.shape[0]):
             quantized_value = round(float(w[i]) * QUANTIZATION / MAX_RANGE + QUANTIZATION / 2)
             integer_weight = max(min(quantized_value, QUANTIZATION - 1), 0)
@@ -248,7 +221,7 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=400, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=300, metavar='N')
+    parser.add_argument('--epochs', type=int, default=30, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -275,16 +248,6 @@ def main():
         cuda_kwargs = {'num_workers': 8, 'pin_memory': True, 'shuffle': True}
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
-
-    # transform=transforms.Compose([
-    #     transforms.ToTensor(),
-    #     transforms.RandomRotation(20)
-    #     # transforms.Normalize((0.1307,), (0.3081,))
-    # ])
-    # dataset1 = datasets.MNIST('../data', train=True, download=True, transform=transform)
-    # dataset2 = datasets.MNIST('../data', train=False, transform=transform)
-    # train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
-    # test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
     
     # Define transformations
     transform = transforms.Compose([

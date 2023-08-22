@@ -110,15 +110,15 @@ def main():
     # print(base64_encoded)
     # print(len(base64_encoded))
     
+    # Test image
     transform = transforms.Compose([ transforms.ToTensor() ])
     image_path = "../rune-data/test/dragon/r_1.png"
     image = Image.open(image_path).convert("L")
     image = transform(image)
-    print(image.reshape(-1).tolist())
     
     model.eval()
-    x11 = torch.nn.functional.relu(model.fc1(image[:,0:7,0:7].reshape(49)))
-    print(x11)
+    tx = torch.nn.functional.relu(model.fc1(image[:,0:7,21:28].reshape(49)))
+    print(tx)
     # print(min(packed_weights))
     # print(max(packed_weights))
     # print(min(weights))

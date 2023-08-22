@@ -35,7 +35,7 @@ const linearReluLayer = (data, modelParams, numOutputs, numInputs, x0, y0, span,
     for (let i = 0; i < numOutputs; i++) {
         let acc = 0;
         for (let j = 0; j < numInputs; j++) {
-            const inputIndex = x0 + j % span + stride * (y0 + Math.floor(j / span));
+            const inputIndex = y0 + j % span + stride * (x0 + Math.floor(j / span));
             const weightIndex = weightOffset + i * numInputs + j;
             acc += modelParams[weightIndex] * data[inputIndex];
         }
@@ -55,7 +55,10 @@ const evalModel = (modelParams, data) => {
 
     // data, modelParams, numOutputs, numInputs, x0, y0, span, stride, biasOffset
     x11 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 0, 7, 28, 0, 49 * PATCH_FEATURES);
-    console.log(x11);
+    x12 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 7, 7, 28, 0, 49 * PATCH_FEATURES);
+    x13 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 14, 7, 28, 0, 49 * PATCH_FEATURES);
+    x14 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+    console.log(x14);
     // x11 = linearLayer(img, modelParams, 28, 0, 0, 7, fc1_w, fc1_b)
     // x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
     // x13 = receptive_field(img, 28, 14, 0, 7, fc1_w, fc1_b)

@@ -107,6 +107,8 @@ def main():
     weights = get_quantized_encoding(model)
     packed_weights = pack_bytes(weights)
     base64_encoded = base64.b64encode(bytes(packed_weights)).decode('utf-8')
+    print(weights)
+    print(packed_weights)
     print(base64_encoded)
     # print(len(base64_encoded))
     

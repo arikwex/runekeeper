@@ -49,35 +49,45 @@ const evalModel = (modelParams, data) => {
     // [fc1_w, fc1_b, fc2_w, fc2_b, fc3_w, fc3_b] = quantized_params
     // img = data.view(28 * 28).tolist()
     
+    const BASE_PATCH = 7 * 7;
     const PATCH_FEATURES = 13;
     const PATCH_FEATURES_DEEP = 13;
     const NUM_CLASSES = 13;
 
     // data, modelParams, numOutputs, numInputs, x0, y0, span, stride, biasOffset
-    x11 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 0, 7, 28, 0, 49 * PATCH_FEATURES);
-    x12 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 7, 7, 28, 0, 49 * PATCH_FEATURES);
-    x13 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 14, 7, 28, 0, 49 * PATCH_FEATURES);
-    x14 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+    x11 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x12 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x13 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x14 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
 
-    x21 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 0, 7, 28, 0, 49 * PATCH_FEATURES);
-    x22 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 7, 7, 28, 0, 49 * PATCH_FEATURES);
-    x23 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 14, 7, 28, 0, 49 * PATCH_FEATURES);
-    x24 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+    x21 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x22 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x23 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x24 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
 
-    x31 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 0, 7, 28, 0, 49 * PATCH_FEATURES);
-    x32 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 7, 7, 28, 0, 49 * PATCH_FEATURES);
-    x33 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 14, 7, 28, 0, 49 * PATCH_FEATURES);
-    x34 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+    x31 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x32 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x33 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x34 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
 
-    x41 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 0, 7, 28, 0, 49 * PATCH_FEATURES);
-    x42 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 7, 7, 28, 0, 49 * PATCH_FEATURES);
-    x43 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 14, 7, 28, 0, 49 * PATCH_FEATURES);
-    x44 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+    x41 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x42 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x43 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x44 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
 
     y11 = linearReluLayer(x11.concat(x12, x21, x22), modelParams, PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES,
-        0, 0, 1000, 0, 49 * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
+        0, 0, 1000, 0, BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
+    y12 = linearReluLayer(x13.concat(x14, x23, x24), modelParams, PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES,
+        0, 0, 1000, 0, BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
+    y21 = linearReluLayer(x31.concat(x32, x41, x42), modelParams, PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES,
+        0, 0, 1000, 0, BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
+    y22 = linearReluLayer(x33.concat(x34, x43, x44), modelParams, PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES,
+        0, 0, 1000, 0, BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
 
-    console.log(y11);
+    z = linearReluLayer(y11.concat(y12, y21, y22), modelParams, NUM_CLASSES, 4 * PATCH_FEATURES_DEEP,
+        0, 0, 1000, 0, BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES + 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP + PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES_DEEP * NUM_CLASSES);
+
+    console.log(z);
     // x11 = linearLayer(img, modelParams, 28, 0, 0, 7, fc1_w, fc1_b)
     // x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
     // x13 = receptive_field(img, 28, 14, 0, 7, fc1_w, fc1_b)

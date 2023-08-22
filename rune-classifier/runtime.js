@@ -39,7 +39,7 @@ const linearReluLayer = (data, modelParams, numOutputs, numInputs, x0, y0, span,
             const weightIndex = weightOffset + i * numInputs + j;
             acc += modelParams[weightIndex] * data[inputIndex];
         }
-        const biasIndex = i + biasOffset;
+        const biasIndex = i + biasOffset + weightOffset;
         outputs[i] = Math.max(0, modelParams[biasIndex] + acc);
     }
     return outputs
@@ -58,7 +58,26 @@ const evalModel = (modelParams, data) => {
     x12 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 7, 7, 28, 0, 49 * PATCH_FEATURES);
     x13 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 14, 7, 28, 0, 49 * PATCH_FEATURES);
     x14 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 0, 21, 7, 28, 0, 49 * PATCH_FEATURES);
-    console.log(x14);
+
+    x21 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 0, 7, 28, 0, 49 * PATCH_FEATURES);
+    x22 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 7, 7, 28, 0, 49 * PATCH_FEATURES);
+    x23 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 14, 7, 28, 0, 49 * PATCH_FEATURES);
+    x24 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 7, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+
+    x31 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 0, 7, 28, 0, 49 * PATCH_FEATURES);
+    x32 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 7, 7, 28, 0, 49 * PATCH_FEATURES);
+    x33 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 14, 7, 28, 0, 49 * PATCH_FEATURES);
+    x34 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 21, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+
+    x41 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 0, 7, 28, 0, 49 * PATCH_FEATURES);
+    x42 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 7, 7, 28, 0, 49 * PATCH_FEATURES);
+    x43 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 14, 7, 28, 0, 49 * PATCH_FEATURES);
+    x44 = linearReluLayer(data, modelParams, PATCH_FEATURES, 49, 28, 21, 7, 28, 0, 49 * PATCH_FEATURES);
+
+    y11 = linearReluLayer(x11.concat(x12, x21, x22), modelParams, PATCH_FEATURES_DEEP, 4 * PATCH_FEATURES,
+        0, 0, 1000, 0, 49 * PATCH_FEATURES + PATCH_FEATURES, 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP);
+
+    console.log(y11);
     // x11 = linearLayer(img, modelParams, 28, 0, 0, 7, fc1_w, fc1_b)
     // x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
     // x13 = receptive_field(img, 28, 14, 0, 7, fc1_w, fc1_b)

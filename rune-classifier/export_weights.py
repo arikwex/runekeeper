@@ -117,7 +117,8 @@ def main():
     image = transform(image)
     
     model.eval()
-    tx = torch.nn.functional.relu(model.fc1(image[:,0:7,21:28].reshape(49)))
+    # tx = torch.nn.functional.relu(model.fc2(image[:,0:7,21:28].reshape(49)))
+    _, tx = model(image.reshape(1, 1, 28, 28))
     print(tx)
     # print(min(packed_weights))
     # print(max(packed_weights))

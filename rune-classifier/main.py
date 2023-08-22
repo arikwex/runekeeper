@@ -48,7 +48,7 @@ class Net(nn.Module):
         
         z = F.relu(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
         output = F.log_softmax(z, dim=1)
-        return output
+        return output, y11
 
 # class Net(nn.Module):
 #     def __init__(self):

@@ -16,37 +16,45 @@ def M(t):
     # t += torch.randn(t.shape).to(t.device) * 1.0
     # t = F.layer_norm(t, normalized_shape=t.size()[1:], weight=None, bias=None, eps=1e-3)
     t = F.leaky_relu(t)
+    # t = F.tanh(t)
+    return t
+
+def W(t):
+    # t += torch.randn(t.shape).to(t.device) * 1.0
+    # t = F.layer_norm(t, normalized_shape=t.size()[1:], weight=None, bias=None, eps=1e-3)
+    t = F.leaky_relu(t)
+    # t = F.tanh(t)
     return t
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.dropout1 = nn.Dropout(0.1)
-        self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 14
-        PATCH_FEATURES_DEEP = 16
+        self.dropout1 = nn.Dropout(0.05)
+        self.dropout2 = nn.Dropout(0.05)
+        PATCH_FEATURES = 18
+        PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
         self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
 
     def forward(self, x):
-        x11 = M(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
-        x12 = M(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
-        x13 = M(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
-        x14 = M(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
-        x21 = M(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
-        x22 = M(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
-        x23 = M(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
-        x24 = M(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
-        x31 = M(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
-        x32 = M(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
-        x33 = M(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
-        x34 = M(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
-        x41 = M(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
-        x42 = M(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
-        x43 = M(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
-        x44 = M(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
+        x11 = W(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
+        x12 = W(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
+        x13 = W(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
+        x14 = W(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
+        x21 = W(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
+        x22 = W(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
+        x23 = W(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
+        x24 = W(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
+        x31 = W(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
+        x32 = W(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
+        x33 = W(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
+        x34 = W(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
+        x41 = W(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
+        x42 = W(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
+        x43 = W(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
+        x44 = W(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
         
         y11 = M(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
         y12 = M(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
@@ -79,12 +87,25 @@ def test(model, device, test_loader):
     test_loss = 0
     correct = 0
     with torch.no_grad():
+        misclassified_counts = {}
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
             test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
+
+            for i in range(len(target)):
+                if pred[i] != target[i]:
+                    misclass_label = target[i].item()
+                    if misclass_label not in misclassified_counts:
+                        misclassified_counts[misclass_label] = 1
+                    else:
+                        misclassified_counts[misclass_label] += 1
+
+        # Print the misclassified counts for each class
+        for class_label, count in misclassified_counts.items():
+            print(f"[{reverse_class_mapping[class_label]}] misclassified {count} times")
 
     test_loss /= len(test_loader.dataset)
 
@@ -185,25 +206,27 @@ def run_model_raw(quantized_params, data):
         softmaxes[i] = math.log(softmaxes[i] / total)
     return torch.tensor(softmaxes)
 
+class_mapping = {
+    'garbage': 0,
+    'fireball': 1,
+    'meteor': 2,
+    'dragon': 3,
+    'ice': 4,
+    'frost': 5,
+    'hail': 6,
+    'lightning': 7,
+    'tornado': 8,
+    'windwalk': 9,
+    'transfusion': 10,
+    'vine': 11,
+    'shockwave': 12,
+}
+reverse_class_mapping = { v: k for k, v in class_mapping.items() }
+
 class RuneDataset(Dataset):
     def __init__(self, root_dir, transform):
         self.root_dir = root_dir
         self.transform = transform
-        self.mapping = {
-            'garbage': 0,
-            'fireball': 1,
-            'meteor': 2,
-            'dragon': 3,
-            'ice': 4,
-            'frost': 5,
-            'hail': 6,
-            'lightning': 7,
-            'tornado': 8,
-            'windwalk': 9,
-            'transfusion': 10,
-            'vine': 11,
-            'shockwave': 12,
-        }
         self.categories = os.listdir(self.root_dir)
         self.all_data = []
         for category in self.categories:
@@ -213,7 +236,7 @@ class RuneDataset(Dataset):
                 image = Image.open(image_path).convert("L")
                 self.all_data.append({
                     'image': image,
-                    'category': self.mapping[category]
+                    'category': class_mapping[category]
                 })
 
     def __len__(self):
@@ -226,9 +249,9 @@ class RuneDataset(Dataset):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=400, metavar='N')
+    parser.add_argument('--batch-size', type=int, default=1000, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=30, metavar='N')
+    parser.add_argument('--epochs', type=int, default=100, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -259,7 +282,13 @@ def main():
     # Define transformations
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.RandomRotation(degrees=(-20, 20))
+        # transforms.RandomRotation(degrees=(-20, 20))
+        transforms.RandomAffine(
+            degrees=(-16, 16),
+            translate=(0.05, 0.05),
+            scale=(0.9, 1.1),
+            interpolation=transforms.InterpolationMode.BILINEAR
+        )
     ])
     train_dataset = RuneDataset(root_dir='../rune-data/train', transform=transform)
     test_dataset = RuneDataset(root_dir='../rune-data/test', transform=transform)

@@ -1,0 +1,21 @@
+{
+    "name": "runekeeper-js13k2022",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev:optimize": "node tools/esbuild.js --watch --minify --roadroll",
+        "dev:minify": "node tools/esbuild.js --watch --minify",
+        "dev": "node tools/esbuild.js --watch",
+        "build": "node tools/esbuild.js --minify --roadroll"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "bestzip": "^2.2.1",
+        "chalk": "^4.1.2",
+        "esbuild": "^0.15.5",
+        "pngjs": "^6.0.0",
+        "roadroller": "git+https://github.com/lifthrasiir/roadroller.git",
+        "uglify-js": "^3.17.0"
+    }
+}

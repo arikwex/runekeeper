@@ -163,3 +163,4 @@ cython_debug/
 data/
 node_modules/
 rune-data/
+.DS_Store

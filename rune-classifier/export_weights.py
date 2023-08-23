@@ -103,22 +103,20 @@ def run_model_raw(quantized_params, data):
 
 def main():
     model = Net()
-    model.load_state_dict(torch.load("model.pt"))
+    model.load_state_dict(torch.load("model.pt", map_location=torch.device('cpu')))
     weights = get_quantized_encoding(model)
     packed_weights = pack_bytes(weights)
     base64_encoded = base64.b64encode(bytes(packed_weights)).decode('utf-8')
-    print(weights)
-    print(packed_weights)
-    print(base64_encoded)
-    # print(len(base64_encoded))
+    print('Writing base 64 endocded parameters to file...')
+    with open('base64_encoded_model.txt', 'w') as f:
+        f.write(base64_encoded)
     
     # Test image
-    transform = transforms.Compose([ transforms.ToTensor() ])
-    image_path = "../rune-data/test/dragon/r_1.png"
-    image = Image.open(image_path).convert("L")
-    image = transform(image)
-    
-    model.eval()
+    # transform = transforms.Compose([ transforms.ToTensor() ])
+    # image_path = "../rune-data/test/dragon/r_1.png"
+    # image = Image.open(image_path).convert("L")
+    # image = transform(image)
+    # model.eval()
     # tx = torch.nn.functional.relu(model.fc2(image[:,0:7,21:28].reshape(49)))
     # _, tx = model(image.reshape(1, 1, 28, 28))
     # print(tx)

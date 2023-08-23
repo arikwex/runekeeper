@@ -30,5 +30,6 @@ const buildProcess = esbuild.build({
     outfile: './dist/build.js',
     bundle: true,
     watch: useWatch,
+    loader: { '.txt': 'text' },
     plugins: [postBuildPlugin],
 });

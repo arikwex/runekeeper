@@ -34,11 +34,11 @@ function initialize() {
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
-            ctx.moveTo(60, canvas.height-60);
+            ctx.moveTo(60, canvas.height/2-60);
             ctx.lineTo(canvas.width/2, 160);
-            ctx.lineTo(canvas.width-60, canvas.height-60);
-            // ctx.lineTo(canvas.width/2, canvas.height-160);
-            // ctx.closePath();
+            ctx.lineTo(canvas.width-60, canvas.height/2-60);
+            ctx.lineTo(canvas.width/2, canvas.height-160);
+            ctx.closePath();
             ctx.strokeStyle = "white";
             ctx.lineWidth = 60;
             ctx.stroke();
@@ -55,7 +55,7 @@ function initialize() {
 
             const z = classify(grayscaleArray);
             const argmax = arr => arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-            // console.log(mapping[argmax(z)], z);
+            console.log(mapping[argmax(z)], z);
         }
     })
 }

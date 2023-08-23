@@ -27,6 +27,7 @@ const favicon = document.createElement('canvas');
 favicon.width = favicon.height = 64;
 ctx = favicon.getContext('2d');
 // TODO
+ctx = canvas.getContext('2d');
 let link = document.querySelector("link");
 link.href = favicon.toDataURL();
 ctx.imageSmoothingEnabled = false;

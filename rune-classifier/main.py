@@ -11,6 +11,13 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
+# normalized_tensor = F.layer_norm(input_tensor, normalized_shape=input_tensor.size()[1:], weight=None, bias=None, eps=epsilon)
+def M(t):
+    # t += torch.randn(t.shape).to(t.device) * 1.0
+    # t = F.layer_norm(t, normalized_shape=t.size()[1:], weight=None, bias=None, eps=1e-3)
+    t = F.leaky_relu(t)
+    return t
+
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -24,29 +31,29 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
 
     def forward(self, x):
-        x11 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
-        x12 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
-        x13 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
-        x14 = F.leaky_relu(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
-        x21 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
-        x22 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
-        x23 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
-        x24 = F.leaky_relu(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
-        x31 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
-        x32 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
-        x33 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
-        x34 = F.leaky_relu(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
-        x41 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
-        x42 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
-        x43 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
-        x44 = F.leaky_relu(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
+        x11 = M(self.fc1(x[:, 0, 0:7, 0:7].reshape(-1, 7 * 7)))
+        x12 = M(self.fc1(x[:, 0, 0:7, 7:14].reshape(-1, 7 * 7)))
+        x13 = M(self.fc1(x[:, 0, 0:7, 14:21].reshape(-1, 7 * 7)))
+        x14 = M(self.fc1(x[:, 0, 0:7, 21:28].reshape(-1, 7 * 7)))
+        x21 = M(self.fc1(x[:, 0, 7:14, 0:7].reshape(-1, 7 * 7)))
+        x22 = M(self.fc1(x[:, 0, 7:14, 7:14].reshape(-1, 7 * 7)))
+        x23 = M(self.fc1(x[:, 0, 7:14, 14:21].reshape(-1, 7 * 7)))
+        x24 = M(self.fc1(x[:, 0, 7:14, 21:28].reshape(-1, 7 * 7)))
+        x31 = M(self.fc1(x[:, 0, 14:21, 0:7].reshape(-1, 7 * 7)))
+        x32 = M(self.fc1(x[:, 0, 14:21, 7:14].reshape(-1, 7 * 7)))
+        x33 = M(self.fc1(x[:, 0, 14:21, 14:21].reshape(-1, 7 * 7)))
+        x34 = M(self.fc1(x[:, 0, 14:21, 21:28].reshape(-1, 7 * 7)))
+        x41 = M(self.fc1(x[:, 0, 21:28, 0:7].reshape(-1, 7 * 7)))
+        x42 = M(self.fc1(x[:, 0, 21:28, 7:14].reshape(-1, 7 * 7)))
+        x43 = M(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
+        x44 = M(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
         
-        y11 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
-        y12 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
-        y21 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
-        y22 = F.leaky_relu(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
+        y11 = M(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
+        y12 = M(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
+        y21 = M(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
+        y22 = M(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        z = F.leaky_relu(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
         output = F.log_softmax(z, dim=1)
         return output
 

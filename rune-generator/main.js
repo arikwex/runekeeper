@@ -132,14 +132,14 @@ const drawDragonRune = (ctx) => {
 const drawIceRune = (ctx) => {
     const path = [];
     
-    const cxT = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cxT = (Math.random() - 0.5) * 22 + SIZE/2;
     const cyT = Math.random() * 4 + 12;
     const cxR = SIZE - 10 - Math.random() * 7;
-    const cyR = (Math.random() - 0.5) * 12 + SIZE/2;
-    const cxB = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cyR = (Math.random() - 0.5) * 22 + SIZE/2;
+    const cxB = (Math.random() - 0.5) * 22 + SIZE/2;
     const cyB = SIZE - (Math.random() * 4 + 12);
     const cxL = 10 + Math.random() * 7;
-    const cyL = (Math.random() - 0.5) * 12 + SIZE/2;
+    const cyL = (Math.random() - 0.5) * 22 + SIZE/2;
     addLineToPath(path, cxT, cyT, cxR, cyR);
     addLineToPath(path, cxR, cyR, cxB, cyB);
     addLineToPath(path, cxB, cyB, cxL, cyL);
@@ -350,7 +350,7 @@ const drawGarbageRune = (ctx) => {
 
 const generateSet = (name, N=10) => {
     const {canvas, ctx} = generateCanvas();
-    FRACTIONAL_PATH = 0.95;
+    FRACTIONAL_PATH = 1;
     generateRuneDataset(`${name}/fireball`, canvas, ctx, drawFireballRune, N);
     generateRuneDataset(`${name}/meteor`, canvas, ctx, drawMeteorRune, N);
     generateRuneDataset(`${name}/dragon`, canvas, ctx, drawDragonRune, N);

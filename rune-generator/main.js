@@ -43,9 +43,13 @@ let FRACTIONAL_PATH = 1.0;
 const drawNoisyPath = (ctx, path) => {
     ctx.beginPath();
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.random() * 1.0 + 7;
-    const squashX = 1 - Math.random() * 0.2;
-    const squashY = 1 - Math.random() * 0.2;
+    ctx.lineWidth = Math.random() * 1.0 + 4;
+    let squashX = 1;
+    let squashY = 1 - Math.random() * 0.4;
+    if (Math.random() > 0.5) {
+        squashX = squashY;
+        squashY = 1;
+    }
     const skewX = (Math.random() - 0.5) * 0.25;
     const skewY = (Math.random() - 0.5) * 0.25;
     for (let i = 0; i < path.length; i++) {
@@ -96,8 +100,8 @@ const drawMeteorRune = (ctx) => {
     path.push({ x: 22, y: top });
     path.push({ x: 32 + Math.random() * 12, y: top });
 
-    const hookSize = Math.random() * 20 + 12;
-    const hookDepth = Math.random() * 20 + 10 - top + 12;
+    const hookSize = Math.random() * 20 + 8;
+    const hookDepth = Math.random() * 20 + 10 - top + 6;
     for (let i = 0; i < 21; i++) {
         const angle = i / 20.0 * Math.PI - Math.PI;
         path.push({

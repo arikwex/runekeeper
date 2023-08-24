@@ -31,7 +31,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.05)
         self.dropout2 = nn.Dropout(0.15)
-        PATCH_FEATURES = 27
+        PATCH_FEATURES = 32
         PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
@@ -255,7 +255,7 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=200, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=20, metavar='N')
+    parser.add_argument('--epochs', type=int, default=200, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -290,7 +290,7 @@ def main():
         transforms.RandomAffine(
             degrees=(-15, 15),
             translate=(0.05, 0.05),
-            scale=(0.9, 1.1),
+            scale=(0.9, 1.05),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

@@ -53,8 +53,7 @@ const drawNoisyPath = (ctx, path) => {
         let yi = (path[i].y - SIZE / 2) * squashY;
         let x0 = (xi + yi * skewX) + SIZE / 2 + (Math.random() - 0.5) * 4;
         let y0 = (yi + xi * skewY) + SIZE / 2 + (Math.random() - 0.5) * 4;
-        let skipPathNode = Math.random() > FRACTIONAL_PATH;
-        if (i == 0 || skipPathNode) {
+        if (i == 0) {
             ctx.moveTo(x0, y0);
         } else {
             ctx.lineTo(x0, y0);
@@ -64,6 +63,9 @@ const drawNoisyPath = (ctx, path) => {
 }
 
 const addLineToPath = (path, x0, y0, x1, y1) => {
+    if (Math.random() > FRACTIONAL_PATH) {
+        return;
+    }
     for (let i = 0; i < 6; i++) {
         const p = i / 5;
         path.push({ 
@@ -321,18 +323,20 @@ const drawScribbles = (ctx) => {
 
 const drawGarbageRune = (ctx) => {
     FRACTIONAL_PATH = 0.25;
+    // Only include the line-based runes for garbage generation
     const runeDrawOptions = [
-        drawFireballRune,
+        drawScribbles,
+        // drawFireballRune,
         drawMeteorRune,
         drawDragonRune,
         drawIceRune,
         drawFrostRune,
         drawHailRune,
         drawLightningRune,
-        drawTornadoRune,
-        drawWindwalkRune,
+        // drawTornadoRune,
+        // drawWindwalkRune,
         drawTransfusionRune,
-        drawVineRune,
+        // drawVineRune,
         drawShockwaveRune,
     ];
     const runeDraw = runeDrawOptions[Math.floor(Math.random() * runeDrawOptions.length)];
@@ -358,7 +362,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/vine`, canvas, ctx, drawVineRune, N);
     generateRuneDataset(`${name}/shockwave`, canvas, ctx, drawShockwaveRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 8);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 3);
 }
 
 // generateSet('train', N=10);

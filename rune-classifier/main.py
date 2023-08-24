@@ -31,7 +31,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.05)
         self.dropout2 = nn.Dropout(0.15)
-        PATCH_FEATURES = 30
+        PATCH_FEATURES = 27
         PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)

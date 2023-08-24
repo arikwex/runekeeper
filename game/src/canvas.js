@@ -22,6 +22,18 @@ function retainTransform(fn) {
     ctx.setTransform(xfm);
 }
 
+function renderLines(ctx, lines) {
+    ctx.beginPath();
+    lines.map((pt, i) => {
+        if (i == 0) {
+            ctx.moveTo(pt[0], pt[1]);
+        } else {
+            ctx.lineTo(pt[0], pt[1]);
+        }
+    });
+    ctx.stroke();
+}
+
 // Favicon
 const favicon = document.createElement('canvas');
 favicon.width = favicon.height = 64;
@@ -37,4 +49,5 @@ export {
     ctx,
     renderText,
     retainTransform,
+    renderLines,
 };

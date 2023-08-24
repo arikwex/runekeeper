@@ -14,6 +14,17 @@
     fn();
     ctx.setTransform(xfm);
   }
+  function renderLines(ctx2, lines) {
+    ctx2.beginPath();
+    lines.map((pt, i) => {
+      if (i == 0) {
+        ctx2.moveTo(pt[0], pt[1]);
+      } else {
+        ctx2.lineTo(pt[0], pt[1]);
+      }
+    });
+    ctx2.stroke();
+  }
   var favicon = document.createElement("canvas");
   favicon.width = favicon.height = 64;
   ctx = favicon.getContext("2d");
@@ -102,12 +113,112 @@
     const a = encodedWeights.charCodeAt(i);
     modelParams.push(((a & 15) - 8) * 2.2 / 16, ((a >> 4 & 15) - 8) * 2.2 / 16);
   }
+  function linearReluLayer(data, modelParams2, numOutputs, numInputs, x0, y0, span, stride, weightOffset, biasOffset) {
+    const outputs = new Array(numOutputs);
+    for (let i = 0; i < numOutputs; i++) {
+      let acc = 0;
+      for (let j = 0; j < numInputs; j++) {
+        const inputIndex = y0 + j % span + stride * (x0 + Math.floor(j / span));
+        const weightIndex = weightOffset + i * numInputs + j;
+        acc += modelParams2[weightIndex] * data[inputIndex];
+      }
+      const biasIndex = i + biasOffset + weightOffset;
+      outputs[i] = Math.max(0, modelParams2[biasIndex] + acc);
+    }
+    return outputs;
+  }
+  function classify(data) {
+    const BASE_PATCH = 7 * 7;
+    const PATCH_FEATURES = 18;
+    const PATCH_FEATURES_DEEP = 24;
+    const NUM_CLASSES = 13;
+    x11 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x12 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x13 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x14 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x21 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x22 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x23 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x24 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x31 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x32 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x33 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x34 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x41 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x42 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x43 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    x44 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);
+    y11 = linearReluLayer(
+      x11.concat(x12, x21, x22),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    );
+    y12 = linearReluLayer(
+      x13.concat(x14, x23, x24),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    );
+    y21 = linearReluLayer(
+      x31.concat(x32, x41, x42),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    );
+    y22 = linearReluLayer(
+      x33.concat(x34, x43, x44),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    );
+    z = linearReluLayer(
+      y11.concat(y12, y21, y22),
+      modelParams,
+      NUM_CLASSES,
+      4 * PATCH_FEATURES_DEEP,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES + 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP + PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES_DEEP * NUM_CLASSES
+    );
+    return z;
+  }
 
   // src/spell-caster.js
   function SpellCaster() {
     const scaledCanvas = document.createElement("canvas");
     const scaledCtx = scaledCanvas.getContext("2d");
     document.body.appendChild(scaledCanvas);
+    scaledCanvas.style.position = "fixed";
+    scaledCanvas.style.top = "10px";
+    scaledCanvas.style.left = "10px";
     scaledCanvas.width = 28;
     scaledCanvas.height = 28;
     const grayscaleArray = new Array(28 * 28);
@@ -126,19 +237,68 @@
       11: "vine",
       12: "shockwave"
     };
+    const lines = [];
+    let isDrawing = false;
     function onMouseDown(evt) {
-      console.log(evt);
+      lines.length = 0;
+      lines.push([evt.clientX, evt.clientY]);
+      isDrawing = true;
     }
     function onMouseMove(evt) {
-      console.log(evt.clientX, evt.clientY);
+      if (isDrawing && lines.length > 0) {
+        const latestPt = lines[lines.length - 1];
+        let dx = evt.clientX - latestPt[0];
+        let dy = evt.clientY - latestPt[1];
+        if (dx * dx + dy * dy > 20) {
+          lines.push([evt.clientX, evt.clientY]);
+          classifyDrawing();
+        }
+      }
     }
     function onMouseUp(evt) {
-      console.log(evt);
+      classifyDrawing();
+      lines.length = 0;
+      isDrawing = false;
     }
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
+    function classifyDrawing() {
+      let mins = [Infinity, Infinity];
+      let maxs = [-Infinity, -Infinity];
+      lines.map((pt) => {
+        mins[0] = Math.min(pt[0], mins[0]);
+        mins[1] = Math.min(pt[1], mins[1]);
+        maxs[0] = Math.max(pt[0], maxs[0]);
+        maxs[1] = Math.max(pt[1], maxs[1]);
+      });
+      normalizeLines = [];
+      const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
+      lines.map((pt) => {
+        normalizeLines.push([
+          (pt[0] - (maxs[0] + mins[0]) / 2) / size * 20 + 14,
+          (pt[1] - (maxs[1] + mins[1]) / 2) / size * 20 + 14
+        ]);
+      });
+      scaledCtx.clearRect(0, 0, 28, 28);
+      scaledCtx.strokeStyle = "white";
+      scaledCtx.lineWidth = 2.5;
+      renderLines(scaledCtx, normalizeLines);
+      const scaledImage = scaledCtx.getImageData(0, 0, 28, 28);
+      const pixelData = scaledImage.data;
+      for (let i = 0; i < pixelData.length; i += 4) {
+        grayscaleArray[i >> 2] = pixelData[i] / 255;
+      }
+      const z2 = classify(grayscaleArray);
+      const argmax = (arr) => arr.reduce((iMax, x, i, arr2) => x > arr2[iMax] ? i : iMax, 0);
+      console.log(mapping[argmax(z2)], z2);
+    }
     function render(ctx2) {
+      if (isDrawing) {
+        ctx2.strokeStyle = "white";
+        ctx2.lineWidth = 20;
+        renderLines(ctx2, lines);
+      }
     }
     function update(dT) {
     }

@@ -8,6 +8,7 @@ function SpellCaster() {
     scaledCanvas.style.position = "fixed";
     scaledCanvas.style.top = "10px";
     scaledCanvas.style.left = "10px";
+    scaledCanvas.style.border = "1px solid red";
     scaledCanvas.width = 28;
     scaledCanvas.height = 28;
     const grayscaleArray = new Array(28*28);
@@ -70,11 +71,11 @@ function SpellCaster() {
         });
         
         normalizeLines = [];
-        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 80);
+        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 30);
         lines.map((pt) => {
             normalizeLines.push([
-                (pt[0] - (maxs[0] + mins[0])/2) / size * 21 + 14,
-                (pt[1] - (maxs[1] + mins[1])/2) / size * 21 + 14,
+                (pt[0] - (maxs[0] + mins[0])/2) / size * 20 + 14,
+                (pt[1] - (maxs[1] + mins[1])/2) / size * 20 + 14,
             ]);
         });
 
@@ -82,11 +83,13 @@ function SpellCaster() {
         for (let i = 0; i < 20; i++) {
             scaledCtx.clearRect(0, 0, 28, 28);
             scaledCtx.strokeStyle = "white";
-            scaledCtx.lineWidth = 2.4;
+            scaledCtx.lineWidth = 1.1;
+            scaledCtx.lineJoin = 'round';
+            scaledCtx.lineCap = 'round';
             scaledCtx.setTransform(
-                1 + (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2,
-                (Math.random() - 0.5) * 0.2, 1 + (Math.random() - 0.5) * 0.2,
-                (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2,
+                1 + (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1,
+                (Math.random() - 0.5) * 0.1, 1 + (Math.random() - 0.5) * 0.1,
+                (Math.random() - 0.5) * 1, (Math.random() - 0.5) * 1,
             );
             renderLines(scaledCtx, normalizeLines);
 
@@ -105,7 +108,7 @@ function SpellCaster() {
             }
             tracker[prediction] += 1;
         }
-        console.log(tracker);
+        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)+1]}: ${tracker[k]}`; }));
         // console.log(mapping[argmax(z)], z);
     }
 

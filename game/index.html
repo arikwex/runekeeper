@@ -1,1 +1,158 @@
-<html><title>Infernal Throne</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(()=>{var I=document.getElementsByTagName("canvas")[0];I.width=innerWidth,I.height=innerHeight,window.onresize=()=>{I.width=innerWidth,I.height=innerHeight,l.imageSmoothingEnabled=!1};var i=document.createElement("canvas"),l=(i.width=i.height=64,l=i.getContext("2d"),I.getContext("2d")),d=(document.querySelector("link").href=i.toDataURL(),l.imageSmoothingEnabled=!1,[]),n={},q=[],t=0;function J(i,e){return i.filter(i=>!e.includes(i))}requestAnimationFrame(function i(m){let h=Math.min(.001*(m-t),.018);var e,a;l.clearRect(0,0,I.width,I.height),l.textBaseline="middle",l.lineJoin="round",l.lineCap="round",e=()=>{let e=(n[0]||[])[0];var i;e&&e.set(l),q.length=0,d.map(i=>{i.update?.(h)&&q.push(i)}),q.length&&(d=J(d,i=q),i.map(e=>{e.tags?.map(i=>{n[i]=J(n[i],[e])})})),e?d.map(i=>{i.inView(e.x,e.y)&&i.render?.(l)}):d.map(i=>{i.render?.(l)}),t=m},a=l.getTransform(),e(),l.setTransform(a),requestAnimationFrame(i)});var e=atob("q6qYqKqKeKqaiZaqmYi5uoqXq5qKqrqpeXepzHeYuYx3mJh3eIh5h2d3eIeHeHhmh2aIu2uIqst4qKt5mJt5qKp4t6uJRbqZV5WZmIh3iImHmIeId4eImYmXiIeXd4iIiIm7rKusqru7qrnMjJi5qmiGulpnh6hWdoiYiKiJqpqZqLupaKucicermWe6q3m2upqJiIiIiYmIl6mZiJm6moiqmpiXq4p4map4t4lnZat4d8ibZ2e8iHjGq5mIvJuKt7uamXiJmYqXiJl2iKlrh7i6hqi6e4ipy3ipzIqHmJh3iIl5d4iJdpioWna6y3WIu3x4yMyJiamKmIeYeHeIiIdod4d3eHeId3iIZ3iWeGd2mIdniIhodoh4eHeZmoiYqZqbqZq6qqmquaq6mryaqrirqpq7m4mpqoiHmolnh3eImZmXh5eHd5iYl3iJeXeJh4h3iZl3eFZmiGhWd7lmh5h7eJi7hqmqnIm7q5nLq8uselbMqom3vIqIq5mJeYeYqXWGmkpll6pldrpqh6mrZ5jLa5eou3eoy4yYuauImLt6iXmYeId4h5iHh4d3d4mXmHiYh4iIh3d42IuIqNrNiLuJtYhaVqh4l4mLaYeWqJineamHl4l2eKuYhlyaiJqJiHeJipiIiHeHqZioiKiHiXmWmYiIiImIl5qKZ4l5h3mJeIZ4mIiYh6eXqYqZaJqJeJiJhoVnhpiIdpiHiZiKd6mYd6mIpoh2h5ialWmYeIiqqZiXiLmYeImVuFaJiGaEl4mLZ6hpmZd4WYiHuoiXmamIeYmHmYmHmHl5iHiYh4iIeGiIiYmImXmJeGh4eIaLdrt4mamLeXeKmZmHiah4iYqLeKuHioubh3mIiIiIiHeIeIZnhpindnmImJmXmJiHeGmJeYaJl5mYiJmJe4iouniIi6d3p4qJiId3iId4d4mWmWZ4iGeHmYmqmZmJipl5eXeWp3aYiYd3iImZd4h4iHl5eIWIeIh3h6eHiXqYmXh4mXmIiYmaeJmHiKmKeIZ4h5iYd5h3loVXZpiKhYiHmIl2h5maiHp4qHmZiZmIiXqJqImrmJp4irh4qIqIiIh6iXeYp5d7d5iKh6iIeYeWqXaYmJaFl5h4hrqodnuJh4h4l3aJh4iHeYiHqZioeZiHeJiHiIiJeJiHl4h2iIiYlnmXeIeZiKmHiaqKiHmWmZinmHqKp5l4Z5mIeGqJioinqWZpiqWFmXmHiKmYl2ual4mYmGWJiId2p5h7aJl5iJeHaZeHmIapmJaGl5eIl3aaeJeGpohnd5iLd4eXeXeIqKinmLqZiIuomoipiYqJl3l4iKqYiJmJeYinuXeXeXiHmHmJmHh4iIiImJh6d3dqeKaYh3mHiHaYh4d2iZaImLqniLmKd3Z3h5mYhoqIqYuYimeJeniYl4l5Z4h5eIiImZmqiZmHmpqKhod2l2aJhneHiIiZeImHiYh4p4h3h5mYmJmZmZiWl5iZh3iItZhndoeLdXeGuIuYeJmJiIiJiXq5qYd5i5aGl3l4d6mZd4l6iYmHqJiph5mItnh4eHaJl3iIh4d4mIh4mImIiIiIeIh5h4iImIl3iHl5iHiHeIiHiJmJh3iJmIqYmImXeHqZiImJmGaIiKd3eYiXqHeIeJiHhodnZ4d4dpeXmHq5qHiJi4eIeYaHl5ind5mIiIeHmHaJiIeGlolpZ6h5d4iZeIiJiIh3iYmIaZiYiXloiZiHiYiaiWdoipZ4iJZ4eHd3iJeHmZqHiJeamImKq5hpeJl4iJiZmZh4uYiImpiIiZmJiIiZjJmYiImYiKppiYyIh5inmZiJiLd3iYuYmXeZmXilaJl2aph5mJiHlah4ZoiGmneHeXd3mYhoeJiniZh4aoiJiploiZmHl4hoaZh3iKmGmHeXyqaoiId4m4qohomImqa7iZmJiZiIeYeYiId5iXh5d4h4iZmImId3iJiIiLpYmJl2qZmGmHiHjJeZmamHiqiLaZiYaGaJiJeJVXiJh4h4dYloaWiJd2hmlnmIeWaGipmGWXl5qJl4lql3aHiIeGl4iHh3apl5iHaJaJd5iYiKd3iJmnh6l4eXdqeIh1l5iHaKdYaImoiah1eHmWaKdYaHh5iZl5aJlpiWmpeXeYiImamXiJmHmZiXdomHiKh4eJp2qZiGdneHepaJmKiFipd5VniYiIiXd5p3qoeGh5iGqaeYhoiFepipeGh4mIeph5iZmJaYiYiJl4iaiYh4iJZ3l5iJh3eIl6l5dYmJmYiHeImGaXeJeHtolniIqIaYeJloWXmJSYiGhph4aZiHeYmElndViGWZh4aYeZaYiGdnhZiYeGqIiIdnmYmZeKlHeIh5qWlomHiIqohnqKmKaImKd3iGmJqWh1mJmIaXl5eXm4iXlWaIiYaZmod5iHdYiHeJd2iJenl5l3p2eXmKhXmIl5iIqLt2eIqHmohnlqd4iph4t7iXmperenhmepeKeJiHVqlXZ3iHVpVneqd2h4l1d3iWiHqZaXh4i3iIqHiIl5aYtnd2eIeKiHiYaImYmIh5dnh5l4eIameJmHd4aFl6hoiJaXeYmYeJeJeZiIh5d5iYiXh5iId3lpiamIiIiJmKBw=="),o=[];for(let i=0;i<+e.length+0;i++){var m=e.charCodeAt(i);o.push(2.2*((15&m)-8)/16,2.2*((m>>4&15)-8)/16)}function Y(h,a,i,I,l,d,n,q,t,J){var o=new Array(i);for(let m=0;m<i;m++){let e=0;for(let i=0;i<I;i++){var Y=d+i%n+q*(l+Math.floor(i/n)),H=t+m*I+i;e+=a[H]*h[Y]}var Z=m+J+t;o[m]=Math.max(0,a[Z]+e)}return o}{var H,i;let m=(i=document.createElement("canvas")).getContext("2d"),h=(document.body.appendChild(i),i.width=28,i.height=28,new Array(784)),a={0:"garbage",1:"fireball",2:"meteor",3:"dragon",4:"ice",5:"frost",6:"hail",7:"lightning",8:"tornado",9:"windwalk",10:"transfusion",11:"vine",12:"shockwave"};(H={render:i=>{i.fillStyle="black",i.fillRect(0,0,I.width,I.height),i.beginPath(),i.moveTo(60,I.height/2-60),i.lineTo(I.width/2,160),i.lineTo(I.width-60,I.height/2-60),i.lineTo(I.width/2,I.height-160),i.closePath(),i.strokeStyle="white",i.lineWidth=60,i.stroke(),m.drawImage(I,0,0,I.width,I.height,0,0,28,28);var e=m.getImageData(0,0,28,28).data;for(let i=0;i<e.length;i+=4)h[i>>2]=e[i]/255;i=h,x11=Y(i,o,18,49,0,0,7,28,0,882),x12=Y(i,o,18,49,0,7,7,28,0,882),x13=Y(i,o,18,49,0,14,7,28,0,882),x14=Y(i,o,18,49,0,21,7,28,0,882),x21=Y(i,o,18,49,7,0,7,28,0,882),x22=Y(i,o,18,49,7,7,7,28,0,882),x23=Y(i,o,18,49,7,14,7,28,0,882),x24=Y(i,o,18,49,7,21,7,28,0,882),x31=Y(i,o,18,49,14,0,7,28,0,882),x32=Y(i,o,18,49,14,7,7,28,0,882),x33=Y(i,o,18,49,14,14,7,28,0,882),x34=Y(i,o,18,49,14,21,7,28,0,882),x41=Y(i,o,18,49,21,0,7,28,0,882),x42=Y(i,o,18,49,21,7,7,28,0,882),x43=Y(i,o,18,49,21,14,7,28,0,882),x44=Y(i,o,18,49,21,21,7,28,0,882),y11=Y(x11.concat(x12,x21,x22),o,24,72,0,0,1e3,0,900,1728),y12=Y(x13.concat(x14,x23,x24),o,24,72,0,0,1e3,0,900,1728),y21=Y(x31.concat(x32,x41,x42),o,24,72,0,0,1e3,0,900,1728),y22=Y(x33.concat(x34,x43,x44),o,24,72,0,0,1e3,0,900,1728);i=z=Y(y11.concat(y12,y21,y22),o,13,96,0,0,1e3,0,2652,1248);console.log(a[i.reduce((i,e,m,h)=>e>h[i]?m:i,0)],i)}}).inView||(H.inView=()=>1),d.push(H),d.sort((i,e)=>(i.order||0)-(e.order||0)),H.tags?.map(i=>{n[i]=n[i]??[],n[i].push(H)})}})();</script>
+<html><title>Runekeeper</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(() => {
+  // src/canvas.js
+  var canvas = document.getElementsByTagName("canvas")[0];
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+  window.onresize = () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    ctx.imageSmoothingEnabled = false;
+  };
+  var ctx;
+  function retainTransform(fn) {
+    const xfm = ctx.getTransform();
+    fn();
+    ctx.setTransform(xfm);
+  }
+  var favicon = document.createElement("canvas");
+  favicon.width = favicon.height = 64;
+  ctx = favicon.getContext("2d");
+  ctx = canvas.getContext("2d");
+  var link = document.querySelector("link");
+  link.href = favicon.toDataURL();
+  ctx.imageSmoothingEnabled = false;
+
+  // src/tags.js
+  var TAG_CAMERA = 0;
+
+  // src/engine.js
+  var gameObjects = [];
+  var gameObjectsByTag = {};
+  var objectsToRemove = [];
+  var lastFrameMs = 0;
+  function tick(currentFrameMs) {
+    const dT = Math.min((currentFrameMs - lastFrameMs) * 1e-3, 0.018);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    retainTransform(() => {
+      const camera = getObjectsByTag(TAG_CAMERA)[0];
+      if (camera) {
+        camera.set(ctx);
+      }
+      objectsToRemove.length = 0;
+      gameObjects.map((g) => {
+        if (g.update?.(dT)) {
+          objectsToRemove.push(g);
+        }
+      });
+      if (objectsToRemove.length) {
+        remove(objectsToRemove);
+      }
+      if (camera) {
+        gameObjects.map((g) => {
+          if (g.inView(camera.x, camera.y)) {
+            g.render?.(ctx);
+          }
+        });
+      } else {
+        gameObjects.map((g) => {
+          g.render?.(ctx);
+        });
+      }
+      lastFrameMs = currentFrameMs;
+    });
+    requestAnimationFrame(tick);
+  }
+  function add(obj) {
+    if (!obj.inView) {
+      obj.inView = () => 1;
+    }
+    gameObjects.push(obj);
+    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
+    obj.tags?.map((tag) => {
+      gameObjectsByTag[tag] = gameObjectsByTag[tag] ?? [];
+      gameObjectsByTag[tag].push(obj);
+    });
+  }
+  function arrayRemove(list, valuesToEvict) {
+    return list.filter((g) => !valuesToEvict.includes(g));
+  }
+  function remove(objList) {
+    gameObjects = arrayRemove(gameObjects, objList);
+    objList.map((obj) => {
+      obj.tags?.map((tag) => {
+        gameObjectsByTag[tag] = arrayRemove(gameObjectsByTag[tag], [obj]);
+      });
+    });
+  }
+  function getObjectsByTag(tag) {
+    return gameObjectsByTag[tag] || [];
+  }
+  requestAnimationFrame(tick);
+
+  // ../rune-classifier/base64_encoded_model.txt
+  var base64_encoded_model_default = "q6qYqKqKeKqaiZaqmYi5uoqXq5qKqrqpeXepzHeYuYx3mJh3eIh5h2d3eIeHeHhmh2aIu2uIqst4qKt5mJt5qKp4t6uJRbqZV5WZmIh3iImHmIeId4eImYmXiIeXd4iIiIm7rKusqru7qrnMjJi5qmiGulpnh6hWdoiYiKiJqpqZqLupaKucicermWe6q3m2upqJiIiIiYmIl6mZiJm6moiqmpiXq4p4map4t4lnZat4d8ibZ2e8iHjGq5mIvJuKt7uamXiJmYqXiJl2iKlrh7i6hqi6e4ipy3ipzIqHmJh3iIl5d4iJdpioWna6y3WIu3x4yMyJiamKmIeYeHeIiIdod4d3eHeId3iIZ3iWeGd2mIdniIhodoh4eHeZmoiYqZqbqZq6qqmquaq6mryaqrirqpq7m4mpqoiHmolnh3eImZmXh5eHd5iYl3iJeXeJh4h3iZl3eFZmiGhWd7lmh5h7eJi7hqmqnIm7q5nLq8uselbMqom3vIqIq5mJeYeYqXWGmkpll6pldrpqh6mrZ5jLa5eou3eoy4yYuauImLt6iXmYeId4h5iHh4d3d4mXmHiYh4iIh3d42IuIqNrNiLuJtYhaVqh4l4mLaYeWqJineamHl4l2eKuYhlyaiJqJiHeJipiIiHeHqZioiKiHiXmWmYiIiImIl5qKZ4l5h3mJeIZ4mIiYh6eXqYqZaJqJeJiJhoVnhpiIdpiHiZiKd6mYd6mIpoh2h5ialWmYeIiqqZiXiLmYeImVuFaJiGaEl4mLZ6hpmZd4WYiHuoiXmamIeYmHmYmHmHl5iHiYh4iIeGiIiYmImXmJeGh4eIaLdrt4mamLeXeKmZmHiah4iYqLeKuHioubh3mIiIiIiHeIeIZnhpindnmImJmXmJiHeGmJeYaJl5mYiJmJe4iouniIi6d3p4qJiId3iId4d4mWmWZ4iGeHmYmqmZmJipl5eXeWp3aYiYd3iImZd4h4iHl5eIWIeIh3h6eHiXqYmXh4mXmIiYmaeJmHiKmKeIZ4h5iYd5h3loVXZpiKhYiHmIl2h5maiHp4qHmZiZmIiXqJqImrmJp4irh4qIqIiIh6iXeYp5d7d5iKh6iIeYeWqXaYmJaFl5h4hrqodnuJh4h4l3aJh4iHeYiHqZioeZiHeJiHiIiJeJiHl4h2iIiYlnmXeIeZiKmHiaqKiHmWmZinmHqKp5l4Z5mIeGqJioinqWZpiqWFmXmHiKmYl2ual4mYmGWJiId2p5h7aJl5iJeHaZeHmIapmJaGl5eIl3aaeJeGpohnd5iLd4eXeXeIqKinmLqZiIuomoipiYqJl3l4iKqYiJmJeYinuXeXeXiHmHmJmHh4iIiImJh6d3dqeKaYh3mHiHaYh4d2iZaImLqniLmKd3Z3h5mYhoqIqYuYimeJeniYl4l5Z4h5eIiImZmqiZmHmpqKhod2l2aJhneHiIiZeImHiYh4p4h3h5mYmJmZmZiWl5iZh3iItZhndoeLdXeGuIuYeJmJiIiJiXq5qYd5i5aGl3l4d6mZd4l6iYmHqJiph5mItnh4eHaJl3iIh4d4mIh4mImIiIiIeIh5h4iImIl3iHl5iHiHeIiHiJmJh3iJmIqYmImXeHqZiImJmGaIiKd3eYiXqHeIeJiHhodnZ4d4dpeXmHq5qHiJi4eIeYaHl5ind5mIiIeHmHaJiIeGlolpZ6h5d4iZeIiJiIh3iYmIaZiYiXloiZiHiYiaiWdoipZ4iJZ4eHd3iJeHmZqHiJeamImKq5hpeJl4iJiZmZh4uYiImpiIiZmJiIiZjJmYiImYiKppiYyIh5inmZiJiLd3iYuYmXeZmXilaJl2aph5mJiHlah4ZoiGmneHeXd3mYhoeJiniZh4aoiJiploiZmHl4hoaZh3iKmGmHeXyqaoiId4m4qohomImqa7iZmJiZiIeYeYiId5iXh5d4h4iZmImId3iJiIiLpYmJl2qZmGmHiHjJeZmamHiqiLaZiYaGaJiJeJVXiJh4h4dYloaWiJd2hmlnmIeWaGipmGWXl5qJl4lql3aHiIeGl4iHh3apl5iHaJaJd5iYiKd3iJmnh6l4eXdqeIh1l5iHaKdYaImoiah1eHmWaKdYaHh5iZl5aJlpiWmpeXeYiImamXiJmHmZiXdomHiKh4eJp2qZiGdneHepaJmKiFipd5VniYiIiXd5p3qoeGh5iGqaeYhoiFepipeGh4mIeph5iZmJaYiYiJl4iaiYh4iJZ3l5iJh3eIl6l5dYmJmYiHeImGaXeJeHtolniIqIaYeJloWXmJSYiGhph4aZiHeYmElndViGWZh4aYeZaYiGdnhZiYeGqIiIdnmYmZeKlHeIh5qWlomHiIqohnqKmKaImKd3iGmJqWh1mJmIaXl5eXm4iXlWaIiYaZmod5iHdYiHeJd2iJenl5l3p2eXmKhXmIl5iIqLt2eIqHmohnlqd4iph4t7iXmperenhmepeKeJiHVqlXZ3iHVpVneqd2h4l1d3iWiHqZaXh4i3iIqHiIl5aYtnd2eIeKiHiYaImYmIh5dnh5l4eIameJmHd4aFl6hoiJaXeYmYeJeJeZiIh5d5iYiXh5iId3lpiamIiIiJmKBw==";
+
+  // src/rune-model.js
+  var encodedWeights = atob(base64_encoded_model_default);
+  var modelParams = [];
+  for (let i = 0; i < 0 + 1 * encodedWeights.length; i++) {
+    const a = encodedWeights.charCodeAt(i);
+    modelParams.push(((a & 15) - 8) * 2.2 / 16, ((a >> 4 & 15) - 8) * 2.2 / 16);
+  }
+
+  // src/spell-caster.js
+  function SpellCaster() {
+    const scaledCanvas = document.createElement("canvas");
+    const scaledCtx = scaledCanvas.getContext("2d");
+    document.body.appendChild(scaledCanvas);
+    scaledCanvas.width = 28;
+    scaledCanvas.height = 28;
+    const grayscaleArray = new Array(28 * 28);
+    const mapping = {
+      0: "garbage",
+      1: "fireball",
+      2: "meteor",
+      3: "dragon",
+      4: "ice",
+      5: "frost",
+      6: "hail",
+      7: "lightning",
+      8: "tornado",
+      9: "windwalk",
+      10: "transfusion",
+      11: "vine",
+      12: "shockwave"
+    };
+    function onMouseDown(evt) {
+      console.log(evt);
+    }
+    function onMouseMove(evt) {
+      console.log(evt.clientX, evt.clientY);
+    }
+    function onMouseUp(evt) {
+      console.log(evt);
+    }
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    function render(ctx2) {
+    }
+    function update(dT) {
+    }
+    return {
+      update,
+      render
+    };
+  }
+  var spell_caster_default = SpellCaster;
+
+  // src/main.js
+  function initialize() {
+    add(spell_caster_default());
+  }
+  initialize();
+})();
+</script>

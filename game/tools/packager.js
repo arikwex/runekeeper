@@ -37,7 +37,7 @@ module.exports = {
 
     html: () => {
         var html = '';
-        html += '<html><title>Infernal Throne</title>';
+        html += '<html><title>Runekeeper</title>';
         html += '<link rel="shortcut icon"/>';
         html += '<style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}';
         html += 'img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style>';

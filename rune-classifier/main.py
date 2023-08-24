@@ -30,9 +30,9 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.05)
-        self.dropout2 = nn.Dropout(0.05)
-        PATCH_FEATURES = 20
-        PATCH_FEATURES_DEEP = 23
+        self.dropout2 = nn.Dropout(0.15)
+        PATCH_FEATURES = 30
+        PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -61,9 +61,10 @@ class Net(nn.Module):
         y21 = M(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
         y22 = M(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        output = F.softmax(z, dim=1)
-        return output
+        z = F.sigmoid(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        # z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        # output = F.softmax(z, dim=1)
+        return z #output
 
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
@@ -93,7 +94,8 @@ def test(model, device, test_loader):
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
+            # test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
+            test_loss += F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
@@ -286,7 +288,7 @@ def main():
         transforms.ToTensor(),
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-16, 16),
+            degrees=(-15, 15),
             translate=(0.05, 0.05),
             scale=(0.9, 1.1),
             interpolation=transforms.InterpolationMode.BILINEAR

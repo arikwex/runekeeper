@@ -39,6 +39,7 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn, N=10) => {
     }
 }
 
+let FRACTIONAL_PATH = 1.0;
 const drawNoisyPath = (ctx, path) => {
     ctx.beginPath();
     ctx.strokeStyle = 'white';
@@ -52,7 +53,8 @@ const drawNoisyPath = (ctx, path) => {
         let yi = (path[i].y - SIZE / 2) * squashY;
         let x0 = (xi + yi * skewX) + SIZE / 2 + (Math.random() - 0.5) * 4;
         let y0 = (yi + xi * skewY) + SIZE / 2 + (Math.random() - 0.5) * 4;
-        if (i == 0) {
+        let skipPathNode = Math.random() > FRACTIONAL_PATH;
+        if (i == 0 || skipPathNode) {
             ctx.moveTo(x0, y0);
         } else {
             ctx.lineTo(x0, y0);
@@ -300,7 +302,7 @@ const drawShockwaveRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawGarbageRune = (ctx) => {
+const drawScribbles = (ctx) => {
     const path = [];
     
     const N = Math.random() * 4 + 3;
@@ -317,8 +319,32 @@ const drawGarbageRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
+const drawGarbageRune = (ctx) => {
+    FRACTIONAL_PATH = 0.25;
+    const runeDrawOptions = [
+        drawFireballRune,
+        drawMeteorRune,
+        drawDragonRune,
+        drawIceRune,
+        drawFrostRune,
+        drawHailRune,
+        drawLightningRune,
+        drawTornadoRune,
+        drawWindwalkRune,
+        drawTransfusionRune,
+        drawVineRune,
+        drawShockwaveRune,
+    ];
+    const runeDraw = runeDrawOptions[Math.floor(Math.random() * runeDrawOptions.length)];
+    runeDraw(ctx);
+
+    FRACTIONAL_PATH = 1.0;
+    drawScribbles(ctx);
+}
+
 const generateSet = (name, N=10) => {
     const {canvas, ctx} = generateCanvas();
+    FRACTIONAL_PATH = 0.95;
     generateRuneDataset(`${name}/fireball`, canvas, ctx, drawFireballRune, N);
     generateRuneDataset(`${name}/meteor`, canvas, ctx, drawMeteorRune, N);
     generateRuneDataset(`${name}/dragon`, canvas, ctx, drawDragonRune, N);
@@ -331,8 +357,10 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/transfusion`, canvas, ctx, drawTransfusionRune, N);
     generateRuneDataset(`${name}/vine`, canvas, ctx, drawVineRune, N);
     generateRuneDataset(`${name}/shockwave`, canvas, ctx, drawShockwaveRune, N);
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N);
+    // Have more garbage data to enforce symbol discrimination
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 8);
 }
 
+// generateSet('train', N=10);
 generateSet('train', N=6000);
 generateSet('test', N=1000);

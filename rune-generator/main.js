@@ -43,7 +43,7 @@ let FRACTIONAL_PATH = 1.0;
 const drawNoisyPath = (ctx, path) => {
     ctx.beginPath();
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.random() * 5 + 4;
+    ctx.lineWidth = Math.random() * 1.0 + 7;
     const squashX = 1 - Math.random() * 0.2;
     const squashY = 1 - Math.random() * 0.2;
     const skewX = (Math.random() - 0.5) * 0.25;
@@ -91,23 +91,25 @@ const drawFireballRune = (ctx) => {
 const drawMeteorRune = (ctx) => {
     const path = [];
     
-    path.push({ x: 12, y: 12 });
-    path.push({ x: 22, y: 12 });
-    path.push({ x: 32, y: 12 });
+    const top = Math.random() * 17 + 12;
+    path.push({ x: 12 - Math.random() * 5, y: top });
+    path.push({ x: 22, y: top });
+    path.push({ x: 32 + Math.random() * 12, y: top });
 
-    const hookSize = Math.random() * 25 + 15;
-    const hookDepth = Math.random() * 10 + 25;
+    const hookSize = Math.random() * 20 + 12;
+    const hookDepth = Math.random() * 20 + 10 - top + 12;
     for (let i = 0; i < 21; i++) {
         const angle = i / 20.0 * Math.PI - Math.PI;
         path.push({
             x: (Math.cos(angle) * hookSize + SIZE/2),
-            y: (-Math.sin(angle) * hookDepth + SIZE / 2),
+            y: (-Math.sin(angle) * hookDepth + SIZE / 2 + top),
         });
     }
     
-    path.push({ x: 100-32, y: 12 });
-    path.push({ x: 100-22, y: 12 });
-    path.push({ x: 100-12, y: 12 });
+    const top2 = Math.random() * 17 + 12;
+    path.push({ x: 100-32 - Math.random() * 12, y: top2 });
+    path.push({ x: 100-22, y: top2 });
+    path.push({ x: 100-12 + Math.random() * 5, y: top2 });
 
     drawNoisyPath(ctx, path);
 }
@@ -118,7 +120,7 @@ const drawDragonRune = (ctx) => {
     const topLeft = 12 + Math.random() * 8;
     const topRight = 12 + Math.random() * 8;
     const bottom = 7 + Math.random() * 16;
-    const top = SIZE/2 - Math.random() * 15 + 8;
+    const top = SIZE/4 - Math.random() * 15 + 8;
     addLineToPath(path, 12, topLeft, SIZE/2, SIZE-bottom);
     addLineToPath(path, SIZE/2, SIZE-bottom, SIZE-12, topRight);
     addLineToPath(path, SIZE-bottom, topRight, SIZE/2, top);
@@ -335,7 +337,7 @@ const drawGarbageRune = (ctx) => {
         drawLightningRune,
         // drawTornadoRune,
         // drawWindwalkRune,
-        drawTransfusionRune,
+        // drawTransfusionRune,
         // drawVineRune,
         drawShockwaveRune,
     ];
@@ -362,7 +364,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/vine`, canvas, ctx, drawVineRune, N);
     generateRuneDataset(`${name}/shockwave`, canvas, ctx, drawShockwaveRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 3);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
 }
 
 // generateSet('train', N=10);

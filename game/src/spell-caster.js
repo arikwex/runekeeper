@@ -70,29 +70,43 @@ function SpellCaster() {
         });
         
         normalizeLines = [];
-        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
+        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 80);
         lines.map((pt) => {
             normalizeLines.push([
-                (pt[0] - (maxs[0] + mins[0])/2) / size * 20 + 14,
-                (pt[1] - (maxs[1] + mins[1])/2) / size * 20 + 14,
+                (pt[0] - (maxs[0] + mins[0])/2) / size * 21 + 14,
+                (pt[1] - (maxs[1] + mins[1])/2) / size * 21 + 14,
             ]);
         });
 
-        scaledCtx.clearRect(0, 0, 28, 28);
-        scaledCtx.strokeStyle = "white";
-        scaledCtx.lineWidth = 2.5;
-        renderLines(scaledCtx, normalizeLines);
+        const tracker = {};
+        for (let i = 0; i < 20; i++) {
+            scaledCtx.clearRect(0, 0, 28, 28);
+            scaledCtx.strokeStyle = "white";
+            scaledCtx.lineWidth = 2.4;
+            scaledCtx.setTransform(
+                1 + (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2,
+                (Math.random() - 0.5) * 0.2, 1 + (Math.random() - 0.5) * 0.2,
+                (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2,
+            );
+            renderLines(scaledCtx, normalizeLines);
 
-        // Convert pixel data to grayscale array
-        const scaledImage = scaledCtx.getImageData(0, 0, 28, 28);
-        const pixelData = scaledImage.data;
-        for (let i = 0; i < pixelData.length; i += 4) {
-            grayscaleArray[i>>2] = pixelData[i] / 255.0;
+            // Convert pixel data to grayscale array
+            const scaledImage = scaledCtx.getImageData(0, 0, 28, 28);
+            const pixelData = scaledImage.data;
+            for (let i = 0; i < pixelData.length; i += 4) {
+                grayscaleArray[i>>2] = pixelData[i] / 255.0;
+            }
+
+            const z = classify(grayscaleArray);
+            const argmax = arr => arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+            const prediction = argmax(z);
+            if (tracker[prediction] === undefined) {
+                tracker[prediction] = 0;
+            }
+            tracker[prediction] += 1;
         }
-
-        const z = classify(grayscaleArray);
-        const argmax = arr => arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-        console.log(mapping[argmax(z)], z);
+        console.log(tracker);
+        // console.log(mapping[argmax(z)], z);
     }
 
     function render(ctx) {

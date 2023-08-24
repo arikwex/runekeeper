@@ -31,8 +31,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.05)
         self.dropout2 = nn.Dropout(0.05)
-        PATCH_FEATURES = 18
-        PATCH_FEATURES_DEEP = 24
+        PATCH_FEATURES = 20
+        PATCH_FEATURES_DEEP = 23
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -62,7 +62,7 @@ class Net(nn.Module):
         y22 = M(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
         z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        output = F.log_softmax(z, dim=1)
+        output = F.softmax(z, dim=1)
         return output
 
 def train(args, model, device, train_loader, optimizer, epoch):
@@ -71,7 +71,9 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        loss = F.nll_loss(output, target)
+        # loss = F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
@@ -249,9 +251,9 @@ class RuneDataset(Dataset):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=1000, metavar='N')
+    parser.add_argument('--batch-size', type=int, default=200, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=100, metavar='N')
+    parser.add_argument('--epochs', type=int, default=20, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)

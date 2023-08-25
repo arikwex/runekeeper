@@ -30,3 +30,36 @@ NEW LOADOUT:
 - loopy M => vines
 - ??? => shockwave
 
+
+###
+- circle => fireball
+- caret + circle => meteor
+- hourglass + circle => dragon
+
+- down triangle => ice
+- caret + down triangle => frost nova
+- hourglass + down triangle => hail
+
+- bolt => lightning
+- caret + bolt => windstrike
+- hourglass + bolt => tornado
+
+- wave => transfusion
+- caret + wave  => vines
+- hourglass + wave => shockwave
+
+- caret + caret => ?
+- hourglass + caret => ?
+- caret + hourglass => ?
+- hourglass + hourglass => ?
+
+### SYMBOLS
+garbage (nothing)
+
+circle
+down triangle
+bolt
+wave
+
+caret
+hourglass

@@ -56,9 +56,9 @@ function linearReluLayer(data, modelParams, numOutputs, numInputs, x0, y0, span,
 
 function classify(data) {
     const BASE_PATCH = 7 * 7;
-    const PATCH_FEATURES = 20;
-    const PATCH_FEATURES_DEEP = 32;
-    const NUM_CLASSES = 12;
+    const PATCH_FEATURES = 16;
+    const PATCH_FEATURES_DEEP = 22;
+    const NUM_CLASSES = 7;
 
     // data, modelParams, numOutputs, numInputs, x0, y0, span, stride, weightOffset, biasOffset
     x11 = linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES);

@@ -14,18 +14,12 @@ function SpellCaster() {
     const grayscaleArray = new Array(28*28);
     const mapping = {
         0: 'garbage',
-        1: 'fireball',
-        2: 'meteor',
-        3: 'dragon',
-        4: 'ice',
-        5: 'frost',
-        6: 'hail',
-        7: 'lightning',
-        8: 'tornado',
-        9: 'windwalk',
-        10: 'transfusion',
-        11: 'vine',
-        12: 'shockwave',
+        1: 'circle',
+        2: 'triangle',
+        3: 'bolt',
+        4: 'wave',
+        5: 'caret',
+        6: 'hourglass',
     };
     const lines = [];
     let isDrawing = false;

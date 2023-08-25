@@ -40,12 +40,31 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn, N=10) => {
 }
 
 let FRACTIONAL_PATH = 1.0;
-const drawNoisyPath = (ctx, path) => {
+const drawNoisyPath = (ctx, origPath) => {
+    // Normalize lines
+    let mins = [Infinity, Infinity];
+    let maxs = [-Infinity, -Infinity];
+    origPath.map((pt) => {
+        mins[0] = Math.min(pt.x, mins[0]);
+        mins[1] = Math.min(pt.y, mins[1]);
+        maxs[0] = Math.max(pt.x, maxs[0]);
+        maxs[1] = Math.max(pt.y, maxs[1]);
+    });
+    
+    const path = [];
+    const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 40);
+    origPath.map((pt) => {
+        path.push({
+            x: (pt.x - (maxs[0] + mins[0])/2) / size * 70 + SIZE/2,
+            y: (pt.y - (maxs[1] + mins[1])/2) / size * 70 + SIZE/2,
+        });
+    });
+
     ctx.beginPath();
     ctx.strokeStyle = 'white';
     ctx.lineWidth = Math.random() * 1.0 + 4;
     let squashX = 1;
-    let squashY = 1 - Math.random() * 0.25;
+    let squashY = 1 - Math.random() * 0.5;
     if (Math.random() > 0.5) {
         squashX = squashY;
         squashY = 1;
@@ -234,7 +253,7 @@ const drawLightningRune = (ctx) => {
 const drawTornadoRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let omega = 2 + Math.random() * 0.5;
+    let omega = 1.5 + Math.random() * 0.5;
     if (Math.random() > 0.5) {
         omega = -omega;
     }
@@ -331,28 +350,28 @@ const drawScribbles = (ctx) => {
 }
 
 const drawGarbageRune = (ctx) => {
-    FRACTIONAL_PATH = 0.25;
-    // Only include the line-based runes for garbage generation
-    const runeDrawOptions = [
-        drawScribbles,
-        // drawFireballRune,
-        drawMeteorRune,
-        drawDragonRune,
-        drawIceRune,
-        drawFrostRune,
-        drawHailRune,
-        drawLightningRune,
-        // drawTornadoRune,
-        // drawWindwalkRune,
-        // drawTransfusionRune,
-        // drawVineRune,
-        drawShockwaveRune,
-    ];
-    const runeDraw = runeDrawOptions[Math.floor(Math.random() * runeDrawOptions.length)];
-    runeDraw(ctx);
+    // FRACTIONAL_PATH = 0.25;
+    // // Only include the line-based runes for garbage generation
+    // const runeDrawOptions = [
+    //     drawScribbles,
+    //     // drawFireballRune,
+    //     drawMeteorRune,
+    //     drawDragonRune,
+    //     drawIceRune,
+    //     drawFrostRune,
+    //     drawHailRune,
+    //     drawLightningRune,
+    //     // drawTornadoRune,
+    //     // drawWindwalkRune,
+    //     // drawTransfusionRune,
+    //     // drawVineRune,
+    //     drawShockwaveRune,
+    // ];
+    // const runeDraw = runeDrawOptions[Math.floor(Math.random() * runeDrawOptions.length)];
+    // runeDraw(ctx);
 
-    FRACTIONAL_PATH = 1.0;
-    drawScribbles(ctx);
+    // FRACTIONAL_PATH = 1.0;
+    // drawScribbles(ctx);
 }
 
 const generateSet = (name, N=10) => {

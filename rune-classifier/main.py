@@ -31,9 +31,9 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 20
-        PATCH_FEATURES_DEEP = 32
-        OUTPUT_CLASSES = 12
+        PATCH_FEATURES = 16
+        PATCH_FEATURES_DEEP = 22
+        OUTPUT_CLASSES = 7
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
         self.fc3 = nn.Linear(PATCH_FEATURES_DEEP * 4, OUTPUT_CLASSES, bias=True)
@@ -72,8 +72,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        # loss = F.mse_loss(output, F.one_hot(target, num_classes=12).to(torch.float32))
-        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=12).to(torch.float32))
+        # loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -95,7 +95,7 @@ def test(model, device, test_loader):
             data, target = data.to(device), target.to(device)
             output = model(data)
             # test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
-            test_loss += F.mse_loss(output, F.one_hot(target, num_classes=12).to(torch.float32))
+            test_loss += F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
@@ -212,20 +212,15 @@ def run_model_raw(quantized_params, data):
 
 class_mapping = {
     'garbage': 0,
-    'fireball': 1,
-    'meteor': 2,
-    'dragon': 3,
-    'ice': 4,
-    'frost': 5,
-    'hail': 6,
-    'lightning': 7,
-    'tornado': 8,
-    'windwalk': 9,
-    'transfusion': 10,
-    'vine': 11,
-    'shockwave': 12,
+    'circle': 1,
+    'triangle': 2,
+    'bolt': 3,
+    'wave': 4,
+    'caret': 5,
+    'hourglass': 6,
 }
 reverse_class_mapping = { v: k for k, v in class_mapping.items() }
+NUM_CLASSES = len(class_mapping.items())
 
 class RuneDataset(Dataset):
     def __init__(self, root_dir, transform):

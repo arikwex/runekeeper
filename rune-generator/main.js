@@ -98,63 +98,36 @@ const addLineToPath = (path, x0, y0, x1, y1) => {
     }
 }
 
-const drawFireballRune = (ctx) => {
+const drawCircleRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    for (let i = 0; i < 29 + Math.random() * 7; i++) {
+    const motion = 5 - Math.random() * 25;
+    for (let i = 0; i < 30 + Math.random() * 8; i++) {
         const angle = i / 32.0 * Math.PI * 2.0 + phase;
+        const dR = motion * i / 32.0;
         path.push({
-            x: Math.cos(angle) * SIZE * 0.35 + SIZE/2,
-            y: Math.sin(angle) * SIZE * 0.35 + SIZE/2,
+            x: Math.cos(angle) * (SIZE * 0.35 + dR) + SIZE/2,
+            y: Math.sin(angle) * (SIZE * 0.35 + dR) + SIZE/2,
         });
     }
     drawNoisyPath(ctx, path);
 }
 
-const drawMeteorRune = (ctx) => {
-    const path = [];
-    
-    const balance = Math.random() * 24;
-    const balance2 = Math.random() * 24;
-    const top = balance + 12;
-    const top2 = balance2 + 12;
-    path.push({ x: 12 - Math.random() * 5, y: top });
-    path.push({ x: 22, y: top });
-    path.push({ x: 32 + Math.random() * 12, y: top });
-
-    const hookSize = Math.random() * 18 + 6;
-    const hookDepth = SIZE/2 - 12 - (balance+balance2)/2;
-    for (let i = 0; i < 21; i++) {
-        const angle = i / 20.0 * Math.PI - Math.PI;
-        path.push({
-            x: (Math.cos(angle) * hookSize + SIZE/2),
-            y: (-Math.sin(angle) * hookDepth + SIZE / 2),
-        });
-    }
-    
-    path.push({ x: 100-32 - Math.random() * 12, y: top2 });
-    path.push({ x: 100-22, y: top2 });
-    path.push({ x: 100-12 + Math.random() * 5, y: top2 });
-
-    drawNoisyPath(ctx, path);
-}
-
-const drawDragonRune = (ctx) => {
+const drawTriangleRune = (ctx) => {
     const path = [];
     
     const topLeft = 12 + Math.random() * 8;
     const topRight = 12 + Math.random() * 8;
     const bottom = 7 + Math.random() * 16;
-    const top = SIZE/4 - Math.random() * 15 + 8;
-    addLineToPath(path, 12, topLeft, SIZE/2, SIZE-bottom);
-    addLineToPath(path, SIZE/2, SIZE-bottom, SIZE-12, topRight);
-    addLineToPath(path, SIZE-bottom, topRight, SIZE/2, top);
-    addLineToPath(path, SIZE/2, top, 12, topLeft);
+    const midx = SIZE/2 + (Math.random() - 0.5) * 16;
+    addLineToPath(path, 12, topLeft, midx, SIZE-bottom);
+    addLineToPath(path, midx, SIZE-bottom, SIZE-12, topRight);
+    addLineToPath(path, SIZE-12, topRight, 12, topLeft);
 
     drawNoisyPath(ctx, path);
 }
 
-const drawIceRune = (ctx) => {
+const drawBolt = (ctx) => {
     const path = [];
     
     const cxT = (Math.random() - 0.5) * 22 + SIZE/2;
@@ -173,37 +146,7 @@ const drawIceRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawFrostRune = (ctx) => {
-    const path = [];
-    
-    const cxBL = (Math.random() - 0.5) * 5 + SIZE/2 - 7;
-    const cyBL = SIZE - (Math.random() * 4 + 12);
-    const cxL = 10 + Math.random() * 10;
-    const cyL = SIZE - (Math.random() * 5 + 28);
-    
-    const cxML = (Math.random() - 0.5) * 6 + SIZE/2 - 8;
-    const cyML = SIZE - (Math.random() * 6 + 40);
-    const cxM = (Math.random() - 0.5) * 7 + SIZE/2;
-    const cyM = 12 + (Math.random() * 7);
-    const cxMR = (Math.random() - 0.5) * 6 + SIZE/2 + 8;
-    const cyMR = SIZE - (Math.random() * 6 + 40);
-
-    const cxR = SIZE - (10 + Math.random() * 10);
-    const cyR = SIZE - (Math.random() * 5 + 28);
-    const cxBR = (Math.random() - 0.5) * 5 + SIZE/2 + 7;
-    const cyBR = SIZE - (Math.random() * 4 + 12);
-    
-    addLineToPath(path, cxBL, cyBL, cxL, cyL);
-    addLineToPath(path, cxL, cyL, cxML, cyML);
-    addLineToPath(path, cxML, cyML, cxM, cyM);
-    addLineToPath(path, cxM, cyM, cxMR, cyMR);
-    addLineToPath(path, cxMR, cyMR, cxR, cyR);
-    addLineToPath(path, cxR, cyR, cxBR, cyBR);
-
-    drawNoisyPath(ctx, path);
-}
-
-const drawHailRune = (ctx) => {
+const drawHourglassRune = (ctx) => {
     const path = [];
     
     const cxT = 12 + Math.random() * 6;
@@ -222,7 +165,7 @@ const drawHailRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawLightningRune = (ctx) => {
+const drawBoltRune = (ctx) => {
     const path = [];
     
     const cx0 = SIZE/2 - 20 - Math.random() * 12;
@@ -250,26 +193,7 @@ const drawLightningRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawTornadoRune = (ctx) => {
-    const path = [];
-    const phase = Math.random() * Math.PI * 2;
-    let omega = 1.5 + Math.random() * 0.5;
-    if (Math.random() > 0.5) {
-        omega = -omega;
-    }
-    const blast = 1.25 + Math.random() * 1.0;
-    for (let i = 0; i < 29 + Math.random() * 7; i++) {
-        const angle = i / 32.0 * Math.PI * 2.0;
-        const R = SIZE * 0.46 * Math.pow(i / 34.0, blast);
-        path.push({
-            x: Math.cos(angle * omega) * R + SIZE/2,
-            y: Math.sin(angle * omega) * R + SIZE/2,
-        });
-    }
-    drawNoisyPath(ctx, path);
-}
-
-const drawWindwalkRune = (ctx) => {
+const drawWaveRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
     let AMP = Math.random() * 15 + 11;
@@ -284,7 +208,7 @@ const drawWindwalkRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawTransfusionRune = (ctx) => {
+const drawCaretRune = (ctx) => {
     const path = [];
     
     const bottomLeft = SIZE - (12 + Math.random() * 8);
@@ -297,45 +221,10 @@ const drawTransfusionRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawVineRune = (ctx) => {
-    const path = [];
-    const phase = Math.random() * Math.PI * 2;
-    let AMP = Math.random() * 15 + 18;
-    let PACE = Math.random() * 0.3 + 0.7;
-    for (let i = 0; i < 33; i++) {
-        const angle = i / 32.0 * Math.PI * 2.0;
-        const p = i / 32.0;
-        path.push({
-            x: 12 + i * (SIZE - 24) / 33.0 - Math.sin(angle * 2) * PACE * 24 * p * (1 - p) * 4,
-            y: Math.cos(angle * 2) * AMP + SIZE/2,
-        });
-    }
-    drawNoisyPath(ctx, path);
-}
-
-const drawShockwaveRune = (ctx) => {
-    const path = [];
-    
-    const cxT = SIZE / 2 + Math.random() * 8 - 4;
-    const cyT = 8 + Math.random() * 6;
-    const cxB = SIZE / 2 + Math.random() * 8 - 4;
-    const cyB = SIZE - (12 + Math.random() * 6);
-    const cxR = (12 + Math.random() * 6);
-    const cyR = SIZE / 2 + Math.random() * 8 - 4;
-    const cxL = SIZE - (12 + Math.random() * 6);
-    const cyL = SIZE / 2 + Math.random() * 8 - 4;
-    addLineToPath(path, cxT, cyT, cxB, cyB);
-    addLineToPath(path, cxB, cyB, cxL, cyL);
-    addLineToPath(path, cxL, cyL, cxR, cyR);
-    addLineToPath(path, cxR, cyR, cxB, cyB);
-
-    drawNoisyPath(ctx, path);
-}
-
 const drawScribbles = (ctx) => {
     const path = [];
     
-    const N = Math.random() * 6 + 6;
+    const N = Math.random() * 6 + 5;
     let xi = 10 + Math.random() * (SIZE - 20);
     let yi = 10 + Math.random() * (SIZE - 20);
     for (let i = 0; i < N; i++) {
@@ -350,45 +239,19 @@ const drawScribbles = (ctx) => {
 }
 
 const drawGarbageRune = (ctx) => {
-    // FRACTIONAL_PATH = 0.25;
-    // // Only include the line-based runes for garbage generation
-    // const runeDrawOptions = [
-    //     drawScribbles,
-    //     // drawFireballRune,
-    //     drawMeteorRune,
-    //     drawDragonRune,
-    //     drawIceRune,
-    //     drawFrostRune,
-    //     drawHailRune,
-    //     drawLightningRune,
-    //     // drawTornadoRune,
-    //     // drawWindwalkRune,
-    //     // drawTransfusionRune,
-    //     // drawVineRune,
-    //     drawShockwaveRune,
-    // ];
-    // const runeDraw = runeDrawOptions[Math.floor(Math.random() * runeDrawOptions.length)];
-    // runeDraw(ctx);
-
-    // FRACTIONAL_PATH = 1.0;
-    // drawScribbles(ctx);
+    FRACTIONAL_PATH = 1.0;
+    drawScribbles(ctx);
 }
 
 const generateSet = (name, N=10) => {
     const {canvas, ctx} = generateCanvas();
     FRACTIONAL_PATH = 1;
-    generateRuneDataset(`${name}/fireball`, canvas, ctx, drawFireballRune, N);
-    generateRuneDataset(`${name}/meteor`, canvas, ctx, drawMeteorRune, N);
-    generateRuneDataset(`${name}/dragon`, canvas, ctx, drawDragonRune, N);
-    generateRuneDataset(`${name}/ice`, canvas, ctx, drawIceRune, N);
-    generateRuneDataset(`${name}/frost`, canvas, ctx, drawFrostRune, N);
-    generateRuneDataset(`${name}/hail`, canvas, ctx, drawHailRune, N);
-    generateRuneDataset(`${name}/lightning`, canvas, ctx, drawLightningRune, N);
-    generateRuneDataset(`${name}/tornado`, canvas, ctx, drawTornadoRune, N);
-    generateRuneDataset(`${name}/windwalk`, canvas, ctx, drawWindwalkRune, N);
-    generateRuneDataset(`${name}/transfusion`, canvas, ctx, drawTransfusionRune, N);
-    generateRuneDataset(`${name}/vine`, canvas, ctx, drawVineRune, N);
-    generateRuneDataset(`${name}/shockwave`, canvas, ctx, drawShockwaveRune, N);
+    generateRuneDataset(`${name}/circle`, canvas, ctx, drawCircleRune, N);
+    generateRuneDataset(`${name}/triangle`, canvas, ctx, drawTriangleRune, N);
+    generateRuneDataset(`${name}/bolt`, canvas, ctx, drawBoltRune, N);
+    generateRuneDataset(`${name}/wave`, canvas, ctx, drawWaveRune, N);
+    generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
+    generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
     generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
 }

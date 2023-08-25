@@ -234,15 +234,14 @@ const drawLightningRune = (ctx) => {
 const drawTornadoRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let omega = 1.75 + Math.random() * 1.5;
+    let omega = 2 + Math.random() * 0.5;
     if (Math.random() > 0.5) {
         omega = -omega;
     }
-    let delta = 1.0 / 32.0 * Math.PI * 2.0;
-    let angle = phase;
+    const blast = 1.25 + Math.random() * 1.0;
     for (let i = 0; i < 29 + Math.random() * 7; i++) {
-        angle += delta * (Math.random() * 0.6 + 0.4);
-        const R = SIZE * 0.43 * i / 34.0;
+        const angle = i / 32.0 * Math.PI * 2.0;
+        const R = SIZE * 0.46 * Math.pow(i / 34.0, blast);
         path.push({
             x: Math.cos(angle * omega) * R + SIZE/2,
             y: Math.sin(angle * omega) * R + SIZE/2,

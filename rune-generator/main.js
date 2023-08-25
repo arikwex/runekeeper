@@ -45,7 +45,7 @@ const drawNoisyPath = (ctx, path) => {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = Math.random() * 1.0 + 4;
     let squashX = 1;
-    let squashY = 1 - Math.random() * 0.3;
+    let squashY = 1 - Math.random() * 0.15;
     if (Math.random() > 0.5) {
         squashX = squashY;
         squashY = 1;

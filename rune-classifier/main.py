@@ -31,7 +31,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.05)
         self.dropout2 = nn.Dropout(0.15)
-        PATCH_FEATURES = 32
+        PATCH_FEATURES = 31
         PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
@@ -72,8 +72,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        # loss = F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
-        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        loss = F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        # loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=13).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -289,7 +289,7 @@ def main():
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
             degrees=(-15, 15),
-            translate=(0.05, 0.05),
+            translate=(0.03, 0.03),
             scale=(0.9, 1.05),
             interpolation=transforms.InterpolationMode.BILINEAR
         )

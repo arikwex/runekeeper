@@ -24,6 +24,7 @@ def get_quantized_encoding(model):
     fc2_b = quantize_weights(model_params[3])
     fc3_w = quantize_weights(model_params[4])
     fc3_b = quantize_weights(model_params[5])
+    print(len(fc2_w))
     return fc1_w + fc1_b + fc2_w + fc2_b + fc3_w + fc3_b
 
 def pack_bytes(input_array):

@@ -230,14 +230,14 @@ class RuneDataset(Dataset):
         self.all_data = []
         for category in self.categories:
             category_path = os.path.join(self.root_dir, category)
-            if category == 'garbage':
-                continue
+            # if category == 'garbage':
+            #     continue
             for file_name in os.listdir(category_path):
                 image_path = os.path.join(category_path, file_name)
                 image = Image.open(image_path).convert("L")
                 self.all_data.append({
                     'image': image,
-                    'category': class_mapping[category] - 1
+                    'category': class_mapping[category]
                 })
 
     def __len__(self):

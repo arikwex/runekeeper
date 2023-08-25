@@ -1,0 +1,32 @@
+- Select new glyphs for problematic symbols
+- Remove abilities if needed
+
+Problems:
+- Tornado => Really struggling
+- Fireball / Ice => Maybe too similar
+- Meteor is struggling
+
+
+Ideas:
+REMOVE:
+- horseshoe
+- spiral
+- diamond
+
+NEW LOADOUT:
+- circle => fireball
+- down-line with circle at bottom => meteor  (NEW)
+- ??? => dragon
+
+- ??? => ice
+- spikes => frost nova
+- ??? => hail
+
+- horizontal wave => windwalk
+- bolt => lightning
+- down triangle => Tornado (NEW)
+
+- caret => transfusion
+- loopy M => vines
+- ??? => shockwave
+

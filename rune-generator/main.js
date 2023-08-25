@@ -45,7 +45,7 @@ const drawNoisyPath = (ctx, path) => {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = Math.random() * 1.0 + 4;
     let squashX = 1;
-    let squashY = 1 - Math.random() * 0.15;
+    let squashY = 1 - Math.random() * 0.25;
     if (Math.random() > 0.5) {
         squashX = squashY;
         squashY = 1;
@@ -234,12 +234,14 @@ const drawLightningRune = (ctx) => {
 const drawTornadoRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let omega = 1.5 + Math.random() * 0.5;
+    let omega = 1.75 + Math.random() * 1.5;
     if (Math.random() > 0.5) {
         omega = -omega;
     }
+    let delta = 1.0 / 32.0 * Math.PI * 2.0;
+    let angle = phase;
     for (let i = 0; i < 29 + Math.random() * 7; i++) {
-        const angle = i / 32.0 * Math.PI * 2.0 + phase;
+        angle += delta * (Math.random() * 0.6 + 0.4);
         const R = SIZE * 0.43 * i / 34.0;
         path.push({
             x: Math.cos(angle * omega) * R + SIZE/2,

@@ -29,10 +29,10 @@ def W(t):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.dropout1 = nn.Dropout(0.05)
-        self.dropout2 = nn.Dropout(0.15)
-        PATCH_FEATURES = 31
-        PATCH_FEATURES_DEEP = 24
+        self.dropout1 = nn.Dropout(0.1)
+        self.dropout2 = nn.Dropout(0.1)
+        PATCH_FEATURES = 20
+        PATCH_FEATURES_DEEP = 32
         OUTPUT_CLASSES = 13
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -72,8 +72,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        loss = F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
-        # loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        # loss = F.mse_loss(output, F.one_hot(target, num_classes=13).to(torch.float32))
+        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=13).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -255,7 +255,7 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=200, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=200, metavar='N')
+    parser.add_argument('--epochs', type=int, default=40, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)

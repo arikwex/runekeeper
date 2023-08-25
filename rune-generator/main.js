@@ -95,22 +95,24 @@ const drawFireballRune = (ctx) => {
 const drawMeteorRune = (ctx) => {
     const path = [];
     
-    const top = Math.random() * 17 + 12;
+    const balance = Math.random() * 24;
+    const balance2 = Math.random() * 24;
+    const top = balance + 12;
+    const top2 = balance2 + 12;
     path.push({ x: 12 - Math.random() * 5, y: top });
     path.push({ x: 22, y: top });
     path.push({ x: 32 + Math.random() * 12, y: top });
 
-    const hookSize = Math.random() * 20 + 8;
-    const hookDepth = Math.random() * 20 + 10 - top + 6;
+    const hookSize = Math.random() * 18 + 6;
+    const hookDepth = SIZE/2 - 12 - (balance+balance2)/2;
     for (let i = 0; i < 21; i++) {
         const angle = i / 20.0 * Math.PI - Math.PI;
         path.push({
             x: (Math.cos(angle) * hookSize + SIZE/2),
-            y: (-Math.sin(angle) * hookDepth + SIZE / 2 + top),
+            y: (-Math.sin(angle) * hookDepth + SIZE / 2),
         });
     }
     
-    const top2 = Math.random() * 17 + 12;
     path.push({ x: 100-32 - Math.random() * 12, y: top2 });
     path.push({ x: 100-22, y: top2 });
     path.push({ x: 100-12 + Math.random() * 5, y: top2 });
@@ -313,7 +315,7 @@ const drawShockwaveRune = (ctx) => {
 const drawScribbles = (ctx) => {
     const path = [];
     
-    const N = Math.random() * 4 + 3;
+    const N = Math.random() * 6 + 6;
     let xi = 10 + Math.random() * (SIZE - 20);
     let yi = 10 + Math.random() * (SIZE - 20);
     for (let i = 0; i < N; i++) {

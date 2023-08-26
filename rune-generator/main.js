@@ -383,7 +383,7 @@ const drawGarbageRune = (ctx, idx) => {
         drawBadCircleRune,
         drawBadTriangleRune,
         drawBadBoltRune,
-        // drawBadWaveRune,  // Yes, skip wave rune
+        drawBadWaveRune,
         drawBadCaretRune,
         drawBadHourglassRune,
         drawScribbles,
@@ -405,9 +405,9 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
     generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N);
 }
 
 // generateSet('train', N=10);
-generateSet('train', N=6000);
+generateSet('train', N=7000);
 generateSet('test', N=1000);

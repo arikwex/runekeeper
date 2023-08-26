@@ -285,8 +285,8 @@ def main():
         transforms.ToTensor(),
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-15, 15),
-            translate=(0.05, 0.05),
+            degrees=(-17, 17),
+            translate=(0.03, 0.03),
             scale=(0.95, 1.05),
             interpolation=transforms.InterpolationMode.BILINEAR
         )

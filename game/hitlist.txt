@@ -1,3 +1,6 @@
+Make garbage small part of dataset to encourage success.
+
+
 - Select new glyphs for problematic symbols
 - Remove abilities if needed
 

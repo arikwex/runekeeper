@@ -197,8 +197,8 @@ const drawCaretRune = (ctx) => {
     const bottomRight = SIZE - (12 + Math.random() * 12);
     const centerX = SIZE/2 + (Math.random() - 0.5) * 10;
     const top = 10 + Math.random() * 15;
-    addLineToPath(path, 12 + Math.random() * 15, bottomLeft, centerX, top);
-    addLineToPath(path, centerX, top, SIZE-12 - Math.random() * 15, bottomRight);
+    addLineToPath(path, 12 + Math.random() * 3, bottomLeft, centerX, top);
+    addLineToPath(path, centerX, top, SIZE-12 - Math.random() * 3, bottomRight);
 
     drawNoisyPath(ctx, path);
 }

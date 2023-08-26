@@ -80,7 +80,7 @@ const drawNoisyPath = (ctx, path, color='white') => {
         let yi = (path[i].y - SIZE / 2) * squashY;
         let x0 = (xi + yi * skewX) + SIZE / 2 + (Math.random() - 0.5) * 4;
         let y0 = (yi + xi * skewY) + SIZE / 2 + (Math.random() - 0.5) * 4;
-        if (i == 0) {
+        if (i == 0 || path[i].newline) {
             ctx.moveTo(x0, y0);
         } else {
             ctx.lineTo(x0, y0);
@@ -95,7 +95,8 @@ const addLineToPath = (path, x0, y0, x1, y1) => {
     }
     for (let i = 0; i < 6; i++) {
         const p = i / 5;
-        path.push({ 
+        path.push({
+            newline: i == 0,
             x: x1 * p + x0 * (1-p),
             y: y1 * p + y0 * (1-p),
         });
@@ -214,7 +215,7 @@ const drawBadCircleRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
     const motion = 5 - Math.random() * 25;
-    for (let i = 0; i < 13 + Math.random() * 13; i++) {
+    for (let i = 0; i < 13 + Math.random() * 16; i++) {
         const angle = i / 32.0 * Math.PI * 2.0 + phase;
         const dR = motion * i / 32.0;
         path.push({
@@ -223,6 +224,9 @@ const drawBadCircleRune = (ctx) => {
         });
     }
     drawNoisyPath(ctx, path);
+    if (Math.random() > 0.7) {
+        drawScribbles(ctx, 'black');
+    }
 }
 
 const drawBadTriangleRune = (ctx) => {
@@ -257,7 +261,7 @@ const drawBadHourglassRune = (ctx) => {
     const cyB = 12 + Math.random() * 16;
     const cxL = 12 + Math.random() * 16;
     const cyL = SIZE - (12 + Math.random() * 16);
-    const skipIdx = Math.floor(Math.random() * 4);
+    const skipIdx = parseInt(Math.floor(Math.random() * 4));
     if (skipIdx != 0) {
         addLineToPath(path, cxT, cyT, cxR, cyR);
     }
@@ -317,6 +321,7 @@ const drawBadBoltRune = (ctx) => {
     }
 
     drawNoisyPath(ctx, path);
+    drawScribbles(ctx, 'black');
 }
 
 const drawBadWaveRune = (ctx) => {
@@ -333,6 +338,7 @@ const drawBadWaveRune = (ctx) => {
         });
     }
     drawNoisyPath(ctx, path);
+    drawScribbles(ctx, 'black');
 }
 
 const drawBadCaretRune = (ctx) => {
@@ -388,7 +394,6 @@ const drawGarbageRune = (ctx) => {
         ];
         const runeDraw = runes[Math.floor(Math.random() * runes.length)];
         runeDraw(ctx);
-        drawScribbles(ctx, 'black');
     } else {
         drawScribbles(ctx);
     }
@@ -404,7 +409,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
     generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 3);
 }
 
 // generateSet('train', N=10);

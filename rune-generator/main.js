@@ -252,7 +252,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
     generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 10);
 }
 
 // generateSet('train', N=10);

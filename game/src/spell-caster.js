@@ -1,4 +1,4 @@
-import { renderLines } from './canvas';
+import { canvas, renderLines } from './canvas';
 import { classify } from './rune-model';
 
 function SpellCaster() {    
@@ -21,10 +21,23 @@ function SpellCaster() {
         5: 'caret',
         6: 'hourglass',
     };
+    const colorMap = {
+        0: [0.4, 0.4, 0.4],
+        1: [1.0, 0.65, 0.3],
+        2: [0.3, 0.65, 1.0],
+        3: [1.0, 1.0, 0.1],
+        4: [0.3, 1.0, 0.65],
+        5: [1.0, 0.1, 1.0],
+        6: [1.0, 1.0, 1.0],
+    }
     const lines = [];
     let isDrawing = false;
+    let selectedLines = [];
+    let selectedClass = -1;
+    let timeSinceSelect = 0;
 
     function onMouseDown(evt) {
+        selectedClass = -1;
         lines.length = 0;
         lines.push([evt.clientX, evt.clientY]);
         isDrawing = true;
@@ -44,7 +57,9 @@ function SpellCaster() {
     }
 
     function onMouseUp(evt) {
-        classifyDrawing();
+        selectedClass = classifyDrawing();
+        selectedLines = JSON.parse(JSON.stringify(lines));
+        timeSinceSelect = 0;
         lines.length = 0;
         isDrawing = false;
     }
@@ -68,13 +83,14 @@ function SpellCaster() {
         const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 30);
         lines.map((pt) => {
             normalizeLines.push([
-                (pt[0] - (maxs[0] + mins[0])/2) / size * 20 + 14,
-                (pt[1] - (maxs[1] + mins[1])/2) / size * 20 + 14,
+                (pt[0] - (maxs[0] + mins[0])/2) / size * 20,
+                (pt[1] - (maxs[1] + mins[1])/2) / size * 20,
             ]);
         });
 
         const tracker = {};
         for (let i = 0; i < 20; i++) {
+            scaledCtx.setTransform(1,0,0,1,0,0);
             scaledCtx.clearRect(0, 0, 28, 28);
             scaledCtx.strokeStyle = "white";
             scaledCtx.lineWidth = Math.random() * 0.6 + 1.2;
@@ -83,7 +99,7 @@ function SpellCaster() {
             scaledCtx.setTransform(
                 1 + (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1,
                 (Math.random() - 0.5) * 0.1, 1 + (Math.random() - 0.5) * 0.1,
-                (Math.random() - 0.5) * 1, (Math.random() - 0.5) * 1,
+                (Math.random() - 0.5) * 2 + 14, (Math.random() - 0.5) * 2 + 14,
             );
             renderLines(scaledCtx, normalizeLines);
 
@@ -102,8 +118,17 @@ function SpellCaster() {
             }
             tracker[prediction] += 1;
         }
-        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
+        // console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
         // console.log(mapping[argmax(z)], z);
+        const keys = Object.keys(tracker);
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            if (tracker[key] >= 9 && key != 'garbage') {
+                return key;
+            }
+        };
+        // Garbage fallback
+        return 0;
     }
 
     function render(ctx) {
@@ -112,9 +137,34 @@ function SpellCaster() {
             ctx.lineWidth = 20;
             renderLines(ctx, lines);
         }
+
+        if (selectedClass != -1) {
+            const classLabel = mapping[selectedClass];
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 48px arial';
+            ctx.fillText(classLabel, canvas.width/2, 70);
+
+            // Pulse
+            const p = Math.exp(-timeSinceSelect*3)*2;
+            const c = colorMap[selectedClass];
+            ctx.strokeStyle = `rgba(${p*c[0]*255}, ${p*c[1]*255}, ${p*c[2]*255}, ${p * 0.6})`;
+            ctx.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect*5)) * 80;
+            renderLines(ctx, selectedLines);
+            ctx.strokeStyle = `rgba(${p*c[0]*300}, ${p*c[1]*300}, ${p*c[2]*300}, ${p})`;
+            ctx.lineWidth = 20;
+            renderLines(ctx, selectedLines);
+        }
     }
 
     function update(dT) {
+        timeSinceSelect += dT;
+        if (selectedClass != -1 && timeSinceSelect < 5.0) {
+            selectedLines.map((pt, i) => {
+                pt[0] += Math.cos(timeSinceSelect * 3.0 + 0.2 * i) * 24.0 * dT;
+                pt[1] += Math.sin(timeSinceSelect * 3.0 + 0.2 * i) * 24.0 * dT;
+            });
+        }
     }
 
     return {

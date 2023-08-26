@@ -102,7 +102,7 @@ function SpellCaster() {
             }
             tracker[prediction] += 1;
         }
-        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)+1]}: ${tracker[k]}`; }));
+        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
         // console.log(mapping[argmax(z)], z);
     }
 

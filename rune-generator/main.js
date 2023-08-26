@@ -345,15 +345,14 @@ const drawBadCaretRune = (ctx) => {
     const centerX = SIZE/2 + (Math.random() - 0.5) * 10;
     const top = 10 + Math.random() * 15;
     
-    const skipIdx = Math.floor(Math.random() * 3);
-    if (skipIdx != 0) {
-        addLineToPath(path, 12, bottomLeft, centerX, top);
-    }
-    if (skipIdx != 1) {
-        addLineToPath(path, centerX, top, SIZE-12, bottomRight);
-    }
-    // Bad carets always have bottoms
+    // Bad caret is just an upright triangle.
+    addLineToPath(path, 12, bottomLeft, centerX, top);
+    addLineToPath(path, centerX, top, SIZE-12, bottomRight);
     addLineToPath(path, 12, bottomLeft, SIZE-12, bottomRight);
+
+    if (Math.random() > 0.8) {
+        drawScribbles(ctx, 'black');
+    }
 
     drawNoisyPath(ctx, path);
 }

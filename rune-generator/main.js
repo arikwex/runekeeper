@@ -131,14 +131,14 @@ const drawTriangleRune = (ctx) => {
 const drawHourglassRune = (ctx) => {
     const path = [];
     
-    const cxT = 12 + Math.random() * 16;
-    const cyT = 12 + Math.random() * 16;
-    const cxR = SIZE - (12 + Math.random() * 16);
-    const cyR = SIZE - (12 + Math.random() * 16);
-    const cxB = SIZE - (12 + Math.random() * 16);
-    const cyB = 12 + Math.random() * 16;
-    const cxL = 12 + Math.random() * 16;
-    const cyL = SIZE - (12 + Math.random() * 16);
+    const cxT = 12 + Math.random() * 6;
+    const cyT = 12 + Math.random() * 20;
+    const cxR = SIZE - (12 + Math.random() * 6);
+    const cyR = SIZE - (12 + Math.random() * 20);
+    const cxB = SIZE - (12 + Math.random() * 6);
+    const cyB = 12 + Math.random() * 20;
+    const cxL = 12 + Math.random() * 6;
+    const cyL = SIZE - (12 + Math.random() * 20);
     addLineToPath(path, cxT, cyT, cxR, cyR);
     addLineToPath(path, cxR, cyR, cxB, cyB);
     addLineToPath(path, cxB, cyB, cxL, cyL);

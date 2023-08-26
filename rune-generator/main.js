@@ -117,13 +117,13 @@ const drawCircleRune = (ctx) => {
 const drawTriangleRune = (ctx) => {
     const path = [];
     
-    const topLeft = 12 + Math.random() * 8;
-    const topRight = 12 + Math.random() * 8;
+    const topLeft = 12 + Math.random() * 28;
+    const topRight = 12 + Math.random() * 28;
     const bottom = 7 + Math.random() * 16;
     const midx = SIZE/2 + (Math.random() - 0.5) * 16;
-    addLineToPath(path, 12, topLeft, midx, SIZE-bottom);
+    addLineToPath(path, 12+Math.random()*13, topLeft, midx, SIZE-bottom);
     addLineToPath(path, midx, SIZE-bottom, SIZE-12, topRight);
-    addLineToPath(path, SIZE-12, topRight, 12, topLeft);
+    addLineToPath(path, SIZE-12-Math.random()*13, topRight, 12, topLeft);
 
     drawNoisyPath(ctx, path);
 }
@@ -178,7 +178,7 @@ const drawBoltRune = (ctx) => {
 const drawWaveRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let AMP = Math.random() * 10 + 10;
+    let AMP = Math.random() * 6 + 8;
     let omega = 1.8 + Math.random() * 0.5;
     for (let i = 0; i < 18; i++) {
         const angle = i / 17.0 * Math.PI * 2.0 + phase;

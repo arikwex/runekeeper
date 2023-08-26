@@ -31,8 +31,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 16
-        PATCH_FEATURES_DEEP = 22
+        PATCH_FEATURES = 19
+        PATCH_FEATURES_DEEP = 24
         OUTPUT_CLASSES = 7
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -286,8 +286,8 @@ def main():
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
             degrees=(-15, 15),
-            translate=(0.03, 0.03),
-            scale=(0.94, 1.03),
+            translate=(0.05, 0.05),
+            scale=(0.95, 1.05),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

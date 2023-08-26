@@ -40,29 +40,33 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn, N=10) => {
 }
 
 let FRACTIONAL_PATH = 1.0;
-const drawNoisyPath = (ctx, origPath) => {
-    // Normalize lines
-    let mins = [Infinity, Infinity];
-    let maxs = [-Infinity, -Infinity];
-    origPath.map((pt) => {
-        mins[0] = Math.min(pt.x, mins[0]);
-        mins[1] = Math.min(pt.y, mins[1]);
-        maxs[0] = Math.max(pt.x, maxs[0]);
-        maxs[1] = Math.max(pt.y, maxs[1]);
-    });
+const drawNoisyPath = (ctx, path, color='white') => {
+    // // Normalize lines
+    // let mins = [Infinity, Infinity];
+    // let maxs = [-Infinity, -Infinity];
+    // origPath.map((pt) => {
+    //     mins[0] = Math.min(pt.x, mins[0]);
+    //     mins[1] = Math.min(pt.y, mins[1]);
+    //     maxs[0] = Math.max(pt.x, maxs[0]);
+    //     maxs[1] = Math.max(pt.y, maxs[1]);
+    // });
     
-    const path = [];
-    const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 40);
-    origPath.map((pt) => {
-        path.push({
-            x: (pt.x - (maxs[0] + mins[0])/2) / size * 70 + SIZE/2,
-            y: (pt.y - (maxs[1] + mins[1])/2) / size * 70 + SIZE/2,
-        });
-    });
+    // const path = [];
+    // const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 40);
+    // origPath.map((pt) => {
+    //     path.push({
+    //         x: (pt.x - (maxs[0] + mins[0])/2) / size * 70 + SIZE/2,
+    //         y: (pt.y - (maxs[1] + mins[1])/2) / size * 70 + SIZE/2,
+    //     });
+    // });
 
     ctx.beginPath();
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.random() * 2.0 + 3;
+    ctx.strokeStyle = color;
+    if (color == 'white') {
+        ctx.lineWidth = Math.random() * 2.0 + 3;
+    } else {
+        ctx.lineWidth = 12;
+    }
     let squashX = 1;
     let squashY = 1 - Math.random() * 0.25;
     if (Math.random() > 0.5) {
@@ -127,36 +131,17 @@ const drawTriangleRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawBolt = (ctx) => {
-    const path = [];
-    
-    const cxT = (Math.random() - 0.5) * 22 + SIZE/2;
-    const cyT = Math.random() * 4 + 12;
-    const cxR = SIZE - 10 - Math.random() * 7;
-    const cyR = (Math.random() - 0.5) * 22 + SIZE/2;
-    const cxB = (Math.random() - 0.5) * 22 + SIZE/2;
-    const cyB = SIZE - (Math.random() * 4 + 12);
-    const cxL = 10 + Math.random() * 7;
-    const cyL = (Math.random() - 0.5) * 22 + SIZE/2;
-    addLineToPath(path, cxT, cyT, cxR, cyR);
-    addLineToPath(path, cxR, cyR, cxB, cyB);
-    addLineToPath(path, cxB, cyB, cxL, cyL);
-    addLineToPath(path, cxL, cyL, cxT, cyT);
-
-    drawNoisyPath(ctx, path);
-}
-
 const drawHourglassRune = (ctx) => {
     const path = [];
     
-    const cxT = 12 + Math.random() * 6;
-    const cyT = 12 + Math.random() * 6;
-    const cxR = SIZE - (12 + Math.random() * 6);
-    const cyR = SIZE - (12 + Math.random() * 6);
-    const cxB = SIZE - (12 + Math.random() * 6);
-    const cyB = 12 + Math.random() * 6;
-    const cxL = 12 + Math.random() * 6;
-    const cyL = SIZE - (12 + Math.random() * 6);
+    const cxT = 12 + Math.random() * 16;
+    const cyT = 12 + Math.random() * 16;
+    const cxR = SIZE - (12 + Math.random() * 16);
+    const cyR = SIZE - (12 + Math.random() * 16);
+    const cxB = SIZE - (12 + Math.random() * 16);
+    const cyB = 12 + Math.random() * 16;
+    const cxL = 12 + Math.random() * 16;
+    const cyL = SIZE - (12 + Math.random() * 16);
     addLineToPath(path, cxT, cyT, cxR, cyR);
     addLineToPath(path, cxR, cyR, cxB, cyB);
     addLineToPath(path, cxB, cyB, cxL, cyL);
@@ -168,13 +153,13 @@ const drawHourglassRune = (ctx) => {
 const drawBoltRune = (ctx) => {
     const path = [];
     
-    const cx0 = SIZE/2 - 20 - Math.random() * 12;
+    const cx0 = SIZE/2 - 10 - Math.random() * 11;
     const cy0 = 12 + Math.random() * 5;
-    const cx1 = SIZE/2 + 20 + Math.random() * 12;
+    const cx1 = SIZE/2 + 10 + Math.random() * 11;
     const cy1 = 12 + Math.random() * 5;
-    const cx2 = SIZE/2 - 15 - Math.random() * 8;
+    const cx2 = SIZE/2 - 10 - Math.random() * 11;
     const cy2 = SIZE / 2 + Math.random() * 6 - 3;
-    const cx3 = SIZE/2 + 15 + Math.random() * 8;
+    const cx3 = SIZE/2 + 10 + Math.random() * 11;
     const cy3 = SIZE / 2 + Math.random() * 6 - 3;
     const cx4 = SIZE/2 + Math.random() * 10 - 5;
     const cy4 = SIZE - 12 - Math.random() * 6;
@@ -196,7 +181,7 @@ const drawBoltRune = (ctx) => {
 const drawWaveRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let AMP = Math.random() * 15 + 11;
+    let AMP = Math.random() * 19 + 15;
     let omega = 1.6 + Math.random() * 0.9;
     for (let i = 0; i < 18; i++) {
         const angle = i / 17.0 * Math.PI * 2.0 + phase;
@@ -221,7 +206,7 @@ const drawCaretRune = (ctx) => {
     drawNoisyPath(ctx, path);
 }
 
-const drawScribbles = (ctx) => {
+const drawScribbles = (ctx, color='white') => {
     const path = [];
     
     const N = Math.random() * 6 + 5;
@@ -235,12 +220,26 @@ const drawScribbles = (ctx) => {
         yi = yn;
     }
 
-    drawNoisyPath(ctx, path);
+    drawNoisyPath(ctx, path, color);
 }
 
 const drawGarbageRune = (ctx) => {
     FRACTIONAL_PATH = 1.0;
-    drawScribbles(ctx);
+    if (Math.random() < 0.85) {
+        const runes = [
+            drawCircleRune,
+            drawTriangleRune,
+            drawBoltRune,
+            drawWaveRune,
+            drawCaretRune,
+            drawHourglassRune,
+        ];
+        const runeDraw = runes[Math.floor(Math.random() * runes.length)];
+        runeDraw(ctx);
+        drawScribbles(ctx, 'black');
+    } else {
+        drawScribbles(ctx);
+    }
 }
 
 const generateSet = (name, N=10) => {

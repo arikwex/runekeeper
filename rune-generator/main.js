@@ -34,12 +34,11 @@ const generateRuneDataset = (name, canvas, ctx, runeDrawFn, N=10) => {
     console.log(`Generating N=${N} for ${name}`);
     for (let i = 0; i < N; i++) {
         clearContext(ctx);
-        runeDrawFn(ctx);
+        runeDrawFn(ctx, i);
         saveCanvas(canvas, path.join(outFolder, `r_${i}.png`));
     }
 }
 
-let FRACTIONAL_PATH = 1.0;
 const drawNoisyPath = (ctx, path, color='white') => {
     // // Normalize lines
     // let mins = [Infinity, Infinity];
@@ -90,9 +89,6 @@ const drawNoisyPath = (ctx, path, color='white') => {
 }
 
 const addLineToPath = (path, x0, y0, x1, y1) => {
-    if (Math.random() > FRACTIONAL_PATH) {
-        return;
-    }
     for (let i = 0; i < 6; i++) {
         const p = i / 5;
         path.push({
@@ -182,8 +178,8 @@ const drawBoltRune = (ctx) => {
 const drawWaveRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    let AMP = Math.random() * 19 + 15;
-    let omega = 1.6 + Math.random() * 0.9;
+    let AMP = Math.random() * 10 + 10;
+    let omega = 1.8 + Math.random() * 0.5;
     for (let i = 0; i < 18; i++) {
         const angle = i / 17.0 * Math.PI * 2.0 + phase;
         path.push({
@@ -381,27 +377,23 @@ const drawScribbles = (ctx, color='white') => {
     drawNoisyPath(ctx, path, color);
 }
 
-const drawGarbageRune = (ctx) => {
-    FRACTIONAL_PATH = 1.0;
-    if (Math.random() < 0.85) {
-        const runes = [
-            drawBadCircleRune,
-            drawBadTriangleRune,
-            drawBadBoltRune,
-            drawBadWaveRune,
-            drawBadCaretRune,
-            drawBadHourglassRune,
-        ];
-        const runeDraw = runes[Math.floor(Math.random() * runes.length)];
-        runeDraw(ctx);
-    } else {
-        drawScribbles(ctx);
-    }
+const drawGarbageRune = (ctx, idx) => {
+    const runes = [
+        drawBadCircleRune,
+        drawBadTriangleRune,
+        drawBadTriangleRune, // Yes, double up triangle rune
+        drawBadBoltRune,
+        // drawBadWaveRune,  // Yes, skip wave rune
+        drawBadCaretRune,
+        drawBadHourglassRune,
+        drawScribbles,
+    ];
+    const runeDraw = runes[idx % runes.length];
+    runeDraw(ctx);
 }
 
 const generateSet = (name, N=10) => {
     const {canvas, ctx} = generateCanvas();
-    FRACTIONAL_PATH = 1;
     generateRuneDataset(`${name}/circle`, canvas, ctx, drawCircleRune, N);
     generateRuneDataset(`${name}/triangle`, canvas, ctx, drawTriangleRune, N);
     generateRuneDataset(`${name}/bolt`, canvas, ctx, drawBoltRune, N);
@@ -409,7 +401,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
     generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 3);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 6);
 }
 
 // generateSet('train', N=10);

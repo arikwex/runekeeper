@@ -196,15 +196,167 @@ const drawWaveRune = (ctx) => {
 const drawCaretRune = (ctx) => {
     const path = [];
     
+    const bottomLeft = SIZE - (12 + Math.random() * 12);
+    const bottomRight = SIZE - (12 + Math.random() * 12);
+    const centerX = SIZE/2 + (Math.random() - 0.5) * 10;
+    const top = 10 + Math.random() * 15;
+    addLineToPath(path, 12 + Math.random() * 15, bottomLeft, centerX, top);
+    addLineToPath(path, centerX, top, SIZE-12 - Math.random() * 15, bottomRight);
+
+    drawNoisyPath(ctx, path);
+}
+
+/*************************************************************************/
+/*** BAD RUNES ***********************************************************/
+/*************************************************************************/
+
+const drawBadCircleRune = (ctx) => {
+    const path = [];
+    const phase = Math.random() * Math.PI * 2;
+    const motion = 5 - Math.random() * 25;
+    for (let i = 0; i < 13 + Math.random() * 13; i++) {
+        const angle = i / 32.0 * Math.PI * 2.0 + phase;
+        const dR = motion * i / 32.0;
+        path.push({
+            x: Math.cos(angle) * (SIZE * 0.35 + dR) + SIZE/2,
+            y: Math.sin(angle) * (SIZE * 0.35 + dR) + SIZE/2,
+        });
+    }
+    drawNoisyPath(ctx, path);
+}
+
+const drawBadTriangleRune = (ctx) => {
+    const path = [];
+    
+    const topLeft = 12 + Math.random() * 8;
+    const topRight = 12 + Math.random() * 8;
+    const bottom = 7 + Math.random() * 16;
+    const midx = SIZE/2 + (Math.random() - 0.5) * 16;
+    const skipIdx = Math.floor(Math.random() * 3);
+    if (skipIdx != 0) {
+        addLineToPath(path, 12, topLeft, midx, SIZE-bottom);
+    }
+    if (skipIdx != 1) {
+        addLineToPath(path, midx, SIZE-bottom, SIZE-12, topRight);
+    }
+    if (skipIdx != 2) {
+        addLineToPath(path, SIZE-12, topRight, 12, topLeft);
+    }
+
+    drawNoisyPath(ctx, path);
+}
+
+const drawBadHourglassRune = (ctx) => {
+    const path = [];
+    
+    const cxT = 12 + Math.random() * 16;
+    const cyT = 12 + Math.random() * 16;
+    const cxR = SIZE - (12 + Math.random() * 16);
+    const cyR = SIZE - (12 + Math.random() * 16);
+    const cxB = SIZE - (12 + Math.random() * 16);
+    const cyB = 12 + Math.random() * 16;
+    const cxL = 12 + Math.random() * 16;
+    const cyL = SIZE - (12 + Math.random() * 16);
+    const skipIdx = Math.floor(Math.random() * 4);
+    if (skipIdx != 0) {
+        addLineToPath(path, cxT, cyT, cxR, cyR);
+    }
+    if (skipIdx != 1) {
+        addLineToPath(path, cxR, cyR, cxB, cyB);
+    }
+    if (skipIdx != 2) {
+        addLineToPath(path, cxB, cyB, cxL, cyL);
+    }
+    if (skipIdx != 3) {
+        addLineToPath(path, cxL, cyL, cxT, cyT);
+    }
+
+    drawNoisyPath(ctx, path);
+}
+
+const drawBadBoltRune = (ctx) => {
+    const path = [];
+    
+    const cx0 = SIZE/2 - 10 - Math.random() * 11;
+    const cy0 = 12 + Math.random() * 5;
+    const cx1 = SIZE/2 + 10 + Math.random() * 11;
+    const cy1 = 12 + Math.random() * 5;
+    const cx2 = SIZE/2 - 10 - Math.random() * 11;
+    const cy2 = SIZE / 2 + Math.random() * 6 - 3;
+    const cx3 = SIZE/2 + 10 + Math.random() * 11;
+    const cy3 = SIZE / 2 + Math.random() * 6 - 3;
+    const cx4 = SIZE/2 + Math.random() * 10 - 5;
+    const cy4 = SIZE - 12 - Math.random() * 6;
+    const skipIdx = Math.floor(Math.random() * 4);
+    if (Math.random() > 0.5) {
+        if (skipIdx != 0) {
+            addLineToPath(path, cx0, cy0, cx1, cy1);
+        }
+        if (skipIdx != 1) {
+            addLineToPath(path, cx1, cy1, cx2, cy2);
+        }
+        if (skipIdx != 2) {
+            addLineToPath(path, cx2, cy2, cx3, cy3);
+        }
+        if (skipIdx != 3) {
+            addLineToPath(path, cx3, cy3, cx4, cy4);
+        }
+    } else {
+        if (skipIdx != 0) {
+            addLineToPath(path, SIZE-cx0, cy0, SIZE-cx1, cy1);
+        }
+        if (skipIdx != 1) {
+            addLineToPath(path, SIZE-cx1, cy1, SIZE-cx2, cy2);
+        }
+        if (skipIdx != 2) {
+            addLineToPath(path, SIZE-cx2, cy2, SIZE-cx3, cy3);
+        }
+        if (skipIdx != 3) {
+            addLineToPath(path, SIZE-cx3, cy3, SIZE-cx4, cy4);
+        }
+    }
+
+    drawNoisyPath(ctx, path);
+}
+
+const drawBadWaveRune = (ctx) => {
+    const path = [];
+    const phase = Math.random() * Math.PI * 2;
+    let AMP = Math.random() * 19 + 15;
+    let omega = 1.6 + Math.random() * 0.9;
+    let start = Math.random() * 9;
+    for (let i = start; i < start + 8; i++) {
+        const angle = i / 17.0 * Math.PI * 2.0 + phase;
+        path.push({
+            x: 12 + i * (SIZE - 24) / 17.0,
+            y: Math.sin(angle * omega) * AMP + SIZE/2,
+        });
+    }
+    drawNoisyPath(ctx, path);
+}
+
+const drawBadCaretRune = (ctx) => {
+    const path = [];
+    
     const bottomLeft = SIZE - (12 + Math.random() * 8);
     const bottomRight = SIZE - (12 + Math.random() * 8);
     const centerX = SIZE/2 + (Math.random() - 0.5) * 10;
     const top = 10 + Math.random() * 15;
-    addLineToPath(path, 12, bottomLeft, centerX, top);
-    addLineToPath(path, centerX, top, SIZE-12, bottomRight);
+    
+    const skipIdx = Math.floor(Math.random() * 2);
+    if (skipIdx != 0) {
+        addLineToPath(path, 12, bottomLeft, centerX, top);
+    }
+    if (skipIdx != 1) {
+        addLineToPath(path, centerX, top, SIZE-12, bottomRight);
+    }
 
     drawNoisyPath(ctx, path);
 }
+
+/***********************************************************************/
+/*** SCRIBBLES *********************************************************/
+/***********************************************************************/
 
 const drawScribbles = (ctx, color='white') => {
     const path = [];
@@ -227,12 +379,12 @@ const drawGarbageRune = (ctx) => {
     FRACTIONAL_PATH = 1.0;
     if (Math.random() < 0.85) {
         const runes = [
-            drawCircleRune,
-            drawTriangleRune,
-            drawBoltRune,
-            drawWaveRune,
-            drawCaretRune,
-            drawHourglassRune,
+            drawBadCircleRune,
+            drawBadTriangleRune,
+            drawBadBoltRune,
+            drawBadWaveRune,
+            drawBadCaretRune,
+            drawBadHourglassRune,
         ];
         const runeDraw = runes[Math.floor(Math.random() * runes.length)];
         runeDraw(ctx);
@@ -252,7 +404,7 @@ const generateSet = (name, N=10) => {
     generateRuneDataset(`${name}/caret`, canvas, ctx, drawCaretRune, N);
     generateRuneDataset(`${name}/hourglass`, canvas, ctx, drawHourglassRune, N);
     // Have more garbage data to enforce symbol discrimination
-    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 10);
+    generateRuneDataset(`${name}/garbage`, canvas, ctx, drawGarbageRune, N * 2);
 }
 
 // generateSet('train', N=10);

@@ -77,7 +77,7 @@ function SpellCaster() {
         for (let i = 0; i < 20; i++) {
             scaledCtx.clearRect(0, 0, 28, 28);
             scaledCtx.strokeStyle = "white";
-            scaledCtx.lineWidth = 1.1;
+            scaledCtx.lineWidth = Math.random() * 0.6 + 1.2;
             scaledCtx.lineJoin = 'round';
             scaledCtx.lineCap = 'round';
             scaledCtx.setTransform(

@@ -31,8 +31,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 19
-        PATCH_FEATURES_DEEP = 24
+        PATCH_FEATURES = 37 #19
+        PATCH_FEATURES_DEEP = 37 #24
         OUTPUT_CLASSES = 7
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -61,9 +61,9 @@ class Net(nn.Module):
         y21 = M(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
         y22 = M(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        z = F.sigmoid(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        # z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        # output = F.softmax(z, dim=1)
+        # z = F.sigmoid(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        z = F.softmax(z, dim=1)
         return z #output
 
 def train(args, model, device, train_loader, optimizer, epoch):
@@ -250,9 +250,9 @@ class RuneDataset(Dataset):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=200, metavar='N')
+    parser.add_argument('--batch-size', type=int, default=1500, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=40, metavar='N')
+    parser.add_argument('--epochs', type=int, default=50, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -285,9 +285,9 @@ def main():
         transforms.ToTensor(),
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-17, 17),
-            translate=(0.03, 0.03),
-            scale=(0.95, 1.05),
+            degrees=(-30, 30),
+            translate=(0.04, 0.04),
+            scale=(0.9, 1.05),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

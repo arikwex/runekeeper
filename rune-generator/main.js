@@ -409,5 +409,5 @@ const generateSet = (name, N=10) => {
 }
 
 // generateSet('train', N=10);
-generateSet('train', N=7000);
-generateSet('test', N=1000);
+generateSet('train', N=70000);
+generateSet('test', N=7000);

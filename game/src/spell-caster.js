@@ -143,7 +143,7 @@ function SpellCaster() {
             ctx.fillStyle = '#fff';
             ctx.textAlign = 'center';
             ctx.font = 'bold 48px arial';
-            ctx.fillText(classLabel, canvas.width/2, 70);
+            ctx.fillText(classLabel, canvas.width/2, 100);
 
             // Pulse
             const p = Math.exp(-timeSinceSelect*3)*2;

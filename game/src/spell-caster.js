@@ -128,7 +128,7 @@ function SpellCaster() {
             if (tracker[prediction] === undefined) {
                 tracker[prediction] = 0;
             }
-            tracker[prediction] += (prediction == 0) ? 1 : 2;
+            tracker[prediction] += 1;
             const v = tracker[prediction];
             if (v > topVal) {
                 topVal = v;

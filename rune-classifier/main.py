@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import random
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms
@@ -73,8 +74,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        # loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
-        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        # loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -235,7 +236,7 @@ class RuneDataset(Dataset):
         self.all_data = []
         for category in self.categories:
             category_path = os.path.join(self.root_dir, category)
-            # if category == 'garbage':
+            # if category == 'garbage' and random.random() > 0.1:
             #     continue
             for file_name in os.listdir(category_path):
                 image_path = os.path.join(category_path, file_name)
@@ -290,9 +291,9 @@ def main():
         transforms.ToTensor(),
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-20, 20),
-            translate=(0.05, 0.05),
-            scale=(0.75, 0.95),
+            degrees=(-17, 17),
+            translate=(0.04, 0.04),
+            scale=(0.85, 1.0),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

@@ -380,12 +380,12 @@ const drawScribbles = (ctx, color='white') => {
 
 const drawGarbageRune = (ctx, idx) => {
     const runes = [
-        drawBadCircleRune,
-        drawBadTriangleRune,
-        drawBadBoltRune,
-        drawBadWaveRune,
-        drawBadCaretRune,
-        drawBadHourglassRune,
+        // drawBadCircleRune,
+        // drawBadTriangleRune,
+        // drawBadBoltRune,
+        // drawBadWaveRune,
+        // drawBadCaretRune,
+        // drawBadHourglassRune,
         drawScribbles,
         drawScribbles,
         drawScribbles,

@@ -195,7 +195,7 @@ const drawCaretRune = (ctx) => {
     
     const bottomLeft = SIZE - (12 + Math.random() * 12);
     const bottomRight = SIZE - (12 + Math.random() * 12);
-    const centerX = SIZE/2 + (Math.random() - 0.5) * 10;
+    const centerX = SIZE/2 + (Math.random() - 0.5) * 36;
     const top = 10 + Math.random() * 15;
     addLineToPath(path, 12 + Math.random() * 3, bottomLeft, centerX, top);
     addLineToPath(path, centerX, top, SIZE-12 - Math.random() * 3, bottomRight);

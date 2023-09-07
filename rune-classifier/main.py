@@ -74,8 +74,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        # loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
-        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        # loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -236,8 +236,8 @@ class RuneDataset(Dataset):
         self.all_data = []
         for category in self.categories:
             category_path = os.path.join(self.root_dir, category)
-            # if category == 'garbage' and random.random() > 0.1:
-            #     continue
+            if category == 'garbage' and random.random() > 0.2:
+                continue
             for file_name in os.listdir(category_path):
                 image_path = os.path.join(category_path, file_name)
                 image = Image.open(image_path).convert("L")
@@ -305,11 +305,10 @@ def main():
     # Define transformations
     transform = transforms.Compose([
         transforms.ToTensor(),
-        # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-17, 17),
+            degrees=(-25, 25),
             translate=(0.04, 0.04),
-            scale=(0.8, 1.0),
+            scale=(0.9, 1.0),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

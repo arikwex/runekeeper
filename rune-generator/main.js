@@ -102,8 +102,8 @@ const addLineToPath = (path, x0, y0, x1, y1) => {
 const drawCircleRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    const motion = 5 - Math.random() * 35;
-    for (let i = 0; i < 29 + Math.random() * 16; i++) {
+    const motion = 5 - Math.random() * 20;
+    for (let i = 0; i < 29 + Math.random() * 15; i++) {
         const angle = i / 32.0 * Math.PI * 2.0 + phase;
         const dR = motion * i / 32.0;
         path.push({

@@ -23,6 +23,7 @@ def W(t):
     # t += torch.randn(t.shape).to(t.device) * 1.0
     # t = F.layer_norm(t, normalized_shape=t.size()[1:], weight=None, bias=None, eps=1e-3)
     t = F.leaky_relu(t)
+    t = (t - torch.mean(t)) / (torch.sqrt((torch.var(t) + 1e-3)))
     # t = F.tanh(t)
     return t
 
@@ -31,8 +32,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.1)
-        PATCH_FEATURES = 37 #19
-        PATCH_FEATURES_DEEP = 37 #24
+        PATCH_FEATURES = 34 #19
+        PATCH_FEATURES_DEEP = 25 #24
         OUTPUT_CLASSES = 7
         self.fc1 = nn.Linear(7*7, PATCH_FEATURES, bias=True)
         self.fc2 = nn.Linear(PATCH_FEATURES * 4, PATCH_FEATURES_DEEP, bias=True)
@@ -56,14 +57,14 @@ class Net(nn.Module):
         x43 = W(self.fc1(x[:, 0, 21:28, 14:21].reshape(-1, 7 * 7)))
         x44 = W(self.fc1(x[:, 0, 21:28, 21:28].reshape(-1, 7 * 7)))
         
-        y11 = M(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
-        y12 = M(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
-        y21 = M(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
-        y22 = M(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
+        y11 = W(self.fc2(self.dropout1(torch.cat((x11, x12, x21, x22), dim=1))))
+        y12 = W(self.fc2(self.dropout1(torch.cat((x13, x14, x23, x24), dim=1))))
+        y21 = W(self.fc2(self.dropout1(torch.cat((x31, x32, x41, x42), dim=1))))
+        y22 = W(self.fc2(self.dropout1(torch.cat((x33, x34, x43, x44), dim=1))))
         
-        # z = F.sigmoid(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
-        z = F.softmax(z, dim=1)
+        z = F.sigmoid(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        # z = M(self.fc3(self.dropout2(torch.cat((y11, y12, y21, y22), dim=1))))
+        # z = F.softmax(z, dim=1)
         return z #output
 
 def train(args, model, device, train_loader, optimizer, epoch):
@@ -172,6 +173,10 @@ def run_model_raw(quantized_params, data):
             outputs[i] = max(0, bias[i] + acc)
         return outputs
     
+    # TODO:
+    # def layer_norm(t):
+    #     return (t - torch.mean(t)) / (torch.sqrt((torch.var(t) + 1e-3)))
+    
     x11 = receptive_field(img, 28, 0, 0, 7, fc1_w, fc1_b)
     x12 = receptive_field(img, 28, 7, 0, 7, fc1_w, fc1_b)
     x13 = receptive_field(img, 28, 14, 0, 7, fc1_w, fc1_b)
@@ -250,9 +255,9 @@ class RuneDataset(Dataset):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=1500, metavar='N')
+    parser.add_argument('--batch-size', type=int, default=1000, metavar='N')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N')
-    parser.add_argument('--epochs', type=int, default=50, metavar='N')
+    parser.add_argument('--epochs', type=int, default=150, metavar='N')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M')
     parser.add_argument('--no-cuda', action='store_true', default=False)
@@ -285,9 +290,9 @@ def main():
         transforms.ToTensor(),
         # transforms.RandomRotation(degrees=(-20, 20))
         transforms.RandomAffine(
-            degrees=(-30, 30),
-            translate=(0.04, 0.04),
-            scale=(0.9, 1.05),
+            degrees=(-20, 20),
+            translate=(0.05, 0.05),
+            scale=(0.75, 0.95),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

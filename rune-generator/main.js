@@ -62,7 +62,7 @@ const drawNoisyPath = (ctx, path, color='white') => {
     ctx.beginPath();
     ctx.strokeStyle = color;
     if (color == 'white') {
-        ctx.lineWidth = Math.random() * 2.0 + 3;
+        ctx.lineWidth = Math.random() * 4.0 + 2.5;
     } else {
         ctx.lineWidth = 12;
     }
@@ -102,8 +102,8 @@ const addLineToPath = (path, x0, y0, x1, y1) => {
 const drawCircleRune = (ctx) => {
     const path = [];
     const phase = Math.random() * Math.PI * 2;
-    const motion = 5 - Math.random() * 25;
-    for (let i = 0; i < 30 + Math.random() * 8; i++) {
+    const motion = 5 - Math.random() * 35;
+    for (let i = 0; i < 29 + Math.random() * 16; i++) {
         const angle = i / 32.0 * Math.PI * 2.0 + phase;
         const dR = motion * i / 32.0;
         path.push({
@@ -409,5 +409,5 @@ const generateSet = (name, N=10) => {
 }
 
 // generateSet('train', N=10);
-generateSet('train', N=70000);
-generateSet('test', N=7000);
+generateSet('train', N=20000);
+generateSet('test', N=2000);

@@ -236,8 +236,8 @@ class RuneDataset(Dataset):
         self.all_data = []
         for category in self.categories:
             category_path = os.path.join(self.root_dir, category)
-            if category == 'garbage' and random.random() > 0.2:
-                continue
+            # if category == 'garbage' and random.random() > 0.2:
+            #     continue
             for file_name in os.listdir(category_path):
                 image_path = os.path.join(category_path, file_name)
                 image = Image.open(image_path).convert("L")

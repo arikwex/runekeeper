@@ -62,7 +62,7 @@ const drawNoisyPath = (ctx, path, color='white') => {
     ctx.beginPath();
     ctx.strokeStyle = color;
     if (color == 'white') {
-        ctx.lineWidth = Math.random() * 4.0 + 2.5;
+        ctx.lineWidth = Math.random() * 4.0 + 4.5;
     } else {
         ctx.lineWidth = 12;
     }

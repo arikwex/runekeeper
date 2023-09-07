@@ -306,9 +306,9 @@ def main():
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.RandomAffine(
-            degrees=(-25, 25),
-            translate=(0.04, 0.04),
-            scale=(0.9, 1.0),
+            degrees=(-10, 10),
+            translate=(0.05, 0.05),
+            scale=(0.85, 1.0),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

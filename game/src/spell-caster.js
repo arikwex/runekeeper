@@ -79,21 +79,33 @@ function SpellCaster() {
             maxs[1] = Math.max(pt[1], maxs[1]);
         });
         
-        normalizeLines = [];
-        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 30);
-        lines.map((pt) => {
-            normalizeLines.push([
-                (pt[0] - (maxs[0] + mins[0])/2) / size * 20,
-                (pt[1] - (maxs[1] + mins[1])/2) / size * 20,
-            ]);
-        });
+        let normalizeLines = [];
+        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 100);
+        // lines.map((pt) => {
+        //     normalizeLines.push([
+        //         (pt[0] - (maxs[0] + mins[0])/2) / size * (Math.random() * 3 + 20),
+        //         (pt[1] - (maxs[1] + mins[1])/2) / size * (Math.random() * 3 + 20),
+        //     ]);
+        // });
 
         const tracker = {};
+        let topPred = 0;
+        let topVal = 0;
         for (let i = 0; i < 20; i++) {
+            normalizeLines = [];
+            const SKX = (Math.random() * 3 + 16);
+            const SKY = (Math.random() * 3 + 16);
+            lines.map((pt) => {
+                normalizeLines.push([
+                    (pt[0] - (maxs[0] + mins[0])/2) / size * SKX,
+                    (pt[1] - (maxs[1] + mins[1])/2) / size * SKY,
+                ]);
+            });
+
             scaledCtx.setTransform(1,0,0,1,0,0);
             scaledCtx.clearRect(0, 0, 28, 28);
             scaledCtx.strokeStyle = "white";
-            scaledCtx.lineWidth = Math.random() * 0.6 + 1.2;
+            scaledCtx.lineWidth = Math.random() * 0.5 + 1.3;
             scaledCtx.lineJoin = 'round';
             scaledCtx.lineCap = 'round';
             scaledCtx.setTransform(
@@ -116,19 +128,24 @@ function SpellCaster() {
             if (tracker[prediction] === undefined) {
                 tracker[prediction] = 0;
             }
-            tracker[prediction] += 1;
-        }
-        // console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
-        // console.log(mapping[argmax(z)], z);
-        const keys = Object.keys(tracker);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            if (tracker[key] >= 9 && key != 'garbage') {
-                return key;
+            tracker[prediction] += (prediction == 0) ? 1 : 2;
+            const v = tracker[prediction];
+            if (v > topVal) {
+                topVal = v;
+                topPred = prediction;
             }
-        };
+        }
+        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
+        // console.log(mapping[argmax(z)], z);
+        // const keys = Object.keys(tracker);
+        // for (let i = 0; i < keys.length; i++) {
+        //     const key = keys[i];
+        //     if (tracker[key] >= 9 && key != 'garbage') {
+        //         return key;
+        //     }
+        // };
         // Garbage fallback
-        return 0;
+        return topPred;
     }
 
     function render(ctx) {

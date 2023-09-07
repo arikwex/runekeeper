@@ -1,1 +1,387 @@
-<html><title>Runekeeper</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(()=>{var p=document.getElementsByTagName("canvas")[0];function J(m,i){m.beginPath(),i.map((i,e)=>{0==e?m.moveTo(i[0],i[1]):m.lineTo(i[0],i[1])}),m.stroke()}p.width=innerWidth,p.height=innerHeight,window.onresize=()=>{p.width=innerWidth,p.height=innerHeight,t.imageSmoothingEnabled=!1};var i=document.createElement("canvas"),t=(i.width=i.height=64,t=i.getContext("2d"),p.getContext("2d")),n=(document.querySelector("link").href=i.toDataURL(),t.imageSmoothingEnabled=!1,[]),I={},d=[],l=0;function o(i,e){return i.filter(i=>!e.includes(i))}requestAnimationFrame(function i(m){let h=Math.min(.001*(m-l),.018);var e,a;t.clearRect(0,0,p.width,p.height),t.textBaseline="middle",t.lineJoin="round",t.lineCap="round",e=()=>{let e=(I[0]||[])[0];var i;e&&e.set(t),d.length=0,n.map(i=>{i.update?.(h)&&d.push(i)}),d.length&&(n=o(n,i=d),i.map(e=>{e.tags?.map(i=>{I[i]=o(I[i],[e])})})),e?n.map(i=>{i.inView(e.x,e.y)&&i.render?.(t)}):n.map(i=>{i.render?.(t)}),l=m},a=t.getTransform(),e(),t.setTransform(a),requestAnimationFrame(i)});var e,m=atob("iKm5ioipqoiYq3uIqbuXqZqJmpqKmaiYiIeqzHiZqYuHmJiIiJmJh3d3eId3d4h3eIiau3qZqrqJqbuKqJuqmLqZqqqreJipiYiZmIh3h4mHmIeIh4iImYmXiIeXd3iIh3m6q5ubqqqqqqmrm6mpmYmoqnmJiJd4d3eHd5eZiIiZmJmYeJqKiLeZh2apmmilqnl3eId3iIiIl5iIh3mYiYiIiIeHiHmId4h3p4mIZ5qJmbireXjNmnnWvJqHzJt5x7yKeHiJqouHiIlmd6hadpaZdYaoaXeImWeIqZiYqbp4mKqLd5m7iJi5fXe63IeIqnyIuMuIeZiJh3d3eHiJh5d5d4h3iHiJeIiJeIl3Z3aYdoaIaXZ4iGdmiHh4iHeIiImYmYmIy9y8u7u7qruaqqmZmZiZiXiIiHZ2eWdWdXaIqoiXmIh3d5h3hnd4aHZ4h4dnh5l3aGdmh2hmd6lmdpibaIeamIiZuoqqmqu7mrqrm4i7qaqZqoqpmYiIaoeHmHaGiWlmh5h3d4iHiIiIiZipmJmYqpqpy5yqubuIqMt8iXmYeId4h5iHh4d3d4mXmHiYh4iIh3d4qYmpmZmZiKmYmJmKmbmZqrqbmaq5iLqqiouHitiIj6+IiImYiJmIeHiYiImIiHh4mIiYh4iImXmXiIh4h4iJeJmJiHh4h4iIl4Z4WXqXuKaVl5iYeJmKiaiqp3Z2dWlol6RoiIeKd5iod4qZd4iXmKmJmJepiIiZmpiJl5q4moqYloiYh2eYqHeHd2h5lqR3aYp4eHiYmaiYiZmJmnqHmIpqhoiZd4iKepiomZiIi4tqd3h5aoaYaHl5mIiZmGiJm5aHmImHeKaJmYmJmYiYh3mJmKiYmHiKiJmHh5maZ2h2lZV4Z6iUZ4eGeYeHtYmJiImJeIeWqWiolml4l5qImKaJiqqHh4mXiHd3iHh4iIiIiIiIiHl4iHiHiIeIiIh4eIiYh4h4iIh4eIeIiYd3aJqol3mJeHiImYqHmIqZiJeGh2hqqKaIhoaJd5eWiYmJiIh4iKiniJmIiZmJm4l5p3ipi2h4mHmop3mpqHl3aGhoiJeFaopYaHWVhYhZqJV4hoeKiIa0i4qZmIeGh5eIeKimaIiHeXh4pol7qoiIiImYqZiJepiJeXd4iIh6WaenmJiIiXiIh4qmd6eqqZmXiqiJmImHiHd4qZiHipmYl4iJe4mIqZeXmId5WJmHqHh3h6iXmXuXt3l5mGeHd4mHh4Z6eamop3l5ebeXh5eJm4unp2dspnmLh5iGd4mldpmZeIeHeImJiIeHqKmoeJmKqZeomJmIh3iImZmIiJipmImYmKeIeoiIeWl4qGhpl5mZmJh6eYqIprepinuZiKiYh2t5iZinmXmXxndqeIaHmIl4mKqWh2hYaXiHdmqLZ1h4h4eIiZmXipiYmHiJiphrqYaYmHiXiHm4plqZaHd4iYh1eop3eIl3imiriZmniHl4iHl6lph6d5iIeHlnmYmIiIiIh4iJeHeIiYd4iIiHh4mIiImIeIh5iXl3l4eJh5eHl3h5mJeIl3d4h4eJmHl4mImIiIiIeIiJl4mYqZl4mHqZmYmXeYmmqIiYhluLiHl4mIeWeGp4aImJmJeYl6l6iXl3d4h4d3mZh4h3iHh3d5iYh3iYmIiYiYeIiHeHh4iXd4iJiIiId4eIiHmIiIiIiZl7mqi5iImKimpoeJmHhomZaGmIiYqHiYebp4eIeIh4mJd4eYiIipl6iahoaaeJeXZpiWp3h4d3iYqKiYiYeWh4iaiomYh5i5Z2qal3eImoh4l5iHmJd4iXl4pomKiIl4iouFaZqnmGl6qZeZd6qJl5l7equqe5iYa3iqiXlnhpeIl+iIeId3iIidmJh8iId3lpaIiHeIh4d3iHiIrZeod3iXqI13i4iXmJeIuIiomGmliJh5hpiVc4dFiEWolXiWeGiZeYhZiIZ5dkmXOJlkeHijeJZqlZh5pmaJiIVniXd5lViJmZmYh3iFiGdohmmZiImHmIWphHqIiWeIZXhWo5mFd4aGhYWGiEiaeHhZhKlpiWeZdng2hYl2ibiHiKWGd3dZeYpok4qIiYZodWhXhYh2h2aVh4WGaVhneJhWh1h3eGZla1mZd5V6iUqGioY3eoiIhIZ5iJepiKdXWFhmaIVaeJaph4aFSmhEeYd5hWmpiXmZOYhliHp2iJh3iISHpjeImXZGinN4k4dWeGiaaJVbd4h7d3l5NqqKeIaViEZJlHdnh3mJiXWYeEhXhnl5iJl4iIineYOXhKh4hph5eIdpiYaJhpmJhah3Z3eYV4mAc="),H=[];for(let i=0;i<+m.length+0;i++){var h=m.charCodeAt(i);H.push(2.2*((15&h)-8)/16,2.2*((h>>4&15)-8)/16)}function Y(h,a,i,t,n,I,d,l,o,r){var q=new Array(i);for(let m=0;m<i;m++){let e=0;for(let i=0;i<t;i++){var p=I+i%d+l*(n+Math.floor(i/d)),J=o+m*t+i;e+=a[J]*h[p]}var H=m+r+o;q[m]=Math.max(0,a[H]+e)}return q}(e=function(){var i=document.createElement("canvas");let l=i.getContext("2d"),o=(document.body.appendChild(i),i.style.position="fixed",i.style.top="10px",i.style.left="10px",i.style.border="1px solid red",i.width=28,i.height=28,new Array(784)),h={0:"garbage",1:"circle",2:"triangle",3:"bolt",4:"wave",5:"caret",6:"hourglass"},a={0:[.4,.4,.4],1:[1,.65,.3],2:[.3,.65,1],3:[1,1,.1],4:[.3,1,.65],5:[1,.1,1],6:[1,1,1]},r=[],t=!1,n=[],I=-1,d=0;function q(){let e=[1/0,1/0],m=[-1/0,-1/0],h=(r.map(i=>{e[0]=Math.min(i[0],e[0]),e[1]=Math.min(i[1],e[1]),m[0]=Math.max(i[0],m[0]),m[1]=Math.max(i[1],m[1])}),normalizeLines=[],Math.max(m[0]-e[0],m[1]-e[1],30));r.map(i=>{normalizeLines.push([(i[0]-(m[0]+e[0])/2)/h*20,(i[1]-(m[1]+e[1])/2)/h*20])});var a={};for(let i=0;i<20;i++){l.setTransform(1,0,0,1,0,0),l.clearRect(0,0,28,28),l.strokeStyle="white",l.lineWidth=.6*Math.random()+1.2,l.lineJoin="round",l.lineCap="round",l.setTransform(1+.1*(Math.random()-.5),.1*(Math.random()-.5),.1*(Math.random()-.5),1+.1*(Math.random()-.5),2*(Math.random()-.5)+14,2*(Math.random()-.5)+14),J(l,normalizeLines);var t=l.getImageData(0,0,28,28).data;for(let i=0;i<t.length;i+=4)o[i>>2]=t[i]/255;n=o,x11=Y(n,H,19,49,0,0,7,28,0,931),x12=Y(n,H,19,49,0,7,7,28,0,931),x13=Y(n,H,19,49,0,14,7,28,0,931),x14=Y(n,H,19,49,0,21,7,28,0,931),x21=Y(n,H,19,49,7,0,7,28,0,931),x22=Y(n,H,19,49,7,7,7,28,0,931),x23=Y(n,H,19,49,7,14,7,28,0,931),x24=Y(n,H,19,49,7,21,7,28,0,931),x31=Y(n,H,19,49,14,0,7,28,0,931),x32=Y(n,H,19,49,14,7,7,28,0,931),x33=Y(n,H,19,49,14,14,7,28,0,931),x34=Y(n,H,19,49,14,21,7,28,0,931),x41=Y(n,H,19,49,21,0,7,28,0,931),x42=Y(n,H,19,49,21,7,7,28,0,931),x43=Y(n,H,19,49,21,14,7,28,0,931),x44=Y(n,H,19,49,21,21,7,28,0,931),y11=Y(x11.concat(x12,x21,x22),H,24,76,0,0,1e3,0,950,1824),y12=Y(x13.concat(x14,x23,x24),H,24,76,0,0,1e3,0,950,1824),y21=Y(x31.concat(x32,x41,x42),H,24,76,0,0,1e3,0,950,1824),y22=Y(x33.concat(x34,x43,x44),H,24,76,0,0,1e3,0,950,1824);var n=(z=Y(y11.concat(y12,y21,y22),H,7,96,0,0,1e3,0,2798,672)).reduce((i,e,m,h)=>e>h[i]?m:i,0);void 0===a[n]&&(a[n]=0),a[n]+=1}var I=Object.keys(a);for(let i=0;i<I.length;i++){var d=I[i];if(9<=a[d]&&"garbage"!=d)return d}return 0}return window.addEventListener("mousedown",function(i){I=-1,r.length=0,r.push([i.clientX,i.clientY]),t=!0}),window.addEventListener("mousemove",function(i){var e,m;t&&0<r.length&&(e=r[r.length-1],20<(m=i.clientX-e[0])*m+(m=i.clientY-e[1])*m)&&(r.push([i.clientX,i.clientY]),q())}),window.addEventListener("mouseup",function(i){I=q(),n=JSON.parse(JSON.stringify(r)),d=0,r.length=0,t=!1}),{update:function(m){d+=m,-1!=I&&d<5&&n.map((i,e)=>{i[0]+=24*Math.cos(3*d+.2*e)*m,i[1]+=24*Math.sin(3*d+.2*e)*m})},render:function(i){var e,m;t&&(i.strokeStyle="white",i.lineWidth=20,J(i,r)),-1!=I&&(e=h[I],i.fillStyle="#fff",i.textAlign="center",i.font="bold 48px arial",i.fillText(e,p.width/2,100),e=2*Math.exp(3*-d),m=a[I],i.strokeStyle=`rgba(${e*m[0]*255}, ${e*m[1]*255}, ${e*m[2]*255}, ${.6*e})`,i.lineWidth=20+80*(1-Math.exp(5*-d)),J(i,n),i.strokeStyle=`rgba(${e*m[0]*300}, ${e*m[1]*300}, ${e*m[2]*300}, ${e})`,i.lineWidth=20,J(i,n))}}}()).inView||(e.inView=()=>1),n.push(e),n.sort((i,e)=>(i.order||0)-(e.order||0)),e.tags?.map(i=>{I[i]=I[i]??[],I[i].push(e)})})();</script>
+<html><title>Runekeeper</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(() => {
+  // src/canvas.js
+  var canvas = document.getElementsByTagName("canvas")[0];
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+  window.onresize = () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    ctx.imageSmoothingEnabled = false;
+  };
+  var ctx;
+  function retainTransform(fn) {
+    const xfm = ctx.getTransform();
+    fn();
+    ctx.setTransform(xfm);
+  }
+  function renderLines(ctx2, lines) {
+    ctx2.beginPath();
+    lines.map((pt, i) => {
+      if (i == 0) {
+        ctx2.moveTo(pt[0], pt[1]);
+      } else {
+        ctx2.lineTo(pt[0], pt[1]);
+      }
+    });
+    ctx2.stroke();
+  }
+  var favicon = document.createElement("canvas");
+  favicon.width = favicon.height = 64;
+  ctx = favicon.getContext("2d");
+  ctx = canvas.getContext("2d");
+  var link = document.querySelector("link");
+  link.href = favicon.toDataURL();
+  ctx.imageSmoothingEnabled = false;
+
+  // src/tags.js
+  var TAG_CAMERA = 0;
+
+  // src/engine.js
+  var gameObjects = [];
+  var gameObjectsByTag = {};
+  var objectsToRemove = [];
+  var lastFrameMs = 0;
+  function tick(currentFrameMs) {
+    const dT = Math.min((currentFrameMs - lastFrameMs) * 1e-3, 0.018);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    retainTransform(() => {
+      const camera = getObjectsByTag(TAG_CAMERA)[0];
+      if (camera) {
+        camera.set(ctx);
+      }
+      objectsToRemove.length = 0;
+      gameObjects.map((g) => {
+        if (g.update?.(dT)) {
+          objectsToRemove.push(g);
+        }
+      });
+      if (objectsToRemove.length) {
+        remove(objectsToRemove);
+      }
+      if (camera) {
+        gameObjects.map((g) => {
+          if (g.inView(camera.x, camera.y)) {
+            g.render?.(ctx);
+          }
+        });
+      } else {
+        gameObjects.map((g) => {
+          g.render?.(ctx);
+        });
+      }
+      lastFrameMs = currentFrameMs;
+    });
+    requestAnimationFrame(tick);
+  }
+  function add(obj) {
+    if (!obj.inView) {
+      obj.inView = () => 1;
+    }
+    gameObjects.push(obj);
+    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
+    obj.tags?.map((tag) => {
+      gameObjectsByTag[tag] = gameObjectsByTag[tag] ?? [];
+      gameObjectsByTag[tag].push(obj);
+    });
+  }
+  function arrayRemove(list, valuesToEvict) {
+    return list.filter((g) => !valuesToEvict.includes(g));
+  }
+  function remove(objList) {
+    gameObjects = arrayRemove(gameObjects, objList);
+    objList.map((obj) => {
+      obj.tags?.map((tag) => {
+        gameObjectsByTag[tag] = arrayRemove(gameObjectsByTag[tag], [obj]);
+      });
+    });
+  }
+  function getObjectsByTag(tag) {
+    return gameObjectsByTag[tag] || [];
+  }
+  requestAnimationFrame(tick);
+
+  // ../rune-classifier/base64_encoded_model.txt
+  var base64_encoded_model_default = "eJiYiIiIeHiIiXeIiIiXmXh3iXh5iIiHh4eJiXiZmJiHiHeIiIiYh3eIeZeYeIh3iHeJiXaJiIh5iJmHiIl5h5iYmYiIiIeIiIiIl4h3h4mHmIiIh5iImYmYiIeXh3h4h3mYeXh5iYiIiJeJeJeXd3iYmXiJiJd5h4mIiIeJmHiIiJmXeHh5iJiIh4eIiXiXiHiIiIh3iImIl5iIh3mYiYiIiYiHiImId4h4l3d3d4iIiYmIeIiIh4iHiIiYiXiJl4mImIiJiYmYeHiIiYh4mZd3l5iId4iIiHeJmZeXiJh4iImZiHiImYiHiIiZmYd4eIh4l4h4eJh4h3d3eHiJh5d5d4d3iXiIiIiIeImYiXeHl5iIeYiJd4eIiHeIiXeHiHmIl3iHmJiImIiIiJl4iIeIiIiIiYiImZiYiHh3h3eImZmXh5iId6iYl3iJiXeIl4h3iZl4eHh4eId3iJl3mIiZeYiJh4iImXiYeHiZeJiIiXeIl5mJmYmYiIiIaIeHiIeXiXiHiIiHiImHmIl4iJiYh5h3eIiYmYiZh3iId5h4iXmIeId4h5iHh4d3d4iXiHiIh4iIh3d4iHiImIiIiJiIh4h5iJeYmZiJiIiXiJmYeIiYiIiHiImHiImYiIl4eHiIiImJiHiImJiYh5h3mHmXeIh4d4h4eJmJiHh4h3iIeIeHiYiHh5eXmYmIeImIeJiIh4d4h5mId5iIiYmJd5eId4iHiIiHmImIh4eYd4iZiYiHmJmXiJmIl4mId3iHd4h5h4d5l4d3eIiImIiXiIiIiIl4mImYmIiIiHeImJmJeHiHeIiImXiJiHh4eIiJd4l5mIiJiHiJmYiIiHd3eIiIiYmYiYmYh4mImIiHh3eIiId4h5iYd3iIl5eIh5eHd4eIeYeJl4iYmImJiYiHmYiIiYh4l4l4mId3iIh3d4mXmXd3mImJmJmYiIiJiXl5iHiHiHeIiIh4d4iIh4iIiHl4eIeHeId3h4mIiIiIiHiImImImImZiYiHmJiJiHiIiJmId5d3mZeIh5iJh5iHeIiIeIiImYl4mHiZiZiIiXmImImZh4l5iJh4iIh3iIh4iIeIl5iJh5iZiImJeYeIiYeIiIeHeIiIiKiGiIiHeIh4hoeImIiIiIiIiImIeIiIiIiJiIiIiJeIiIiIiHiIiIiXeIiIiIiIiYiIh4iIiIiIiIiIiYiHiIiIiIiIiIiIiIiJiIiIiHeIiIiIiHmIeIiIh4iIiImIiIiJiIiIiIiHiIiIiJiImId3mJiIh3iIh3iHiHiIiId4iIeIeIiIh4iHiJmHeIiIiIeIiIiIh4l3iYiIiIeIiHiImIiIeXiHeIiIiIh4iIeYiIh3eId4d4eYd3mHiIiHiIh4iJeYiIiIiIiIiYiHiIiHmImIiIiIeHiJiIeIiIh4eIiIiIiHiIiYiImImIiIh4iIiHiIh5iIiIiIiIiIiIiIiIiIiIh3mYiIeIiHiIiIiIiJmIiIiIiIeIiIiIiIiHiIiJiIiHiIiIiIiIiIiImIiIiIiIh4iIiIiIeIiIiIiIiIiIiIiHiIiIh4mIh4mImIiIiIiIh4h4iIl3iIiImJiHiIiIiHiJh4iIiIiImIiImIiIiYiIiIh4iYiJiIiIiImIh4iIiIiIiHiIiIiIiIh4iImIiIiYeIiIeHiIiYeHiIeIiIeIiIiIiIiIiIeZiIeYiIh4h4eHiIiJiIeIeHiHiIiIiHiIiIiIiIiIh4iYiHiIiIiIiIiYiIiIeIiHh4iIiId4iHmIiIiIiIiHh4iIiIeIl4mIiIiIiIiIiIiIiJiHiIiIiIiIiIiIiIiHiIiYeIiImIiIiIiIiJiIiHh4eIiIiIiYiIiIeIiIiIiIiIiHiIiHiIiIiIiIh4h4h4iIiHeIiIeIiIiImIiHd4mIiJiIiJiJiJd4iHiYmIiYiYiIh4iIiIeIiHiIiIiYiImIiIiIiIiIh3iHd3iIiImYeIiImIiIiIh4eIeHeYiIl4iIiIh4iHiIh4iIiIiIiIiHiIeIeYiIiIeIiIiJiIiIiIiIh4eIiIiZh3iIiIiIiIiIeIiIh4iIiIiIiIiHd4iIiIiImIiIiIiIh4iYiYiIiHiIiIiIiIiJiIiHiIiIiIiYeYiYiJiJiXiIiHiIiIh4mHd5iIiZiJiJiYiIiIiIiIiIiIiYeIeHiIiIiIiJmJiIiIh4iIiIiIiIiIiIiIiIiIiIiIh4l4iIiIiIiIiYeJiIeIeJiIiIiIiIiHiIl4eImIiJiIh4eYiHiIiIiIiIiImYiIiIiIiIiIiIiIiJiIiIiIiIeIiId4iYiIiIiJh4iHiIiHiIiImIiIiHiIiImIiIiIiIiJmHiIiIiIiIh3h5d5iIiIiIeHiIiIiIiId4eIiIiIiIiIiYiIiIiIiJiIiIeIiIiHmIiIiIl4iIiHiIiIiIiIiIeJmIiIiHiIeIh4iIiIiIiIiIiYiJiJiIiIiIiIiIiIeIiIiIiId4iIiIh3iIh3iIh4iIeIiHeIiYiIiIiIiIiIh4eIiIiIeHiIh4iXiImIiYeYmIiIiHiIh4l4h3h4iIh4iJd4iHmIeIeHiIiHiIiIiIiIiHmIh4iYiJl4iJiJh4iIiImIeIiHiIh4iIiHiIiIiJh4iIiIiIiYiId4iIiHiIh4iHiIiIiIiIh4h4h4iIiYiIiIiIiIiHiImIeIiYiIiIiIiIiIiHiJiIiIh4iIiIh4iIeIiIiIiHiIiJiIeIiImHiJiIiIiHmIiIiIiIh4iIiIiIiIh4iIh4iIiIh4iIiIiIiIiIiHh4h4iIiIiIiIiYh4eImIiIiHiIh5iIiIiIiJiIiIiYiIiIeYiHiIiIiIiIiImIiJh4iHiIeJiHiIiIeHiIiIiHiIiIeIh4iHiId3iImHeIeIh4mIiIiIiIeIiIiJiIiIiIiYiIiIiIiHiIiJeIiIeImIiJiIiIiIiImIiIeIiJiIiIiIiJh4iIiIh4iYeYiIiIiIiIiHiImIiId4iIiIiHmJiIiIiIiHiXiIiIiIiIiZeYiIiHiIiYiIiIiIiIiIiIiIiIiJiIiYiXiIh3h4iIiIiIiYd4iIiIiIiJiHiIiIiIiIeImHiImIiIiIiIiIiIh4iHiHiHeIiIiIiIiImIiImYiIiIiIiYiIiHmYeJiImYiIeIeIiJiIiYiYmIiJiIiIiYmIiIl4iImIiIiJiIiIiIiHiIiIiIiIiIiIiIiIiImIiIiImIiIiIiIiIiIh4h4iIiIiIh4iHiIiHiIiIiYiIl4iIiIh4iJh4iIiIiIiIh4iIiIeZeIh4h4iIh3eHiIiJiIiIiIh4iIiIiIiIiIiIeIiIiIiIiIiIiImIiIiIiIh4iJiIiIiIiHiIeIiIiIiIiIiIiIiXiIiIiIiIeIiIiJh4h3iIiHiYmJiIeIiIiIh2qYmYd3mZmYmKZ4l4iYmXiWmJl4iHl4apmIlpl5loaaiamZd6aKiYmniHmYeIaYiHqZqJmZVneXiIaJZ3mVd3ead5mJiZiGVXmHaHiWiYlqmod4mXiWhmiJiYtneJh3qoepd4dpmJmnhoiWd3l5mohXd5eYh5h5Z5aXaKd5qZeJh3moeohpmXeGqHiZeHd3mql6l4h4iImZiXqqmZl2eYaIlqeImJqImnl5mmiYd4ipl3l3iIiHmWmZl5aWepl4h3eYl4iWimeIiJiJeHiHh7pZeHmIZ3qWmIaJuYmIhoh3iXmJiWdoiKiaaJh4h3d4mHeWl5l6l3aJaHeJmIl4iJiXl3lmiJeXhph5h5mYmJhneHhpiJeZloeXmZZ6iXp6eKmXd4mnmWaHpomYiGiZiYeWmZZoeXmYmVeah3mJmIlplpeJmGl4mXmIdYiZl4l4qZqHmYiJmHqZZpeHiZd5h3Z4";
+
+  // src/rune-model.js
+  var encodedWeights = atob(base64_encoded_model_default);
+  var modelParams = [];
+  for (let i = 0; i < 0 + 1 * encodedWeights.length; i++) {
+    const a = encodedWeights.charCodeAt(i);
+    modelParams.push(((a & 15) - 8) * 2.2 / 16, ((a >> 4 & 15) - 8) * 2.2 / 16);
+  }
+  function linearReluLayer(data, modelParams2, numOutputs, numInputs, x0, y0, span, stride, weightOffset, biasOffset) {
+    const outputs = new Array(numOutputs);
+    for (let i = 0; i < numOutputs; i++) {
+      let acc = 0;
+      for (let j = 0; j < numInputs; j++) {
+        const inputIndex = y0 + j % span + stride * (x0 + Math.floor(j / span));
+        const weightIndex = weightOffset + i * numInputs + j;
+        acc += modelParams2[weightIndex] * data[inputIndex];
+      }
+      const biasIndex = i + biasOffset + weightOffset;
+      outputs[i] = Math.max(0, modelParams2[biasIndex] + acc);
+    }
+    return outputs;
+  }
+  function layerNorm(t) {
+    const mean = t.reduce((acc, val) => acc + val, 0) / t.length;
+    const variance = t.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / t.length;
+    return t.map((val) => (val - mean) / Math.sqrt(variance + 1e-3));
+  }
+  function classify(data) {
+    const BASE_PATCH = 7 * 7;
+    const PATCH_FEATURES = 34;
+    const PATCH_FEATURES_DEEP = 25;
+    const NUM_CLASSES = 7;
+    x11 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x12 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x13 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x14 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 0, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x21 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x22 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x23 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x24 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 7, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x31 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x32 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x33 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x34 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 14, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x41 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 0, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x42 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 7, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x43 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 14, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    x44 = layerNorm(linearReluLayer(data, modelParams, PATCH_FEATURES, BASE_PATCH, 21, 21, 7, 28, 0, BASE_PATCH * PATCH_FEATURES));
+    y11 = layerNorm(linearReluLayer(
+      x11.concat(x12, x21, x22),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    ));
+    y12 = layerNorm(linearReluLayer(
+      x13.concat(x14, x23, x24),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    ));
+    y21 = layerNorm(linearReluLayer(
+      x31.concat(x32, x41, x42),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    ));
+    y22 = layerNorm(linearReluLayer(
+      x33.concat(x34, x43, x44),
+      modelParams,
+      PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES,
+      4 * PATCH_FEATURES * PATCH_FEATURES_DEEP
+    ));
+    z = linearReluLayer(
+      y11.concat(y12, y21, y22),
+      modelParams,
+      NUM_CLASSES,
+      4 * PATCH_FEATURES_DEEP,
+      0,
+      0,
+      1e3,
+      0,
+      BASE_PATCH * PATCH_FEATURES + PATCH_FEATURES + 4 * PATCH_FEATURES * PATCH_FEATURES_DEEP + PATCH_FEATURES_DEEP,
+      4 * PATCH_FEATURES_DEEP * NUM_CLASSES
+    );
+    return z;
+  }
+
+  // src/spell-caster.js
+  function SpellCaster() {
+    const scaledCanvas = document.createElement("canvas");
+    const scaledCtx = scaledCanvas.getContext("2d");
+    document.body.appendChild(scaledCanvas);
+    scaledCanvas.style.position = "fixed";
+    scaledCanvas.style.top = "10px";
+    scaledCanvas.style.left = "10px";
+    scaledCanvas.style.border = "1px solid red";
+    scaledCanvas.width = 28;
+    scaledCanvas.height = 28;
+    const grayscaleArray = new Array(28 * 28);
+    const mapping = {
+      0: "garbage",
+      1: "circle",
+      2: "triangle",
+      3: "bolt",
+      4: "wave",
+      5: "caret",
+      6: "hourglass"
+    };
+    const colorMap = {
+      0: [0.4, 0.4, 0.4],
+      1: [1, 0.65, 0.3],
+      2: [0.3, 0.65, 1],
+      3: [1, 1, 0.1],
+      4: [0.3, 1, 0.65],
+      5: [1, 0.1, 1],
+      6: [1, 1, 1]
+    };
+    const lines = [];
+    let isDrawing = false;
+    let selectedLines = [];
+    let selectedClass = -1;
+    let timeSinceSelect = 0;
+    function onMouseDown(evt) {
+      selectedClass = -1;
+      lines.length = 0;
+      lines.push([evt.clientX, evt.clientY]);
+      isDrawing = true;
+    }
+    function onMouseMove(evt) {
+      if (isDrawing && lines.length > 0) {
+        const latestPt = lines[lines.length - 1];
+        let dx = evt.clientX - latestPt[0];
+        let dy = evt.clientY - latestPt[1];
+        if (dx * dx + dy * dy > 20) {
+          lines.push([evt.clientX, evt.clientY]);
+          classifyDrawing();
+        }
+      }
+    }
+    function onMouseUp(evt) {
+      selectedClass = classifyDrawing();
+      selectedLines = JSON.parse(JSON.stringify(lines));
+      timeSinceSelect = 0;
+      lines.length = 0;
+      isDrawing = false;
+    }
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    function classifyDrawing() {
+      let mins = [Infinity, Infinity];
+      let maxs = [-Infinity, -Infinity];
+      lines.map((pt) => {
+        mins[0] = Math.min(pt[0], mins[0]);
+        mins[1] = Math.min(pt[1], mins[1]);
+        maxs[0] = Math.max(pt[0], maxs[0]);
+        maxs[1] = Math.max(pt[1], maxs[1]);
+      });
+      let normalizeLines = [];
+      const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 100);
+      const tracker = {};
+      let topPred = 0;
+      let topVal = 0;
+      for (let i = 0; i < 20; i++) {
+        normalizeLines = [];
+        const SKX = Math.random() * 3 + 16;
+        const SKY = Math.random() * 3 + 16;
+        lines.map((pt) => {
+          normalizeLines.push([
+            (pt[0] - (maxs[0] + mins[0]) / 2) / size * SKX,
+            (pt[1] - (maxs[1] + mins[1]) / 2) / size * SKY
+          ]);
+        });
+        scaledCtx.setTransform(1, 0, 0, 1, 0, 0);
+        scaledCtx.clearRect(0, 0, 28, 28);
+        scaledCtx.strokeStyle = "white";
+        scaledCtx.lineWidth = Math.random() * 0.5 + 1.3;
+        scaledCtx.lineJoin = "round";
+        scaledCtx.lineCap = "round";
+        scaledCtx.setTransform(
+          1 + (Math.random() - 0.5) * 0.1,
+          (Math.random() - 0.5) * 0.1,
+          (Math.random() - 0.5) * 0.1,
+          1 + (Math.random() - 0.5) * 0.1,
+          (Math.random() - 0.5) * 2 + 14,
+          (Math.random() - 0.5) * 2 + 14
+        );
+        renderLines(scaledCtx, normalizeLines);
+        const scaledImage = scaledCtx.getImageData(0, 0, 28, 28);
+        const pixelData = scaledImage.data;
+        for (let i2 = 0; i2 < pixelData.length; i2 += 4) {
+          grayscaleArray[i2 >> 2] = pixelData[i2] / 255;
+        }
+        const z2 = classify(grayscaleArray);
+        const argmax = (arr) => arr.reduce((iMax, x, i2, arr2) => x > arr2[iMax] ? i2 : iMax, 0);
+        const prediction = argmax(z2);
+        if (tracker[prediction] === void 0) {
+          tracker[prediction] = 0;
+        }
+        tracker[prediction] += prediction == 0 ? 1 : 2;
+        const v = tracker[prediction];
+        if (v > topVal) {
+          topVal = v;
+          topPred = prediction;
+        }
+      }
+      console.log(Object.keys(tracker).map((k) => {
+        return `${mapping[parseInt(k)]}: ${tracker[k]}`;
+      }));
+      return topPred;
+    }
+    function render(ctx2) {
+      if (isDrawing) {
+        ctx2.strokeStyle = "white";
+        ctx2.lineWidth = 20;
+        renderLines(ctx2, lines);
+      }
+      if (selectedClass != -1) {
+        const classLabel = mapping[selectedClass];
+        ctx2.fillStyle = "#fff";
+        ctx2.textAlign = "center";
+        ctx2.font = "bold 48px arial";
+        ctx2.fillText(classLabel, canvas.width / 2, 100);
+        const p = Math.exp(-timeSinceSelect * 3) * 2;
+        const c = colorMap[selectedClass];
+        ctx2.strokeStyle = `rgba(${p * c[0] * 255}, ${p * c[1] * 255}, ${p * c[2] * 255}, ${p * 0.6})`;
+        ctx2.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect * 5)) * 80;
+        renderLines(ctx2, selectedLines);
+        ctx2.strokeStyle = `rgba(${p * c[0] * 300}, ${p * c[1] * 300}, ${p * c[2] * 300}, ${p})`;
+        ctx2.lineWidth = 20;
+        renderLines(ctx2, selectedLines);
+      }
+    }
+    function update(dT) {
+      timeSinceSelect += dT;
+      if (selectedClass != -1 && timeSinceSelect < 5) {
+        selectedLines.map((pt, i) => {
+          pt[0] += Math.cos(timeSinceSelect * 3 + 0.2 * i) * 24 * dT;
+          pt[1] += Math.sin(timeSinceSelect * 3 + 0.2 * i) * 24 * dT;
+        });
+      }
+    }
+    return {
+      update,
+      render
+    };
+  }
+  var spell_caster_default = SpellCaster;
+
+  // src/main.js
+  function initialize() {
+    add(spell_caster_default());
+  }
+  initialize();
+})();
+</script>

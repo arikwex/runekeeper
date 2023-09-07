@@ -74,8 +74,8 @@ def train(args, model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
-        # loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        # loss = F.mse_loss(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
+        loss = F.binary_cross_entropy(output, F.one_hot(target, num_classes=NUM_CLASSES).to(torch.float32))
         # loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -253,6 +253,22 @@ class RuneDataset(Dataset):
         data = self.all_data[idx]
         return (self.transform(data['image']), data['category'], )
 
+class RandomHorizontalStretch(transforms.RandomAffine):
+    def __init__(self, stretch_range=(0.7, 1.0), **kwargs):
+        angle = 0
+        translate = (0, 0)
+        scale = (stretch_range[0], 1.0)
+        shear = 0
+        super().__init__(angle, translate, scale, shear, **kwargs)
+
+class RandomVerticalStretch(transforms.RandomAffine):
+    def __init__(self, stretch_range=(0.7, 1.0), **kwargs):
+        angle = 0
+        translate = (0, 0)
+        scale = (1.0, stretch_range[0])
+        shear = 0
+        super().__init__(angle, translate, scale, shear, **kwargs)
+
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
@@ -293,7 +309,7 @@ def main():
         transforms.RandomAffine(
             degrees=(-17, 17),
             translate=(0.04, 0.04),
-            scale=(0.85, 1.0),
+            scale=(0.8, 1.0),
             interpolation=transforms.InterpolationMode.BILINEAR
         )
     ])

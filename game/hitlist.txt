@@ -1,5 +1,34 @@
-Make garbage small part of dataset to encourage success.
+HITLIST
+=======
 
+- Render arena / grid
+- Render mage character
+- Render knight character
+- Render spellcasting slab
+- Render rune game objects
+- Rune objects "toss" into scene
+- Each sigil draw increment game tick
+- Showcase current rune sequence
+
+
+
+# Core symbols:
+- Fire Rune (circle)
+- Earth Rune (bolt)
+- Ice Rune (ice)
+- Life Rune (triangle)
+- Wind Rune (wave)
+- Time Rune (hourglass)
+
+# Core game concept / mechanics:
+- Always have one rune on the arena per symbol you've learned
+- Rune selector + element -> basic cast
+- Rune selector + modifier + (modifier | element) -> advanced cast
+
+
+
+### The past
+Make garbage small part of dataset to encourage success.
 
 - Select new glyphs for problematic symbols
 - Remove abilities if needed
@@ -8,7 +37,6 @@ Problems:
 - Tornado => Really struggling
 - Fireball / Ice => Maybe too similar
 - Meteor is struggling
-
 
 Ideas:
 REMOVE:

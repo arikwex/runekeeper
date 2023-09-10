@@ -2,14 +2,14 @@ import { canvas, renderLines, retainTransform } from "./canvas";
 import { LIGHT_BROWN, TAN } from "./color";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 
-const runeOrder = [
-    CARET_RUNE,
-    CIRCLE_RUNE,
-    BOLT_RUNE,
-    TRIANGLE_RUNE,
-    WAVE_RUNE,
-    HOURGLASS_RUNE,
-];
+// const runeOrder = [
+//     CARET_RUNE,
+//     CIRCLE_RUNE,
+//     BOLT_RUNE,
+//     TRIANGLE_RUNE,
+//     WAVE_RUNE,
+//     HOURGLASS_RUNE,
+// ];
 
 function GameArena() {
 
@@ -32,20 +32,20 @@ function GameArena() {
         }
         ctx.stroke();
 
-        for (let i = 0; i < 6; i++) {
-            ctx.strokeStyle = TAN;
-            ctx.lineWidth = 4;
-            retainTransform(() => {
-                ctx.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
-                ctx.scale(1.5, 1.5);
-                renderLines(ctx, runeOrder[i]);
-            });
-            retainTransform(() => {
-                ctx.translate(SIZE / 2 + SIZE * i, SIZE * 6.5);
-                ctx.scale(1.5, 1.5);
-                renderLines(ctx, runeOrder[i]);
-            });
-        }
+        // for (let i = 0; i < 6; i++) {
+        //     ctx.strokeStyle = TAN;
+        //     ctx.lineWidth = 4;
+        //     retainTransform(() => {
+        //         ctx.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
+        //         ctx.scale(1.5, 1.5);
+        //         renderLines(ctx, runeOrder[i]);
+        //     });
+        //     retainTransform(() => {
+        //         ctx.translate(SIZE / 2 + SIZE * i, SIZE * 6.5);
+        //         ctx.scale(1.5, 1.5);
+        //         renderLines(ctx, runeOrder[i]);
+        //     });
+        // }
     }
 
     function update(dT) {

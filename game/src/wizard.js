@@ -1,12 +1,31 @@
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
-import { BLACK, LIGHT_PURPLE, PURPLE, WHITE } from "./color";
+import { BLACK, DARK_GRAY, GRAY, LIGHT_PURPLE, MID_GRAY, PURPLE, WHITE } from "./color";
 
 function Wizard() {
     let anim = 0;
 
     function render(ctx) {
         retainTransform(() => {
-            ctx.translate(-120, 240);
+            // Tower
+            ctx.translate(-120, 160);
+            ctx.fillStyle = GRAY;
+            ctx.strokeStyle = DARK_GRAY;
+            ctx.lineWidth = 10;
+            
+            for (let i = 0; i < 4; i++) {
+                ctx.translate(0, 20);
+                renderAndFill(ctx, [[-30, 0], [-15, 10], [-15, 30], [-30, 20]]);
+                renderAndFill(ctx, [[-15, 10], [15, 10], [30, 0], [30, 20], [15, 30], [-15, 30]]);
+                ctx.translate(0, 20);
+                renderAndFill(ctx, [[-30, 0], [-15, 10], [15, 10], [15, 30], [-15, 30], [-30, 20]]);
+                renderAndFill(ctx, [[15, 10], [30, 0], [30, 20], [15, 30]]);
+            }
+            ctx.translate(0, -143);
+            ctx.fillStyle = MID_GRAY;
+            renderAndFill(ctx, [[-30, 0], [-15, 10], [15, 10], [30, 0], [15, -10], [-15, -10]]);
+
+            // Wizard
+            ctx.translate(3, -2);
             // Torso
             ctx.fillStyle = BLACK;
             ctx.strokeStyle = BLACK;

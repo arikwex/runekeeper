@@ -123,6 +123,8 @@
   var PURPLE = "#683492";
   var BLACK = "#000";
   var DARK_GRAY = "#474747";
+  var GRAY = "#777";
+  var MID_GRAY = "#a4a4a4";
   var WHITE = "#fff";
 
   // src/runes.js
@@ -491,7 +493,22 @@
     let anim = 0;
     function render(ctx2) {
       retainTransform(() => {
-        ctx2.translate(-120, 240);
+        ctx2.translate(-120, 160);
+        ctx2.fillStyle = GRAY;
+        ctx2.strokeStyle = DARK_GRAY;
+        ctx2.lineWidth = 10;
+        for (let i = 0; i < 4; i++) {
+          ctx2.translate(0, 20);
+          renderAndFill(ctx2, [[-30, 0], [-15, 10], [-15, 30], [-30, 20]]);
+          renderAndFill(ctx2, [[-15, 10], [15, 10], [30, 0], [30, 20], [15, 30], [-15, 30]]);
+          ctx2.translate(0, 20);
+          renderAndFill(ctx2, [[-30, 0], [-15, 10], [15, 10], [15, 30], [-15, 30], [-30, 20]]);
+          renderAndFill(ctx2, [[15, 10], [30, 0], [30, 20], [15, 30]]);
+        }
+        ctx2.translate(0, -143);
+        ctx2.fillStyle = MID_GRAY;
+        renderAndFill(ctx2, [[-30, 0], [-15, 10], [15, 10], [30, 0], [15, -10], [-15, -10]]);
+        ctx2.translate(3, -2);
         ctx2.fillStyle = BLACK;
         ctx2.strokeStyle = BLACK;
         ctx2.lineWidth = 4;

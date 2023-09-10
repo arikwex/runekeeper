@@ -1,4 +1,13 @@
 <html><title>Runekeeper</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(() => {
+  // src/bus.js
+  var HANDLES = {};
+  function on(e, handler) {
+    (HANDLES[e] || (HANDLES[e] = [])).push(handler);
+  }
+  function emit(e, data) {
+    (HANDLES[e] || []).map((handler) => handler(data));
+  }
+
   // src/canvas.js
   var canvas = document.getElementsByTagName("canvas")[0];
   canvas.width = innerWidth;
@@ -186,7 +195,11 @@
   }
   var game_arena_default = GameArena;
 
+  // src/events.js
+  var SIGIL_DRAWN = 0;
+
   // src/rune-stone.js
+  var ORDER_REMAP = { 5: 0, 1: 1, 3: 2, 2: 3, 4: 4, 6: 5 };
   function RuneStone() {
     let anim = 0;
     let cx = 0;
@@ -270,9 +283,6 @@
           anim = 0;
         }
       }
-      if (state == IDLE && timeInState > 0.5) {
-        moveToDest(Math.floor(Math.random() * 6), Math.floor(Math.random() * 6));
-      }
     }
     function moveToDest(x, y) {
       originCX = cx;
@@ -282,6 +292,14 @@
       state = MOVING;
       timeInState = 0;
     }
+    function onSigilDrawn(idx) {
+      if (idx == 0) {
+        return;
+      }
+      const m = ORDER_REMAP[idx];
+      moveToDest(m, m);
+    }
+    on(SIGIL_DRAWN, onSigilDrawn);
     return {
       update,
       render
@@ -458,7 +476,6 @@
         }
         if (dx * dx + dy * dy > 20) {
           lines.push([evt.clientX, evt.clientY]);
-          classifyDrawing();
         }
       }
     }
@@ -472,6 +489,7 @@
       timeSinceSelect = 0;
       lines.length = 0;
       isDrawing = false;
+      emit(SIGIL_DRAWN, selectedClass);
     }
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
@@ -540,9 +558,6 @@
           topPred = prediction;
         }
       }
-      console.log(Object.keys(tracker).map((k) => {
-        return `${mapping[parseInt(k)]}: ${tracker[k]}`;
-      }));
       return topPred;
     }
     function render(ctx2) {
@@ -559,11 +574,6 @@
           renderLines(ctx2, lines);
         }
         if (selectedClass != -1) {
-          const classLabel = mapping[selectedClass];
-          ctx2.fillStyle = "#fff";
-          ctx2.textAlign = "center";
-          ctx2.font = "bold 48px arial";
-          ctx2.fillText(classLabel, canvas.width / 2, 100);
           const p = Math.exp(-timeSinceSelect * 3) * 2;
           const c = colorMap[selectedClass];
           ctx2.strokeStyle = `rgba(${c[0] * 255}, ${c[1] * 255}, ${c[2] * 255}, ${p * 0.6})`;

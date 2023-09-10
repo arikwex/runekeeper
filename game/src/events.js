@@ -1,0 +1,1 @@
+export const SIGIL_DRAWN = 0;

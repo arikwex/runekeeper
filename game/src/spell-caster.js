@@ -1,5 +1,7 @@
+import { emit } from './bus';
 import { canvas, renderLines, retainTransform } from './canvas';
 import { BLACK, DARK_GRAY } from './color';
+import { SIGIL_DRAWN } from './events';
 import { classify } from './rune-model';
 
 function SpellCaster() {    
@@ -68,7 +70,7 @@ function SpellCaster() {
             // If dragged far enough, register new point
             if (dx * dx + dy * dy > 20) {
                 lines.push([evt.clientX, evt.clientY]);
-                classifyDrawing();
+                // classifyDrawing();
             }
         }
     }
@@ -83,6 +85,7 @@ function SpellCaster() {
         timeSinceSelect = 0;
         lines.length = 0;
         isDrawing = false;
+        emit(SIGIL_DRAWN, selectedClass);
     }
 
     window.addEventListener('mousedown', onMouseDown);
@@ -163,7 +166,7 @@ function SpellCaster() {
                 topPred = prediction;
             }
         }
-        console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
+        // console.log(Object.keys(tracker).map((k) => { return `${mapping[parseInt(k)]}: ${tracker[k]}`; }));
         // console.log(mapping[argmax(z)], z);
         // const keys = Object.keys(tracker);
         // for (let i = 0; i < keys.length; i++) {
@@ -193,11 +196,11 @@ function SpellCaster() {
             }
 
             if (selectedClass != -1) {
-                const classLabel = mapping[selectedClass];
-                ctx.fillStyle = '#fff';
-                ctx.textAlign = 'center';
-                ctx.font = 'bold 48px arial';
-                ctx.fillText(classLabel, canvas.width/2, 100);
+                // const classLabel = mapping[selectedClass];
+                // ctx.fillStyle = '#fff';
+                // ctx.textAlign = 'center';
+                // ctx.font = 'bold 48px arial';
+                // ctx.fillText(classLabel, canvas.width/2, 100);
 
                 // Pulse
                 const p = Math.exp(-timeSinceSelect*3)*2;

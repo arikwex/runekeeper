@@ -1,6 +1,10 @@
+import { on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY } from "./color";
+import { SIGIL_DRAWN } from "./events";
 import { CARET_RUNE, TRIANGLE_RUNE } from "./runes";
+
+const ORDER_REMAP = { 5:0, 1:1, 3:2, 2:3, 4:4, 6:5 };
 
 function RuneStone() {
     let anim = 0;
@@ -102,9 +106,9 @@ function RuneStone() {
             }
         }
 
-        if (state == IDLE && timeInState > 0.5) {
-            moveToDest(Math.floor(Math.random() * 6), Math.floor(Math.random() * 6));
-        }
+        // if (state == IDLE && timeInState > 0.5) {
+        //     moveToDest(Math.floor(Math.random() * 6), Math.floor(Math.random() * 6));
+        // }
     }
 
     function moveToDest(x, y) {
@@ -115,6 +119,16 @@ function RuneStone() {
         state = MOVING;
         timeInState = 0;
     }
+
+    function onSigilDrawn(idx) {
+        if (idx == 0) {
+            return;
+        }
+        const m = ORDER_REMAP[idx]
+        moveToDest(m, m);
+    }
+
+    on(SIGIL_DRAWN, onSigilDrawn);
 
     return {
         update,

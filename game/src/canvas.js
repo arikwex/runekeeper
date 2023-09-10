@@ -22,7 +22,7 @@ function retainTransform(fn) {
     ctx.setTransform(xfm);
 }
 
-function renderLines(ctx, lines) {
+function renderLines(ctx, lines, close=false) {
     ctx.beginPath();
     lines.map((pt, i) => {
         if (i == 0) {
@@ -31,7 +31,15 @@ function renderLines(ctx, lines) {
             ctx.lineTo(pt[0], pt[1]);
         }
     });
+    if (close){
+        ctx.closePath();
+    }
     ctx.stroke();
+}
+
+function renderAndFill(ctx, lines) {
+    renderLines(ctx, lines, true);
+    ctx.fill();
 }
 
 // Favicon
@@ -53,4 +61,5 @@ export {
     renderText,
     retainTransform,
     renderLines,
+    renderAndFill,
 };

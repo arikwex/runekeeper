@@ -1,5 +1,5 @@
 import { canvas, renderLines, retainTransform } from './canvas';
-import COLORS from './color';
+import { BLACK, DARK_GRAY } from './color';
 import { classify } from './rune-model';
 
 function SpellCaster() {    
@@ -180,9 +180,9 @@ function SpellCaster() {
         // Casting zone
         retainTransform(() => {
             ctx.setTransform(1,0,0,1,0,0);
-            ctx.fillStyle = COLORS.DARK_GRAY;
+            ctx.fillStyle = DARK_GRAY;
             ctx.fillRect(0, canvas.height * 0.65, canvas.width, canvas.height * 0.36);
-            ctx.strokeStyle = COLORS.BLACK;
+            ctx.strokeStyle = BLACK;
             ctx.lineWidth = 10;
             renderLines(ctx, [[0, canvas.height * 0.65], [canvas.width, canvas.height * 0.65]]);
 

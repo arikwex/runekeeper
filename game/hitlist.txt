@@ -1,15 +1,13 @@
 HITLIST
 =======
 
-- Render arena / grid
 - Render mage character
+- In-grid rune object to command around in the scene
 - Render knight character
-- Render spellcasting slab
 - Render rune game objects
-- Rune objects "toss" into scene
 - Each sigil draw increment game tick
 - Showcase current rune sequence
-
+- Improve / give love to spellcasting slab
 
 
 # Core symbols:

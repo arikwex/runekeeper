@@ -1,5 +1,5 @@
 import { canvas, renderLines, retainTransform } from "./canvas";
-import COLORS from "./color";
+import { LIGHT_BROWN, TAN } from "./color";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 
 const runeOrder = [
@@ -16,11 +16,11 @@ function GameArena() {
     function render(ctx) {
         retainTransform(() => {
             ctx.setTransform(1,0,0,1,0,0);
-            ctx.fillStyle = COLORS.TAN;
+            ctx.fillStyle = LIGHT_BROWN;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         });
 
-        ctx.strokeStyle = COLORS.LIGHT_BROWN;
+        ctx.strokeStyle =  TAN;
         ctx.lineWidth = 4;
         ctx.beginPath();
         const SIZE = 80;
@@ -33,7 +33,7 @@ function GameArena() {
         ctx.stroke();
 
         for (let i = 0; i < 6; i++) {
-            ctx.strokeStyle = 'black';
+            ctx.strokeStyle = TAN;
             ctx.lineWidth = 4;
             retainTransform(() => {
                 ctx.translate(-SIZE / 2, SIZE / 2 + SIZE * i);

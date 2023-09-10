@@ -14,7 +14,7 @@
     fn();
     ctx.setTransform(xfm);
   }
-  function renderLines(ctx2, lines) {
+  function renderLines(ctx2, lines, close = false) {
     ctx2.beginPath();
     lines.map((pt, i) => {
       if (i == 0) {
@@ -23,7 +23,14 @@
         ctx2.lineTo(pt[0], pt[1]);
       }
     });
+    if (close) {
+      ctx2.closePath();
+    }
     ctx2.stroke();
+  }
+  function renderAndFill(ctx2, lines) {
+    renderLines(ctx2, lines, true);
+    ctx2.fill();
   }
   var favicon = document.createElement("canvas");
   favicon.width = favicon.height = 64;
@@ -53,7 +60,7 @@
       canvas.width / 800,
       canvas.height / 1100
     );
-    ctx.setTransform(zoom, 0, 0, zoom, canvas.width / 2 - 80 * 6 * 0.5 * zoom, canvas.height * 0.3 - 80 * 6 * 0.5 * zoom);
+    ctx.setTransform(zoom, 0, 0, zoom, canvas.width / 2 - 190 * zoom, canvas.height * 0.3 - 80 * 6 * 0.5 * zoom);
     retainTransform(() => {
       const camera = getObjectsByTag(TAG_CAMERA)[0];
       if (camera) {
@@ -111,17 +118,12 @@
   requestAnimationFrame(tick);
 
   // src/color.js
-  var COLORS = {
-    TAN: "#f2e5a5",
-    LIGHT_BROWN: "#dbad81",
-    BLACK: "#000",
-    DARK_GRAY: "#474747",
-    GRAY: "#777",
-    MID_GRAY: "#a4a4a4",
-    LIGHT_GRAY: "#cbcbcb",
-    WHITE: "#fff"
-  };
-  var color_default = COLORS;
+  var TAN = "#f2e5a5";
+  var LIGHT_BROWN = "#dbad81";
+  var PURPLE = "#683492";
+  var BLACK = "#000";
+  var DARK_GRAY = "#474747";
+  var WHITE = "#fff";
 
   // src/runes.js
   var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
@@ -144,10 +146,10 @@
     function render(ctx2) {
       retainTransform(() => {
         ctx2.setTransform(1, 0, 0, 1, 0, 0);
-        ctx2.fillStyle = color_default.TAN;
+        ctx2.fillStyle = LIGHT_BROWN;
         ctx2.fillRect(0, 0, canvas.width, canvas.height);
       });
-      ctx2.strokeStyle = color_default.LIGHT_BROWN;
+      ctx2.strokeStyle = TAN;
       ctx2.lineWidth = 4;
       ctx2.beginPath();
       const SIZE = 80;
@@ -159,7 +161,7 @@
       }
       ctx2.stroke();
       for (let i = 0; i < 6; i++) {
-        ctx2.strokeStyle = "black";
+        ctx2.strokeStyle = TAN;
         ctx2.lineWidth = 4;
         retainTransform(() => {
           ctx2.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
@@ -441,9 +443,9 @@
     function render(ctx2) {
       retainTransform(() => {
         ctx2.setTransform(1, 0, 0, 1, 0, 0);
-        ctx2.fillStyle = color_default.DARK_GRAY;
+        ctx2.fillStyle = DARK_GRAY;
         ctx2.fillRect(0, canvas.height * 0.65, canvas.width, canvas.height * 0.36);
-        ctx2.strokeStyle = color_default.BLACK;
+        ctx2.strokeStyle = BLACK;
         ctx2.lineWidth = 10;
         renderLines(ctx2, [[0, canvas.height * 0.65], [canvas.width, canvas.height * 0.65]]);
         if (isDrawing) {
@@ -484,9 +486,43 @@
   }
   var spell_caster_default = SpellCaster;
 
+  // src/wizard.js
+  function Wizard() {
+    let anim = 0;
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate(-120, 240);
+        ctx2.fillStyle = BLACK;
+        ctx2.strokeStyle = BLACK;
+        ctx2.lineWidth = 4;
+        const squeeze = -Math.cos(anim * 10) * 0.05 + 0.95;
+        renderAndFill(ctx2, [[-20 * squeeze, 0], [12 * squeeze, 0], [1 * squeeze, -30], [-10 * squeeze, -10]]);
+        ctx2.fillStyle = PURPLE;
+        ctx2.strokeStyle = PURPLE;
+        ctx2.translate(0, -23 + Math.abs(Math.sin(anim * 5) * 2.5));
+        ctx2.rotate(Math.sin(anim * 10 - 1) * 0.06);
+        renderAndFill(ctx2, [[-20, 2], [-10, -1], [13, 0], [20, 4], [17, 0], [12, -5], [7, -13], [0, -23], [-10, -29], [-21, -20], [-12, -22], [-6, -10]]);
+        ctx2.lineWidth = 7;
+        ctx2.strokeStyle = WHITE;
+        renderLines(ctx2, [[8, -4], [8.01, -4]]);
+        renderLines(ctx2, [[-1, -4], [-1.01, -4]]);
+        renderLines(ctx2, [[2, -11], [2.01, -11]]);
+      });
+    }
+    function update(dT) {
+      anim += dT;
+    }
+    return {
+      update,
+      render
+    };
+  }
+  var wizard_default = Wizard;
+
   // src/main.js
   function initialize() {
     add(game_arena_default());
+    add(wizard_default());
     add(spell_caster_default());
   }
   initialize();

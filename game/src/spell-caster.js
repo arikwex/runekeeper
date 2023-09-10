@@ -1,4 +1,5 @@
-import { canvas, renderLines } from './canvas';
+import { canvas, renderLines, retainTransform } from './canvas';
+import COLORS from './color';
 import { classify } from './rune-model';
 
 function SpellCaster() {    
@@ -36,18 +37,34 @@ function SpellCaster() {
     let selectedClass = -1;
     let timeSinceSelect = 0;
 
+    function touchifyEvent(evt) {
+        const touches = evt.changedTouches;
+        if (touches) {
+            evt.clientX = touches[0].clientX;
+            evt.clientY = touches[0].clientY;
+        }
+    }
+
     function onMouseDown(evt) {
+        touchifyEvent(evt);
         selectedClass = -1;
+        if (evt.clientY < canvas.height * 0.65 - 5) {
+            return;
+        }
         lines.length = 0;
         lines.push([evt.clientX, evt.clientY]);
         isDrawing = true;
     }
 
     function onMouseMove(evt) {
+        touchifyEvent(evt);
         if (isDrawing && lines.length > 0) {
             const latestPt = lines[lines.length - 1];
             let dx = evt.clientX - latestPt[0];
             let dy = evt.clientY - latestPt[1];
+            if (evt.clientY < canvas.height * 0.65 - 5) {
+                return;
+            }
             // If dragged far enough, register new point
             if (dx * dx + dy * dy > 20) {
                 lines.push([evt.clientX, evt.clientY]);
@@ -57,6 +74,7 @@ function SpellCaster() {
     }
 
     function onMouseUp(evt) {
+        touchifyEvent(evt);
         selectedClass = classifyDrawing();
         selectedLines = JSON.parse(JSON.stringify(lines));
         timeSinceSelect = 0;
@@ -67,6 +85,9 @@ function SpellCaster() {
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('touchstart', onMouseDown);
+    window.addEventListener('touchmove', onMouseMove);
+    window.addEventListener('touchend', onMouseUp);
 
     function classifyDrawing() {
         // Normalize lines
@@ -149,29 +170,39 @@ function SpellCaster() {
     }
 
     function render(ctx) {
-        if (isDrawing) {
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 20;
-            renderLines(ctx, lines);
-        }
+        // Casting zone
+        retainTransform(() => {
+            ctx.setTransform(1,0,0,1,0,0);
+            ctx.fillStyle = COLORS.DARK_GRAY;
+            ctx.fillRect(0, canvas.height * 0.65, canvas.width, canvas.height * 0.36);
+            ctx.strokeStyle = COLORS.BLACK;
+            ctx.lineWidth = 10;
+            renderLines(ctx, [[0, canvas.height * 0.65], [canvas.width, canvas.height * 0.65]]);
 
-        if (selectedClass != -1) {
-            const classLabel = mapping[selectedClass];
-            ctx.fillStyle = '#fff';
-            ctx.textAlign = 'center';
-            ctx.font = 'bold 48px arial';
-            ctx.fillText(classLabel, canvas.width/2, 100);
+            if (isDrawing) {
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 20;
+                renderLines(ctx, lines);
+            }
 
-            // Pulse
-            const p = Math.exp(-timeSinceSelect*3)*2;
-            const c = colorMap[selectedClass];
-            ctx.strokeStyle = `rgba(${p*c[0]*255}, ${p*c[1]*255}, ${p*c[2]*255}, ${p * 0.6})`;
-            ctx.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect*5)) * 80;
-            renderLines(ctx, selectedLines);
-            ctx.strokeStyle = `rgba(${p*c[0]*300}, ${p*c[1]*300}, ${p*c[2]*300}, ${p})`;
-            ctx.lineWidth = 20;
-            renderLines(ctx, selectedLines);
-        }
+            if (selectedClass != -1) {
+                const classLabel = mapping[selectedClass];
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 48px arial';
+                ctx.fillText(classLabel, canvas.width/2, 100);
+
+                // Pulse
+                const p = Math.exp(-timeSinceSelect*3)*2;
+                const c = colorMap[selectedClass];
+                ctx.strokeStyle = `rgba(${p*c[0]*255}, ${p*c[1]*255}, ${p*c[2]*255}, ${p * 0.6})`;
+                ctx.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect*5)) * 80;
+                renderLines(ctx, selectedLines);
+                ctx.strokeStyle = `rgba(${p*c[0]*300}, ${p*c[1]*300}, ${p*c[2]*300}, ${p})`;
+                ctx.lineWidth = 20;
+                renderLines(ctx, selectedLines);
+            }
+        });
     }
 
     function update(dT) {

@@ -44,6 +44,9 @@ let link = document.querySelector("link");
 link.href = favicon.toDataURL();
 ctx.imageSmoothingEnabled = false;
 
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+
 export {
     canvas,
     ctx,

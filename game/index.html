@@ -32,6 +32,8 @@
   var link = document.querySelector("link");
   link.href = favicon.toDataURL();
   ctx.imageSmoothingEnabled = false;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
 
   // src/tags.js
   var TAG_CAMERA = 0;
@@ -47,6 +49,11 @@
     ctx.textBaseline = "middle";
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
+    const zoom = Math.min(
+      canvas.width / 800,
+      canvas.height / 1100
+    );
+    ctx.setTransform(zoom, 0, 0, zoom, canvas.width / 2 - 80 * 6 * 0.5 * zoom, canvas.height * 0.33 - 80 * 6 * 0.5 * zoom);
     retainTransform(() => {
       const camera = getObjectsByTag(TAG_CAMERA)[0];
       if (camera) {
@@ -102,6 +109,48 @@
     return gameObjectsByTag[tag] || [];
   }
   requestAnimationFrame(tick);
+
+  // src/color.js
+  var COLORS = {
+    TAN: "#f2e5a5",
+    LIGHT_BROWN: "#dbad81",
+    BLACK: "#000",
+    DARK_GRAY: "#474747",
+    GRAY: "#777",
+    MID_GRAY: "#a4a4a4",
+    LIGHT_GRAY: "#cbcbcb",
+    WHITE: "#fff"
+  };
+  var color_default = COLORS;
+
+  // src/game-arena.js
+  function GameArena() {
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.setTransform(1, 0, 0, 1, 0, 0);
+        ctx2.fillStyle = color_default.TAN;
+        ctx2.fillRect(0, 0, canvas.width, canvas.height);
+      });
+      ctx2.strokeStyle = color_default.LIGHT_BROWN;
+      ctx2.lineWidth = 4;
+      ctx2.beginPath();
+      const SIZE = 80;
+      for (let x = 0; x <= 6; x++) {
+        ctx2.moveTo(x * SIZE, 0);
+        ctx2.lineTo(x * SIZE, 6 * SIZE);
+        ctx2.moveTo(0, x * SIZE);
+        ctx2.lineTo(6 * SIZE, x * SIZE);
+      }
+      ctx2.stroke();
+    }
+    function update(dT) {
+    }
+    return {
+      update,
+      render
+    };
+  }
+  var game_arena_default = GameArena;
 
   // ../rune-classifier/base64_encoded_model.txt
   var base64_encoded_model_default = "eJiYiIiJeIiIiXeIiIiXmXl3iXh5iIiHh3eJmXiIl5l3iHd4iIiIh3d4eZeIiIiHiIeJiXeJiIh4mJl3iHl5h5iHiYiIeIeYiIiYmIh3d4iHmIeIh5iJmYmXiIeXh3l4h3mYeXh5iXiIiJeIeJiXd3iYmXeJmId5h4mXd5eJiHiIiJmXeHl5iJiIh4eIiXiXiHiIiId3iIiIl5iIh3mYiYiIiIeHiHmId4h4l3d3d4iIiImJeIiIh4iHiIiYiXiJl5mIiIiJiYiYeHiIiZh4iZd3l5iYd4iIiHiJmZeXmJh4iImZiHh4iZiHiIiZmYd4eIiJh4h4eJh4h3d3eHiJh5d5d4d3iXeIeIiIeImIiYiHl5iIeYh5d4d4iHeIiXeIiHiIh3iHmJiIiIiIiJl4iIeIiIiIiYiImJiYiHh3h3eImZmXh5iIh6iYl3iJiXeIl5h3eZmIeIh4eId3iJl4h4iZeYiJh4iImXiYeHiZeIiJeXeIl5l4mYmYiIiIeIeIiIeHiXh3d4eId4mHmYl4iJiYh5iHeIiYmYiZiHiIiIiIiXmIiYd4h5iHh4h3d4iHiHiIh4h4h3d4iHmIiIiIiJiIh4h5iIeYmZiJiIiXiJmYeJiYiIiHiImHiImYiIl4eHeZiImJeHiImJiYh5h3mHmXeIh4d5h4eJmJiHh4h3iIeId3iYiHh5eXmYmIeImIeJeIh4d4h5mHd5iIiYiJd5eId3iHiIiHl4mIh4eYeIiZmYiHh5mHiJmIl4mId3iHd4iJh4d5l4d3eIh4iIiXiIiIiImIiHmImIh4iHeJiJmJiHiHeId4mHmJiHh4eIiId4l5mIiJiHiJiYiImXd3eIiIiYmIiYmYh4mImImIh3iId4d4d5eYd4iIl5iJh5eHd4eIeYeJl4iYmImJiXeHmYmIiIh4l4l4mJeHiIiId4mXmXeHmHmIiJmYmIiJiYl5iXiHh3eYiId4eIiIh4h4h3h4eIeHeId3h4iHiHh3iHiImImImImZiYiHmJiJiHiIiImId5d3mZeIh5h5h4iHiIiHeJiIiYl4mHiZiZiIiXmIl4mZh4mJiYh4iJiHiYh4iIeYl5eJiIiImImIiYeYiYiIiIeHeIl4h5iFeIiHeId4h4eIiIiIiIiIiImIeIiIeIiIiIiIiJiIiIiIiYiIiIiYeIiIiIiIiImIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiHeIiIeIiHiYeIiIiIiIiIh4h4iJiIiIiIeHiIiIiJiIiIiHiJiIh3iIh3iHiHiIiIeIiIeIiIiIh4iHiJiHeIiIh3eIh4iIh4h3iYiIiIiHiIiIiIiIeIiIeIiIiIiIiIiIiIiIeId4d4eYh3mHh4iHiIh4iIeYiJiIiIeIiYeHiIiHiIiIiIiIeHiJiIeIiIh4eIiHiHiHiIiZiImHmJiIh4iIiIiIh4iIiIiIiIiIeIiIiIiIiHh4mIiJiIiIiIiIiIiJmIiIiIiId4iHiIiIiIiIiJiIiHiIiIh4h4iIiImIiIiIiIh4iImIiIeIiIiIiIiIiIiIiHiIiIh4mIiIiImIiIiIeIh4h4iIh3iIiHmJiHiIiIiHiIh4h4iIiImIiImIiIiIiImIh4iYiJh4iIiImIh4iIiIeIh3iIiIiIiIh4iImIiIiYeIiIeHiIiYeIiIiIiId4iIiIiIiJiIeIiIiYiIiIiIeHiIiJiIeIeHiIh4iIiHiIiIiIiIiIh4iIiHiIiIeIiIiIiIh4eIiHh4iIeHh4h3iJiIiIiIiXd4iIiIeImIiIiIiJiIiIiIiImIiIiIiIiHh4iIiIh4iIiIiYeImImIiIh4eIiJiIiIiJeIiIiIiIiIiIiHiHeIiIiIiIiIiIiIh4iIiYh4h4h4iIiHiIeHeHiIiJiIh3iHmJiIh4iIiIeIh4iHmZmIiYiYh4iIiIiIeImHiIiIiHiImYeIiImIeIh3iHd3mIiIiHiHiImIiIiIiIeIeHeYiIl4iIiHh4iHh4h4iIiIiIiHiHiIeHeYh4iIeIiIiImImIiIiIh4eIiIiYiIiIiIiIiIiIeIiIiIiIiIiIiIiId4iIiJiIiIiIiIiIh4iYiIiIiIiIiIh4iIiJeIiIiIiIiIiIiYiYiJiJiXiIiIiIiIh4iHd5iIiZh5iJiYiIiIiIiIiIiIiHd4iHiIiIiIeJiIiIiIh3iImIiIiIiIiIiIiIiIiIiIh4l4iIiIiIiIiIeJiIiIiJeIiIiIiIiHiIl4eImIiIiIiIiYh3iIiIiIiIiImYeIiIiJiIiIiIiIiIiIiIiIiIeIiId4iYiIiIiIh4iHiIiIiIiImIiIiHiJiImIeIiIiIeImHiIiHiIiIiIiJd5iIiIiIiHiIiIiIiIiIiIiIiIiYiIiIiIiIiIiJiIiYeIiIiIiIiIeImIiIiIiHiIh4iIiIiJmIiIh3iIiIh4iIeIh4iIiIiIeIiIiIiIiIiIiIiIeIh4mIiHeIiYiJh4iIiHiIiIiIiIiHiIiYiIiIiIeIeZh4eHeIiIeIiJh4iIiHiIiIiIiIiIiHiIh3mIiHh4iIh4iJd4iHmIeIiHeIh4iYiIiIiIiImIh4iYiImIiIiJh4h4h4mIeIiHiIh4iIiHiIiIiJh4iIiIiIiYiYd5iIiHiHh4iHiIiIiHiIh4h3h4iIeYh4iIh4iIiHeIiIiIiIiIeIiJh4iIiHiJiIiIiIiIiIiImIeIiIiIiIiIiJiIiIiImIiIiIiIiImIiIiIiIh4iIiIeIiIiIiIh4iIiIh4iIiIiIiIiIiHh4h4iIiIiIiIiIiIeIiIiIiIiIh4iIiIiIiIiIiIiYiIh4eYiHiIiIiIiHiImIiJh4iIiIeJiHiHiIeHiIiIiHiIh4eIh4iHiId3iImHiIiId4iIiJiIeIeIeIiIiIiIiIiIiIiIiIiHiHh4eIiIh4mIiYiIiIiIiImHiIeIiIiHiIiIiJiIeIiIh4eIeIiIeIiHiIiHiIh4iIh4iIiIiXiJiIiImIiHiHiIiIiIh4iJiIiIiHiYiYmIiIiIh4iIiIeIiJiJiIiIiXiIh4h4iHiIh4mXh5iIeIiIiIiHiIiIiIiIeIiIiImIiIiIiIiIiIh4h3iHiHd4iYd4iJiImIiImIiJiIiIiIiIiIiIeJiImHiIiIeHh5iIiIiIiIiIiJiImYmImIl4iImIiJiJiIiIiIiHiJh4iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIh4iIiIh4h4iHiIiGiIiIiIiIiIiIiIiJiIh4iIiIiIiIh4eIiHeIeIh4h4iJh3h3h4eJiIiIiIh4iIeIiIiIiHiIeImIiIiIiIiIiImYiIeIiIh4iYiIiIiIiHiIeIiIiIiIiIiIiIiXiIiIiIiIeIiIiIh4h3iIiHiYmJiIeIeIiHh2qXmYd4mJmImKd4l4mYmHiWmIl4iHiIe5mIhpmJl4eaiaqZd6aJeZqXh3iYiXaYiHqIqJiZVnenmHaJd3qXd2eZh5mJeYmHZWmXeHiGiZlpmZhomYmml2eJiHtnZ5l4mZiZiIdolpmphnmWd4mKmIhXd5aIh5h5Z6aIiZZqmYh5h3ipandpqXeGqHiZaXdnmYh5l5l4d4qZiXmpipiGeIaIlaeIiZqHmXl5imeYaHiZmHl3eIh3iVipl5aWephnh2eYh4iWiWiHiJeJeHiHh7pZiXiHZ4qWl5aZqZmIhnhoeXmIiWd4eaibaJl3l3Zpl3alh5maiIZ5aGeZh4l4iZiXl3l2eJeYh5h5iJmYmZhmeHhpiKeZlneWead6iXt6eKmXd5mniWeGlnmYiWipeYeFmYZ4eHmXmlaqh2iIiJlplpiJiIl4qYmIdoepiIl4mYp4iYeImIqZaaaIiZh5d3Z4";
@@ -251,17 +300,32 @@
     let selectedLines = [];
     let selectedClass = -1;
     let timeSinceSelect = 0;
+    function touchifyEvent(evt) {
+      const touches = evt.changedTouches;
+      if (touches) {
+        evt.clientX = touches[0].clientX;
+        evt.clientY = touches[0].clientY;
+      }
+    }
     function onMouseDown(evt) {
+      touchifyEvent(evt);
       selectedClass = -1;
+      if (evt.clientY < canvas.height * 0.65 - 5) {
+        return;
+      }
       lines.length = 0;
       lines.push([evt.clientX, evt.clientY]);
       isDrawing = true;
     }
     function onMouseMove(evt) {
+      touchifyEvent(evt);
       if (isDrawing && lines.length > 0) {
         const latestPt = lines[lines.length - 1];
         let dx = evt.clientX - latestPt[0];
         let dy = evt.clientY - latestPt[1];
+        if (evt.clientY < canvas.height * 0.65 - 5) {
+          return;
+        }
         if (dx * dx + dy * dy > 20) {
           lines.push([evt.clientX, evt.clientY]);
           classifyDrawing();
@@ -269,6 +333,7 @@
       }
     }
     function onMouseUp(evt) {
+      touchifyEvent(evt);
       selectedClass = classifyDrawing();
       selectedLines = JSON.parse(JSON.stringify(lines));
       timeSinceSelect = 0;
@@ -278,6 +343,9 @@
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("touchstart", onMouseDown);
+    window.addEventListener("touchmove", onMouseMove);
+    window.addEventListener("touchend", onMouseUp);
     function classifyDrawing() {
       let mins = [Infinity, Infinity];
       let maxs = [-Infinity, -Infinity];
@@ -341,26 +409,34 @@
       return topPred;
     }
     function render(ctx2) {
-      if (isDrawing) {
-        ctx2.strokeStyle = "white";
-        ctx2.lineWidth = 20;
-        renderLines(ctx2, lines);
-      }
-      if (selectedClass != -1) {
-        const classLabel = mapping[selectedClass];
-        ctx2.fillStyle = "#fff";
-        ctx2.textAlign = "center";
-        ctx2.font = "bold 48px arial";
-        ctx2.fillText(classLabel, canvas.width / 2, 100);
-        const p = Math.exp(-timeSinceSelect * 3) * 2;
-        const c = colorMap[selectedClass];
-        ctx2.strokeStyle = `rgba(${p * c[0] * 255}, ${p * c[1] * 255}, ${p * c[2] * 255}, ${p * 0.6})`;
-        ctx2.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect * 5)) * 80;
-        renderLines(ctx2, selectedLines);
-        ctx2.strokeStyle = `rgba(${p * c[0] * 300}, ${p * c[1] * 300}, ${p * c[2] * 300}, ${p})`;
-        ctx2.lineWidth = 20;
-        renderLines(ctx2, selectedLines);
-      }
+      retainTransform(() => {
+        ctx2.setTransform(1, 0, 0, 1, 0, 0);
+        ctx2.fillStyle = color_default.DARK_GRAY;
+        ctx2.fillRect(0, canvas.height * 0.65, canvas.width, canvas.height * 0.36);
+        ctx2.strokeStyle = color_default.BLACK;
+        ctx2.lineWidth = 10;
+        renderLines(ctx2, [[0, canvas.height * 0.65], [canvas.width, canvas.height * 0.65]]);
+        if (isDrawing) {
+          ctx2.strokeStyle = "white";
+          ctx2.lineWidth = 20;
+          renderLines(ctx2, lines);
+        }
+        if (selectedClass != -1) {
+          const classLabel = mapping[selectedClass];
+          ctx2.fillStyle = "#fff";
+          ctx2.textAlign = "center";
+          ctx2.font = "bold 48px arial";
+          ctx2.fillText(classLabel, canvas.width / 2, 100);
+          const p = Math.exp(-timeSinceSelect * 3) * 2;
+          const c = colorMap[selectedClass];
+          ctx2.strokeStyle = `rgba(${p * c[0] * 255}, ${p * c[1] * 255}, ${p * c[2] * 255}, ${p * 0.6})`;
+          ctx2.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect * 5)) * 80;
+          renderLines(ctx2, selectedLines);
+          ctx2.strokeStyle = `rgba(${p * c[0] * 300}, ${p * c[1] * 300}, ${p * c[2] * 300}, ${p})`;
+          ctx2.lineWidth = 20;
+          renderLines(ctx2, selectedLines);
+        }
+      });
     }
     function update(dT) {
       timeSinceSelect += dT;
@@ -380,6 +456,7 @@
 
   // src/main.js
   function initialize() {
+    add(game_arena_default());
     add(spell_caster_default());
   }
   initialize();

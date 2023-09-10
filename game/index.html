@@ -53,7 +53,7 @@
       canvas.width / 800,
       canvas.height / 1100
     );
-    ctx.setTransform(zoom, 0, 0, zoom, canvas.width / 2 - 80 * 6 * 0.5 * zoom, canvas.height * 0.33 - 80 * 6 * 0.5 * zoom);
+    ctx.setTransform(zoom, 0, 0, zoom, canvas.width / 2 - 80 * 6 * 0.5 * zoom, canvas.height * 0.3 - 80 * 6 * 0.5 * zoom);
     retainTransform(() => {
       const camera = getObjectsByTag(TAG_CAMERA)[0];
       if (camera) {
@@ -334,6 +334,9 @@
     }
     function onMouseUp(evt) {
       touchifyEvent(evt);
+      if (lines.length == 0) {
+        return;
+      }
       selectedClass = classifyDrawing();
       selectedLines = JSON.parse(JSON.stringify(lines));
       timeSinceSelect = 0;
@@ -356,7 +359,12 @@
         maxs[1] = Math.max(pt[1], maxs[1]);
       });
       let normalizeLines = [];
-      const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 100);
+      let size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
+      console.log(size);
+      if (size < 70) {
+        return 0;
+      }
+      size = Math.max(size, 100);
       const tracker = {};
       let topPred = 0;
       let topVal = 0;

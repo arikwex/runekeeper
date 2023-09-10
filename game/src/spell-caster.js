@@ -75,6 +75,9 @@ function SpellCaster() {
 
     function onMouseUp(evt) {
         touchifyEvent(evt);
+        if (lines.length == 0) {
+            return;
+        }
         selectedClass = classifyDrawing();
         selectedLines = JSON.parse(JSON.stringify(lines));
         timeSinceSelect = 0;
@@ -101,7 +104,12 @@ function SpellCaster() {
         });
         
         let normalizeLines = [];
-        const size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1], 100);
+        let size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
+        console.log(size);
+        if (size < 70) {
+            return 0;
+        }
+        size = Math.max(size, 100);
         // lines.map((pt) => {
         //     normalizeLines.push([
         //         (pt[0] - (maxs[0] + mins[0])/2) / size * (Math.random() * 3 + 20),

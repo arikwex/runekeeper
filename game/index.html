@@ -186,6 +186,109 @@
   }
   var game_arena_default = GameArena;
 
+  // src/rune-stone.js
+  function RuneStone() {
+    let anim = 0;
+    let cx = 0;
+    let cy = 0;
+    const mesh = [[-35, 0], [-15, 30], [15, 30], [35, 0], [15, -30], [-15, -30]];
+    const MOVE_DURATION = 0.66;
+    const IDLE = 0;
+    const MOVING = 1;
+    let state = IDLE;
+    let timeInState = 0;
+    let targetCX = 0;
+    let targetCY = 0;
+    let originCX = 0;
+    let originCY = 0;
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80 + 4);
+        ctx2.fillStyle = "rgba(0,0,0,0.13)";
+        ctx2.beginPath();
+        ctx2.ellipse(0, 0, 32, 22, 0, 0, 2 * Math.PI);
+        ctx2.fill();
+        if (state == MOVING) {
+          const p = timeInState / MOVE_DURATION;
+          ctx2.translate(0, -180 * p * (1 - p));
+        }
+        const angle = anim;
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+        const xfmMesh = mesh.map((pt) => {
+          return [
+            (pt[0] * c + pt[1] * s) * 0.8,
+            (-pt[0] * s * 0.6 + pt[1] * c * 0.6) * 0.8
+          ];
+        });
+        ctx2.lineWidth = 10;
+        ctx2.strokeStyle = DARK_GRAY;
+        ctx2.fillStyle = GRAY;
+        renderAndFill(ctx2, xfmMesh);
+        ctx2.translate(0, -11);
+        ctx2.lineWidth = 6;
+        ctx2.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const pt = mesh[i];
+          const x = (pt[0] * c + pt[1] * s) * 0.83;
+          const y = (-pt[0] * s * 0.6 + pt[1] * c * 0.6) * 0.83;
+          ctx2.moveTo(x, y);
+          ctx2.lineTo(x, y + 10);
+        }
+        ctx2.stroke();
+        ctx2.lineWidth = 10;
+        ctx2.fillStyle = GRAY;
+        renderAndFill(ctx2, xfmMesh);
+        ctx2.strokeStyle = "#fff";
+        ctx2.beginPath();
+        ctx2.lineWidth = 4;
+        for (let i = 0; i < 3; i++) {
+          const pt = CARET_RUNE[i];
+          const x = (pt[0] * c + pt[1] * s) * 1;
+          const y = (-pt[0] * s * 0.6 + pt[1] * c * 0.6) * 1;
+          if (i == 0) {
+            ctx2.moveTo(x, y);
+          } else {
+            ctx2.lineTo(x, y);
+          }
+        }
+        ctx2.stroke();
+      });
+    }
+    function update(dT) {
+      timeInState += dT;
+      if (state == MOVING) {
+        const p = timeInState / MOVE_DURATION;
+        anim = p * Math.PI * 2;
+        cx = originCX * (1 - p) + targetCX * p;
+        cy = originCY * (1 - p) + targetCY * p;
+        if (p >= 1) {
+          cx = targetCX;
+          cy = targetCY;
+          timeInState = IDLE;
+          state = IDLE;
+          anim = 0;
+        }
+      }
+      if (state == IDLE && timeInState > 0.5) {
+        moveToDest(Math.floor(Math.random() * 6), Math.floor(Math.random() * 6));
+      }
+    }
+    function moveToDest(x, y) {
+      originCX = cx;
+      originCY = cy;
+      targetCX = x;
+      targetCY = y;
+      state = MOVING;
+      timeInState = 0;
+    }
+    return {
+      update,
+      render
+    };
+  }
+  var rune_stone_default = RuneStone;
+
   // ../rune-classifier/base64_encoded_model.txt
   var base64_encoded_model_default = "eJiYiIiJeIiIiXeIiIiXmXl3iXh5iIiHh3eJmXiIl5l3iHd4iIiIh3d4eZeIiIiHiIeJiXeJiIh4mJl3iHl5h5iHiYiIeIeYiIiYmIh3d4iHmIeIh5iJmYmXiIeXh3l4h3mYeXh5iXiIiJeIeJiXd3iYmXeJmId5h4mXd5eJiHiIiJmXeHl5iJiIh4eIiXiXiHiIiId3iIiIl5iIh3mYiYiIiIeHiHmId4h4l3d3d4iIiImJeIiIh4iHiIiYiXiJl5mIiIiJiYiYeHiIiZh4iZd3l5iYd4iIiHiJmZeXmJh4iImZiHh4iZiHiIiZmYd4eIiJh4h4eJh4h3d3eHiJh5d5d4d3iXeIeIiIeImIiYiHl5iIeYh5d4d4iHeIiXeIiHiIh3iHmJiIiIiIiJl4iIeIiIiIiYiImJiYiHh3h3eImZmXh5iIh6iYl3iJiXeIl5h3eZmIeIh4eId3iJl4h4iZeYiJh4iImXiYeHiZeIiJeXeIl5l4mYmYiIiIeIeIiIeHiXh3d4eId4mHmYl4iJiYh5iHeIiYmYiZiHiIiIiIiXmIiYd4h5iHh4h3d4iHiHiIh4h4h3d4iHmIiIiIiJiIh4h5iIeYmZiJiIiXiJmYeJiYiIiHiImHiImYiIl4eHeZiImJeHiImJiYh5h3mHmXeIh4d5h4eJmJiHh4h3iIeId3iYiHh5eXmYmIeImIeJeIh4d4h5mHd5iIiYiJd5eId3iHiIiHl4mIh4eYeIiZmYiHh5mHiJmIl4mId3iHd4iJh4d5l4d3eIh4iIiXiIiIiImIiHmImIh4iHeJiJmJiHiHeId4mHmJiHh4eIiId4l5mIiJiHiJiYiImXd3eIiIiYmIiYmYh4mImImIh3iId4d4d5eYd4iIl5iJh5eHd4eIeYeJl4iYmImJiXeHmYmIiIh4l4l4mJeHiIiId4mXmXeHmHmIiJmYmIiJiYl5iXiHh3eYiId4eIiIh4h4h3h4eIeHeId3h4iHiHh3iHiImImImImZiYiHmJiJiHiIiImId5d3mZeIh5h5h4iHiIiHeJiIiYl4mHiZiZiIiXmIl4mZh4mJiYh4iJiHiYh4iIeYl5eJiIiImImIiYeYiYiIiIeHeIl4h5iFeIiHeId4h4eIiIiIiIiIiImIeIiIeIiIiIiIiJiIiIiIiYiIiIiYeIiIiIiIiImIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiHeIiIeIiHiYeIiIiIiIiIh4h4iJiIiIiIeHiIiIiJiIiIiHiJiIh3iIh3iHiHiIiIeIiIeIiIiIh4iHiJiHeIiIh3eIh4iIh4h3iYiIiIiHiIiIiIiIeIiIeIiIiIiIiIiIiIiIeId4d4eYh3mHh4iHiIh4iIeYiJiIiIeIiYeHiIiHiIiIiIiIeHiJiIeIiIh4eIiHiHiHiIiZiImHmJiIh4iIiIiIh4iIiIiIiIiIeIiIiIiIiHh4mIiJiIiIiIiIiIiJmIiIiIiId4iHiIiIiIiIiJiIiHiIiIh4h4iIiImIiIiIiIh4iImIiIeIiIiIiIiIiIiIiHiIiIh4mIiIiImIiIiIeIh4h4iIh3iIiHmJiHiIiIiHiIh4h4iIiImIiImIiIiIiImIh4iYiJh4iIiImIh4iIiIeIh3iIiIiIiIh4iImIiIiYeIiIeHiIiYeIiIiIiId4iIiIiIiJiIeIiIiYiIiIiIeHiIiJiIeIeHiIh4iIiHiIiIiIiIiIh4iIiHiIiIeIiIiIiIh4eIiHh4iIeHh4h3iJiIiIiIiXd4iIiIeImIiIiIiJiIiIiIiImIiIiIiIiHh4iIiIh4iIiIiYeImImIiIh4eIiJiIiIiJeIiIiIiIiIiIiHiHeIiIiIiIiIiIiIh4iIiYh4h4h4iIiHiIeHeHiIiJiIh3iHmJiIh4iIiIeIh4iHmZmIiYiYh4iIiIiIeImHiIiIiHiImYeIiImIeIh3iHd3mIiIiHiHiImIiIiIiIeIeHeYiIl4iIiHh4iHh4h4iIiIiIiHiHiIeHeYh4iIeIiIiImImIiIiIh4eIiIiYiIiIiIiIiIiIeIiIiIiIiIiIiIiId4iIiJiIiIiIiIiIh4iYiIiIiIiIiIh4iIiJeIiIiIiIiIiIiYiYiJiJiXiIiIiIiIh4iHd5iIiZh5iJiYiIiIiIiIiIiIiHd4iHiIiIiIeJiIiIiIh3iImIiIiIiIiIiIiIiIiIiIh4l4iIiIiIiIiIeJiIiIiJeIiIiIiIiHiIl4eImIiIiIiIiYh3iIiIiIiIiImYeIiIiJiIiIiIiIiIiIiIiIiIeIiId4iYiIiIiIh4iHiIiIiIiImIiIiHiJiImIeIiIiIeImHiIiHiIiIiIiJd5iIiIiIiHiIiIiIiIiIiIiIiIiYiIiIiIiIiIiJiIiYeIiIiIiIiIeImIiIiIiHiIh4iIiIiJmIiIh3iIiIh4iIeIh4iIiIiIeIiIiIiIiIiIiIiIeIh4mIiHeIiYiJh4iIiHiIiIiIiIiHiIiYiIiIiIeIeZh4eHeIiIeIiJh4iIiHiIiIiIiIiIiHiIh3mIiHh4iIh4iJd4iHmIeIiHeIh4iYiIiIiIiImIh4iYiImIiIiJh4h4h4mIeIiHiIh4iIiHiIiIiJh4iIiIiIiYiYd5iIiHiHh4iHiIiIiHiIh4h3h4iIeYh4iIh4iIiHeIiIiIiIiIeIiJh4iIiHiJiIiIiIiIiIiImIeIiIiIiIiIiJiIiIiImIiIiIiIiImIiIiIiIh4iIiIeIiIiIiIh4iIiIh4iIiIiIiIiIiHh4h4iIiIiIiIiIiIeIiIiIiIiIh4iIiIiIiIiIiIiYiIh4eYiHiIiIiIiHiImIiJh4iIiIeJiHiHiIeHiIiIiHiIh4eIh4iHiId3iImHiIiId4iIiJiIeIeIeIiIiIiIiIiIiIiIiIiHiHh4eIiIh4mIiYiIiIiIiImHiIeIiIiHiIiIiJiIeIiIh4eIeIiIeIiHiIiHiIh4iIh4iIiIiXiJiIiImIiHiHiIiIiIh4iJiIiIiHiYiYmIiIiIh4iIiIeIiJiJiIiIiXiIh4h4iHiIh4mXh5iIeIiIiIiHiIiIiIiIeIiIiImIiIiIiIiIiIh4h3iHiHd4iYd4iJiImIiImIiJiIiIiIiIiIiIeJiImHiIiIeHh5iIiIiIiIiIiJiImYmImIl4iImIiJiJiIiIiIiHiJh4iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIh4iIiIh4h4iHiIiGiIiIiIiIiIiIiIiJiIh4iIiIiIiIh4eIiHeIeIh4h4iJh3h3h4eJiIiIiIh4iIeIiIiIiHiIeImIiIiIiIiIiImYiIeIiIh4iYiIiIiIiHiIeIiIiIiIiIiIiIiXiIiIiIiIeIiIiIh4h3iIiHiYmJiIeIeIiHh2qXmYd4mJmImKd4l4mYmHiWmIl4iHiIe5mIhpmJl4eaiaqZd6aJeZqXh3iYiXaYiHqIqJiZVnenmHaJd3qXd2eZh5mJeYmHZWmXeHiGiZlpmZhomYmml2eJiHtnZ5l4mZiZiIdolpmphnmWd4mKmIhXd5aIh5h5Z6aIiZZqmYh5h3ipandpqXeGqHiZaXdnmYh5l5l4d4qZiXmpipiGeIaIlaeIiZqHmXl5imeYaHiZmHl3eIh3iVipl5aWephnh2eYh4iWiWiHiJeJeHiHh7pZiXiHZ4qWl5aZqZmIhnhoeXmIiWd4eaibaJl3l3Zpl3alh5maiIZ5aGeZh4l4iZiXl3l2eJeYh5h5iJmYmZhmeHhpiKeZlneWead6iXt6eKmXd5mniWeGlnmYiWipeYeFmYZ4eHmXmlaqh2iIiJlplpiJiIl4qYmIdoepiIl4mYp4iYeImIqZaaaIiZh5d3Z4";
 
@@ -540,6 +643,7 @@
   function initialize() {
     add(game_arena_default());
     add(wizard_default());
+    add(rune_stone_default());
     add(spell_caster_default());
   }
   initialize();

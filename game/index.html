@@ -123,7 +123,23 @@
   };
   var color_default = COLORS;
 
+  // src/runes.js
+  var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
+  var CIRCLE_RUNE = [[10, 0], [9, 4], [7, 7], [4, 9], [0, 10], [-4, 9], [-7, 7], [-9, 4], [-10, 0], [-9, -4], [-7, -7], [-4, -9], [0, -10], [4, -9], [7, -7], [9, -4], [10, 0]];
+  var BOLT_RUNE = [[-5, -10], [5, -10], [-3, 0], [3, 0], [0, 10]];
+  var TRIANGLE_RUNE = [[-9, -10], [9, -10], [0, 10], [-9, -10]];
+  var WAVE_RUNE = [[-10, -4], [-5, 4], [0, -4], [5, 4], [10, -4]];
+  var HOURGLASS_RUNE = [[-9, -8], [9, 8], [9, -8], [-9, 8], [-9, -8]];
+
   // src/game-arena.js
+  var runeOrder = [
+    CARET_RUNE,
+    CIRCLE_RUNE,
+    BOLT_RUNE,
+    TRIANGLE_RUNE,
+    WAVE_RUNE,
+    HOURGLASS_RUNE
+  ];
   function GameArena() {
     function render(ctx2) {
       retainTransform(() => {
@@ -142,6 +158,20 @@
         ctx2.lineTo(6 * SIZE, x * SIZE);
       }
       ctx2.stroke();
+      for (let i = 0; i < 6; i++) {
+        ctx2.strokeStyle = "black";
+        ctx2.lineWidth = 4;
+        retainTransform(() => {
+          ctx2.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
+          ctx2.scale(1.5, 1.5);
+          renderLines(ctx2, runeOrder[i]);
+        });
+        retainTransform(() => {
+          ctx2.translate(SIZE / 2 + SIZE * i, SIZE * 6.5);
+          ctx2.scale(1.5, 1.5);
+          renderLines(ctx2, runeOrder[i]);
+        });
+      }
     }
     function update(dT) {
     }
@@ -269,13 +299,6 @@
   function SpellCaster() {
     const scaledCanvas = document.createElement("canvas");
     const scaledCtx = scaledCanvas.getContext("2d");
-    document.body.appendChild(scaledCanvas);
-    scaledCanvas.style.position = "fixed";
-    scaledCanvas.style.top = "10px";
-    scaledCanvas.style.left = "10px";
-    scaledCanvas.style.border = "1px solid red";
-    scaledCanvas.width = 28;
-    scaledCanvas.height = 28;
     const grayscaleArray = new Array(28 * 28);
     const mapping = {
       0: "garbage",
@@ -360,7 +383,6 @@
       });
       let normalizeLines = [];
       let size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
-      console.log(size);
       if (size < 70) {
         return 0;
       }
@@ -437,10 +459,10 @@
           ctx2.fillText(classLabel, canvas.width / 2, 100);
           const p = Math.exp(-timeSinceSelect * 3) * 2;
           const c = colorMap[selectedClass];
-          ctx2.strokeStyle = `rgba(${p * c[0] * 255}, ${p * c[1] * 255}, ${p * c[2] * 255}, ${p * 0.6})`;
+          ctx2.strokeStyle = `rgba(${c[0] * 255}, ${c[1] * 255}, ${c[2] * 255}, ${p * 0.6})`;
           ctx2.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect * 5)) * 80;
           renderLines(ctx2, selectedLines);
-          ctx2.strokeStyle = `rgba(${p * c[0] * 300}, ${p * c[1] * 300}, ${p * c[2] * 300}, ${p})`;
+          ctx2.strokeStyle = `rgba(${c[0] * 300}, ${c[1] * 300}, ${c[2] * 300}, ${p})`;
           ctx2.lineWidth = 20;
           renderLines(ctx2, selectedLines);
         }

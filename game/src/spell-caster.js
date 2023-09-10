@@ -5,13 +5,13 @@ import { classify } from './rune-model';
 function SpellCaster() {    
     const scaledCanvas = document.createElement("canvas");
     const scaledCtx = scaledCanvas.getContext("2d");
-    document.body.appendChild(scaledCanvas);
-    scaledCanvas.style.position = "fixed";
-    scaledCanvas.style.top = "10px";
-    scaledCanvas.style.left = "10px";
-    scaledCanvas.style.border = "1px solid red";
-    scaledCanvas.width = 28;
-    scaledCanvas.height = 28;
+    // document.body.appendChild(scaledCanvas);
+    // scaledCanvas.style.position = "fixed";
+    // scaledCanvas.style.top = "10px";
+    // scaledCanvas.style.left = "10px";
+    // scaledCanvas.style.border = "1px solid red";
+    // scaledCanvas.width = 28;
+    // scaledCanvas.height = 28;
     const grayscaleArray = new Array(28*28);
     const mapping = {
         0: 'garbage',
@@ -105,7 +105,6 @@ function SpellCaster() {
         
         let normalizeLines = [];
         let size = Math.max(maxs[0] - mins[0], maxs[1] - mins[1]);
-        console.log(size);
         if (size < 70) {
             return 0;
         }
@@ -203,10 +202,10 @@ function SpellCaster() {
                 // Pulse
                 const p = Math.exp(-timeSinceSelect*3)*2;
                 const c = colorMap[selectedClass];
-                ctx.strokeStyle = `rgba(${p*c[0]*255}, ${p*c[1]*255}, ${p*c[2]*255}, ${p * 0.6})`;
+                ctx.strokeStyle = `rgba(${c[0]*255}, ${c[1]*255}, ${c[2]*255}, ${p * 0.6})`;
                 ctx.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect*5)) * 80;
                 renderLines(ctx, selectedLines);
-                ctx.strokeStyle = `rgba(${p*c[0]*300}, ${p*c[1]*300}, ${p*c[2]*300}, ${p})`;
+                ctx.strokeStyle = `rgba(${c[0]*300}, ${c[1]*300}, ${c[2]*300}, ${p})`;
                 ctx.lineWidth = 20;
                 renderLines(ctx, selectedLines);
             }

@@ -9,7 +9,6 @@ let lastFrameMs = 0;
 
 function tick(currentFrameMs) {
     // updateGameControls();
-    
     const dT = Math.min((currentFrameMs - lastFrameMs) * 0.001, 0.018);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.textBaseline = 'middle';

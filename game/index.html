@@ -1,4 +1,16 @@
 <html><title>Runekeeper</title><link rel="shortcut icon"/><style>body{overflow:hidden;background:#000;margin:0px;font-family:sans-serif;}h1{color:#fff;text-align:center;margin-top:30px;}img{position:fixed;top:280px;width:600px;left:50%;margin-left:-300px;}h2{color:#666;font-style:italic;text-align:center;}</style><canvas></canvas><script>(() => {
+  // src/bus.js
+  var HANDLES = {};
+  function on(e, handler) {
+    (HANDLES[e] || (HANDLES[e] = [])).push(handler);
+  }
+  function off(e, handler) {
+    HANDLES[e] = (HANDLES[e] || []).filter((x) => x != handler);
+  }
+  function emit(e, data) {
+    (HANDLES[e] || []).map((handler) => handler(data));
+  }
+
   // src/canvas.js
   var canvas = document.getElementsByTagName("canvas")[0];
   canvas.width = innerWidth;
@@ -51,77 +63,6 @@
   var GRAY = "#777";
   var MID_GRAY = "#a4a4a4";
   var WHITE = "#fff";
-
-  // src/ability.js
-  function Ability(cx, cy, powerType) {
-    let anim = Math.random() * 5;
-    function update(dT) {
-      anim += dT;
-    }
-    function render(ctx2) {
-      if (powerType == 0) {
-        retainTransform(() => {
-          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-          for (let i = 0; i < 12; i++) {
-            const p = (i * 30 + anim * 100) % 50 / 50;
-            const q = 0.15 + p * 0.85;
-            const w = 1 - p * p * p * p * p;
-            ctx2.fillStyle = `rgba(${255 * w}, ${(50 + p * 200) * w}, ${30 * w}, ${1 - p})`;
-            ctx2.beginPath();
-            ctx2.ellipse(
-              (i * 83 % 130 - 65) * 0.5,
-              -p * 56 + (i * 11 % 23 - 5) * 2,
-              26 * (1 - p) * q,
-              26 * (1 - p) / q * p,
-              0,
-              0,
-              Math.PI * 2
-            );
-            ctx2.fill();
-          }
-        });
-      } else if (powerType == 1) {
-        retainTransform(() => {
-          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-          ctx2.fillStyle = "#29e";
-          ctx2.fillRect(-38, -38, 76, 76);
-          ctx2.strokeStyle = "#eef";
-          ctx2.lineWidth = 5;
-          ctx2.beginPath();
-          ctx2.moveTo(-25, 5);
-          ctx2.lineTo(-20, -5);
-          ctx2.lineTo(-15, 5);
-          ctx2.moveTo(-5, 25);
-          ctx2.lineTo(0, 15);
-          ctx2.lineTo(5, 25);
-          ctx2.moveTo(-5, -15);
-          ctx2.lineTo(0, -25);
-          ctx2.lineTo(5, -15);
-          ctx2.moveTo(25, 5);
-          ctx2.lineTo(20, -5);
-          ctx2.lineTo(15, 5);
-          ctx2.stroke();
-        });
-      }
-    }
-    return {
-      update,
-      render
-    };
-  }
-  var ability_default = Ability;
-
-  // src/bus.js
-  var HANDLES = {};
-  function on(e, handler) {
-    (HANDLES[e] || (HANDLES[e] = [])).push(handler);
-  }
-  function off(e, handler) {
-    HANDLES[e] = (HANDLES[e] || []).filter((x) => x != handler);
-  }
-  function emit(e, data) {
-    (HANDLES[e] || []).map((handler) => handler(data));
-  }
 
   // src/tags.js
   var TAG_CAMERA = 0;
@@ -198,60 +139,11 @@
   }
   requestAnimationFrame(tick);
 
-  // src/runes.js
-  var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
-  var CIRCLE_RUNE = [[10, 0], [9, 4], [7, 7], [4, 9], [0, 10], [-4, 9], [-7, 7], [-9, 4], [-10, 0], [-9, -4], [-7, -7], [-4, -9], [0, -10], [4, -9], [7, -7], [9, -4], [10, 0]];
-  var BOLT_RUNE = [[-5, -10], [5, -10], [-3, 0], [3, 0], [0, 10]];
-  var TRIANGLE_RUNE = [[-9, -10], [9, -10], [0, 10], [-9, -10]];
-  var WAVE_RUNE = [[-10, -4], [-5, 4], [0, -4], [5, 4], [10, -4]];
-  var HOURGLASS_RUNE = [[-9, -8], [9, 8], [9, -8], [-9, 8], [-9, -8]];
-  var SQUARE_SHAPE = [[-7, -7], [7, -7], [7, -7], [7, 7], [7, 7], [-7, 7], [-7, 7], [-7, -7]];
-  var PLUS_SHAPE = [[-7, 0], [7, 0], [0, -7], [0, 7]];
-  var EX_SHAPE = [[-7, -7], [7, 7], [-7, 7], [7, -7]];
-  var HORIZONTAL_SHAPE = [[-7, 0], [7, 0]];
-  var VERTICAL_SHAPE = [[0, -7], [0, 7]];
-  var COLOR_MAP = {
-    0: [0.4, 0.4, 0.4],
-    1: [1, 0.3, 0.3],
-    2: [0.3, 0.65, 1],
-    3: [0.4, 1, 0.4],
-    4: [1, 1, 0.3],
-    5: [1, 0.65, 0.3],
-    6: [1, 0.4, 1]
-  };
-
-  // src/game-arena.js
-  function GameArena() {
-    function render(ctx2) {
-      retainTransform(() => {
-        ctx2.setTransform(1, 0, 0, 1, 0, 0);
-        ctx2.fillStyle = LIGHT_BROWN;
-        ctx2.fillRect(0, 0, canvas.width, canvas.height);
-      });
-      ctx2.strokeStyle = TAN;
-      ctx2.lineWidth = 4;
-      ctx2.beginPath();
-      const SIZE = 80;
-      for (let x = 0; x <= 6; x++) {
-        ctx2.moveTo(x * SIZE, 0);
-        ctx2.lineTo(x * SIZE, 6 * SIZE);
-        ctx2.moveTo(0, x * SIZE);
-        ctx2.lineTo(6 * SIZE, x * SIZE);
-      }
-      ctx2.stroke();
-    }
-    function update(dT) {
-    }
-    return {
-      update,
-      render
-    };
-  }
-  var game_arena_default = GameArena;
-
   // src/events.js
   var SIGIL_DRAWN = 0;
   var RUNESTONE_MOVE = 1;
+  var POWERUP_ACQUIRED = 2;
+  var RUNESTONE_LAND = 3;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -280,6 +172,156 @@
   }
   var pulse_sfx_default = PulseSFX;
 
+  // src/ability.js
+  var POWER_COLORS = [
+    [230, 30, 30],
+    [48, 128, 230],
+    [106, 250, 106]
+  ];
+  function Ability(cx, cy, powerType) {
+    let anim = Math.random() * 5;
+    let t = 0;
+    let turn = 0;
+    add(pulse_sfx_default(cx, cy, 50, POWER_COLORS[powerType]));
+    function update(dT) {
+      anim += dT;
+      t += dT * 2.3;
+      if (powerType == 0 && turn >= 2) {
+        return true;
+      }
+      if (powerType == 1 && turn >= 2) {
+        return true;
+      }
+      if (powerType == 2 && t > 1) {
+        return true;
+      }
+    }
+    function render(ctx2) {
+      if (powerType == 0) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          for (let i = 0; i < 12; i++) {
+            const p = (i * 30 + anim * 100) % 50 / 50;
+            const q = 0.15 + p * 0.85;
+            const w = 1 - p * p * p * p * p;
+            ctx2.fillStyle = `rgba(${255 * w}, ${(50 + p * 200) * w}, ${30 * w}, ${1 - p})`;
+            ctx2.beginPath();
+            ctx2.ellipse(
+              (i * 83 % 130 - 65) * 0.5,
+              -p * 56 + (i * 11 % 23 - 5) * 2,
+              26 * (1 - p) * q,
+              26 * (1 - p) / q * p,
+              0,
+              0,
+              Math.PI * 2
+            );
+            ctx2.fill();
+          }
+        });
+      } else if (powerType == 1) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          ctx2.fillStyle = "#29e";
+          ctx2.fillRect(-38, -38, 76, 76);
+          ctx2.strokeStyle = "#eef";
+          ctx2.lineWidth = 5;
+          ctx2.beginPath();
+          ctx2.moveTo(-25, 5);
+          ctx2.lineTo(-20, -5);
+          ctx2.lineTo(-15, 5);
+          ctx2.moveTo(-5, 25);
+          ctx2.lineTo(0, 15);
+          ctx2.lineTo(5, 25);
+          ctx2.moveTo(-5, -15);
+          ctx2.lineTo(0, -25);
+          ctx2.lineTo(5, -15);
+          ctx2.moveTo(25, 5);
+          ctx2.lineTo(20, -5);
+          ctx2.lineTo(15, 5);
+          ctx2.stroke();
+        });
+      } else if (powerType == 2) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          ctx2.strokeStyle = "#131";
+          ctx2.lineWidth = 11 * (1 - t);
+          ctx2.beginPath();
+          ctx2.moveTo(-18 * Math.cos(Math.round(anim * 13) * 123), -55);
+          ctx2.lineTo(18 * Math.cos(Math.round(anim * 15) * 103), -40);
+          ctx2.lineTo(-11 * Math.cos(Math.round(anim * 17) * 93), -20);
+          ctx2.lineTo(11 * Math.cos(Math.round(anim * 13) * 133), -15);
+          ctx2.lineTo(6 * Math.cos(Math.round(anim * 11) * 97), 10);
+          ctx2.stroke();
+          ctx2.strokeStyle = "#1f1";
+          ctx2.lineWidth = 10 * (1 - t);
+          ctx2.stroke();
+        });
+      }
+    }
+    function onRunestoneLand() {
+      turn += 1;
+    }
+    on(RUNESTONE_LAND, onRunestoneLand);
+    return {
+      update,
+      render,
+      order: -10
+    };
+  }
+  var ability_default = Ability;
+
+  // src/game-arena.js
+  function GameArena() {
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.setTransform(1, 0, 0, 1, 0, 0);
+        ctx2.fillStyle = LIGHT_BROWN;
+        ctx2.fillRect(0, 0, canvas.width, canvas.height);
+      });
+      ctx2.strokeStyle = TAN;
+      ctx2.lineWidth = 4;
+      ctx2.beginPath();
+      const SIZE = 80;
+      for (let x = 0; x <= 6; x++) {
+        ctx2.moveTo(x * SIZE, 0);
+        ctx2.lineTo(x * SIZE, 6 * SIZE);
+        ctx2.moveTo(0, x * SIZE);
+        ctx2.lineTo(6 * SIZE, x * SIZE);
+      }
+      ctx2.stroke();
+    }
+    function update(dT) {
+    }
+    return {
+      update,
+      render,
+      order: -20
+    };
+  }
+  var game_arena_default = GameArena;
+
+  // src/runes.js
+  var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
+  var CIRCLE_RUNE = [[10, 0], [9, 4], [7, 7], [4, 9], [0, 10], [-4, 9], [-7, 7], [-9, 4], [-10, 0], [-9, -4], [-7, -7], [-4, -9], [0, -10], [4, -9], [7, -7], [9, -4], [10, 0]];
+  var BOLT_RUNE = [[-5, -10], [5, -10], [-3, 0], [3, 0], [0, 10]];
+  var TRIANGLE_RUNE = [[-9, -10], [9, -10], [0, 10], [-9, -10]];
+  var WAVE_RUNE = [[-10, -4], [-5, 4], [0, -4], [5, 4], [10, -4]];
+  var HOURGLASS_RUNE = [[-9, -8], [9, 8], [9, -8], [-9, 8], [-9, -8]];
+  var SQUARE_SHAPE = [[-7, -7], [7, -7], [7, -7], [7, 7], [7, 7], [-7, 7], [-7, 7], [-7, -7]];
+  var PLUS_SHAPE = [[-7, 0], [7, 0], [0, -7], [0, 7]];
+  var EX_SHAPE = [[-7, -7], [7, 7], [-7, 7], [7, -7]];
+  var HORIZONTAL_SHAPE = [[-7, 0], [7, 0]];
+  var VERTICAL_SHAPE = [[0, -7], [0, 7]];
+  var COLOR_MAP = {
+    0: [0.4, 0.4, 0.4],
+    1: [1, 0.3, 0.3],
+    2: [0.3, 0.65, 1],
+    3: [0.4, 1, 0.4],
+    4: [1, 1, 0.3],
+    5: [1, 0.65, 0.3],
+    6: [1, 0.4, 1]
+  };
+
   // src/powerup.js
   var SHAPES = [
     SQUARE_SHAPE,
@@ -288,20 +330,18 @@
     HORIZONTAL_SHAPE,
     VERTICAL_SHAPE
   ];
-  var POWER_COLORS = [
+  var POWER_COLORS2 = [
     [230, 30, 30],
     [48, 128, 230],
     [16, 240, 16]
   ];
-  function PowerUp(cx, cy) {
+  function PowerUp(cx, cy, powerType, shapeType) {
     let anim = 0;
     let remove2 = false;
-    const shapeType = 0;
-    const powerType = 1;
     function render(ctx2) {
       retainTransform(() => {
         ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-        const color = POWER_COLORS[powerType];
+        const color = POWER_COLORS2[powerType];
         ctx2.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
         ctx2.beginPath();
         ctx2.ellipse(0, 0, 18 + Math.cos(anim * 12) * 1, 18 - Math.cos(anim * 12) * 1, 0, 0, Math.PI * 2);
@@ -343,16 +383,88 @@
       }
       if (distToHit >= 0) {
         setTimeout(() => {
-          add(pulse_sfx_default(cx, cy, 60, POWER_COLORS[powerType]));
+          add(pulse_sfx_default(cx, cy, 60, POWER_COLORS2[powerType]));
           remove2 = true;
           off(RUNESTONE_MOVE, onRunestoneMove);
+          emit(POWERUP_ACQUIRED);
         }, distToHit / (totalDist + 0.01) * 600);
         setTimeout(() => {
-          add(pulse_sfx_default(cx1 + 1, cy1, 60, [255, 255, 255]));
-          add(pulse_sfx_default(cx1 - 1, cy1, 60, [255, 255, 255]));
-          add(pulse_sfx_default(cx1, cy1 + 1, 60, [255, 255, 255]));
-          add(pulse_sfx_default(cx1, cy1 - 1, 60, [255, 255, 255]));
+          applyAbility(cx1, cy1);
         }, 660);
+      }
+    }
+    function castPattern(a) {
+      for (let i = 0; i < a.length; i++) {
+        const x = a[i][0];
+        const y = a[i][1];
+        if (x < 0 || x >= 6 || y < 0 || y >= 6) {
+          continue;
+        }
+        setTimeout(() => {
+          add(ability_default(x, y, powerType));
+        }, a[i][2]);
+      }
+    }
+    function applyAbility(x, y) {
+      if (shapeType == 0) {
+        castPattern([
+          [x - 1, y, 0],
+          [x - 1, y - 1, 0],
+          [x, y - 1, 0],
+          [x + 1, y - 1, 0],
+          [x + 1, y, 0],
+          [x + 1, y + 1, 0],
+          [x, y + 1, 0],
+          [x - 1, y + 1, 0]
+        ]);
+      } else if (shapeType == 1) {
+        castPattern([
+          [x - 1, y, 0],
+          [x, y - 1, 0],
+          [x + 1, y, 0],
+          [x, y + 1, 0],
+          [x - 2, y, 300],
+          [x, y - 2, 300],
+          [x + 2, y, 300],
+          [x, y + 2, 300]
+        ]);
+      } else if (shapeType == 2) {
+        castPattern([
+          [x - 1, y - 1, 0],
+          [x + 1, y - 1, 0],
+          [x - 1, y + 1, 0],
+          [x + 1, y + 1, 0],
+          [x - 2, y - 2, 300],
+          [x + 2, y - 2, 300],
+          [x - 2, y + 2, 300],
+          [x + 2, y + 2, 300]
+        ]);
+      } else if (shapeType == 3) {
+        castPattern([
+          [x - 1, y, 0],
+          [x - 2, y, 100],
+          [x - 3, y, 200],
+          [x - 4, y, 300],
+          [x - 5, y, 400],
+          [x + 1, y, 0],
+          [x + 2, y, 100],
+          [x + 3, y, 200],
+          [x + 4, y, 300],
+          [x + 5, y, 400]
+        ]);
+      } else if (shapeType == 4) {
+        castPattern([
+          [x, y - 1, 0],
+          [x, y - 2, 100],
+          [x, y - 3, 200],
+          [x, y - 4, 300],
+          [x, y - 5, 400],
+          [x, y + 1, 0],
+          [x, y + 2, 100],
+          [x, y + 3, 200],
+          [x, y + 4, 300],
+          [x, y + 5, 400]
+        ]);
       }
     }
     on(RUNESTONE_MOVE, onRunestoneMove);
@@ -476,6 +588,7 @@
           timeInState = IDLE;
           state = IDLE;
           anim = 0;
+          emit(RUNESTONE_LAND);
         }
       }
     }
@@ -847,10 +960,19 @@
   function initialize() {
     add(game_arena_default());
     add(wizard_default());
-    add(powerup_default(3, 3));
-    add(ability_default(2, 2, 1));
+    add(powerup_default(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
+    add(powerup_default(5, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(rune_stone_default());
     add(spell_caster_default());
+    function onPowerupAcquired() {
+      add(powerup_default(
+        Math.floor(Math.random() * 6),
+        Math.floor(Math.random() * 6),
+        Math.floor(Math.random() * 3),
+        Math.floor(Math.random() * 5)
+      ));
+    }
+    on(POWERUP_ACQUIRED, onPowerupAcquired);
   }
   initialize();
 })();

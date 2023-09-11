@@ -1,11 +1,37 @@
+import { on } from "./bus";
 import { retainTransform } from "./canvas";
 import { WHITE } from "./color";
+import { add } from "./engine";
+import { RUNESTONE_LAND } from "./events";
+import PulseSFX from "./pulse-sfx";
+
+const POWER_COLORS = [
+    [230, 30, 30],
+    [48, 128, 230],
+    [106, 250, 106],
+];
 
 function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
+    let t = 0;
+    let turn = 0;
+
+    // VFX on spawn
+    add(PulseSFX(cx, cy, 50, POWER_COLORS[powerType]));
 
     function update(dT) {
         anim += dT;
+        t += dT * 2.3;
+
+        if (powerType == 0 && turn >= 2) {
+            return true;
+        }
+        if (powerType == 1 && turn >= 2) {
+            return true;
+        }
+        if (powerType == 2 && t > 1) {
+            return true;
+        }
     }
 
     function render(ctx) {
@@ -51,11 +77,35 @@ function Ability(cx, cy, powerType) {
                 ctx.stroke();
             });
         }
+        else if (powerType == 2) {
+            retainTransform(() => {
+                ctx.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+                ctx.strokeStyle = '#131';
+                ctx.lineWidth = 11 * (1 - t);
+                ctx.beginPath();
+                ctx.moveTo(-18 * Math.cos(Math.round(anim*13)*123), -55);
+                ctx.lineTo(18 * Math.cos(Math.round(anim*15)*103), -40);
+                ctx.lineTo(-11 * Math.cos(Math.round(anim*17)*93), -20);
+                ctx.lineTo(11 * Math.cos(Math.round(anim*13)*133), -15);
+                ctx.lineTo(6 * Math.cos(Math.round(anim*11)*97), 10);
+                ctx.stroke();
+                ctx.strokeStyle = '#1f1';
+                ctx.lineWidth = 10 * (1 - t);
+                ctx.stroke();
+            });
+        }
     }
+
+    function onRunestoneLand() {
+        turn += 1;
+    }
+
+    on(RUNESTONE_LAND, onRunestoneLand);
 
     return {
         update,
-        render
+        render,
+        order: -10
     };
 }
 

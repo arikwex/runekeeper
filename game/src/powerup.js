@@ -1,8 +1,9 @@
-import { off, on } from "./bus";
+import Ability from "./ability";
+import { emit, off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { WHITE } from "./color";
 import { add } from "./engine";
-import { RUNESTONE_MOVE } from "./events";
+import { POWERUP_ACQUIRED, RUNESTONE_MOVE } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { EX_SHAPE, HORIZONTAL_SHAPE, PLUS_SHAPE, SQUARE_SHAPE, VERTICAL_SHAPE } from "./runes";
 
@@ -20,12 +21,9 @@ const POWER_COLORS = [
     [16, 240, 16],
 ];
 
-function PowerUp(cx, cy) {
+function PowerUp(cx, cy, powerType, shapeType) {
     let anim = 0;
     let remove = false;
-
-    const shapeType = 0;
-    const powerType = 1;
 
     function render(ctx) {
         retainTransform(() => {
@@ -79,18 +77,109 @@ function PowerUp(cx, cy) {
 
         // Apply hit
         if (distToHit >= 0) {
-            // TODO: This will probably need some love after introducing in-path collisions
+            // TODO: This should really be triggered on runestone land...
+            // Queue configuratino from motion path, then trigger on land.
             setTimeout(() => {
                 add(PulseSFX(cx, cy, 60, POWER_COLORS[powerType]));
                 remove = true;
                 off(RUNESTONE_MOVE, onRunestoneMove);
+                emit(POWERUP_ACQUIRED);
             }, distToHit / (totalDist+0.01) * 600);
+
             setTimeout(() => {
-                add(PulseSFX(cx1+1, cy1, 60, [255, 255, 255]));
-                add(PulseSFX(cx1-1, cy1, 60, [255, 255, 255]));
-                add(PulseSFX(cx1, cy1+1, 60, [255, 255, 255]));
-                add(PulseSFX(cx1, cy1-1, 60, [255, 255, 255]));
+                applyAbility(cx1, cy1);
+                // add(Ability(cx1+1, cy1, 2));
+                // add(Ability(cx1-1, cy1, 2));
+
+                // setTimeout(() => {
+                //     add(Ability(cx1+2, cy1, 2));
+                //     add(Ability(cx1-2, cy1, 2));
+                // }, 300);
+                // add(PulseSFX(cx1+1, cy1, 60, [255, 255, 255]));
+                // add(PulseSFX(cx1-1, cy1, 60, [255, 255, 255]));
+                // add(PulseSFX(cx1, cy1+1, 60, [255, 255, 255]));
+                // add(PulseSFX(cx1, cy1-1, 60, [255, 255, 255]));
             }, 660);
+        }
+    }
+
+    function castPattern(a) {
+        for (let i = 0; i < a.length; i++) {
+            const x = a[i][0];
+            const y = a[i][1];
+            if (x < 0 || x >= 6 || y < 0 || y >= 6) {
+                continue;
+            }
+            setTimeout(() => {
+                add(Ability(x, y, powerType));
+            }, a[i][2]);
+        }
+    }
+
+    function applyAbility(x, y) {
+        if (shapeType == 0) {
+            castPattern([
+                [x-1, y, 0],
+                [x-1, y-1, 0],
+                [x, y-1, 0],
+                [x+1, y-1, 0],
+                [x+1, y, 0],
+                [x+1, y+1, 0],
+                [x, y+1, 0],
+                [x-1, y+1, 0],
+            ]);
+        }
+        else if (shapeType == 1) {
+            castPattern([
+                [x-1, y, 0],
+                [x, y-1, 0],
+                [x+1, y, 0],
+                [x, y+1, 0],
+                [x-2, y, 300],
+                [x, y-2, 300],
+                [x+2, y, 300],
+                [x, y+2, 300],
+            ]);
+        }
+        else if (shapeType == 2) {
+            castPattern([
+                [x-1, y-1, 0],
+                [x+1, y-1, 0],
+                [x-1, y+1, 0],
+                [x+1, y+1, 0],
+                [x-2, y-2, 300],
+                [x+2, y-2, 300],
+                [x-2, y+2, 300],
+                [x+2, y+2, 300],
+            ]);
+        }
+        else if (shapeType == 3) {
+            castPattern([
+                [x-1, y, 0],
+                [x-2, y, 100],
+                [x-3, y, 200],
+                [x-4, y, 300],
+                [x-5, y, 400],
+                [x+1, y, 0],
+                [x+2, y, 100],
+                [x+3, y, 200],
+                [x+4, y, 300],
+                [x+5, y, 400],
+            ]);
+        }
+        else if (shapeType == 4) {
+            castPattern([
+                [x, y-1, 0],
+                [x, y-2, 100],
+                [x, y-3, 200],
+                [x, y-4, 300],
+                [x, y-5, 400],
+                [x, y+1, 0],
+                [x, y+2, 100],
+                [x, y+3, 200],
+                [x, y+4, 300],
+                [x, y+5, 400],
+            ]);
         }
     }
 

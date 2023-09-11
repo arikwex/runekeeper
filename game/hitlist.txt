@@ -3,11 +3,11 @@ HITLIST
 
 Sunday
 - Collecting a power orb (passing through it) casts a spell on landing
-- Fire orb
-- Ice orb
-- Show powerups on the rune stone somehow
+- Render sort order
 
 Monday
+- Respect existing items in the grid (dont spawn on obstacles)
+- Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)
 - Render knight character
 - Enemy knight motion towards base

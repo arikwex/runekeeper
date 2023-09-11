@@ -2,6 +2,7 @@ import Ability from './ability';
 import * as bus from './bus';
 import { canvas } from './canvas';
 import { add } from './engine';
+import { POWERUP_ACQUIRED } from './events';
 import GameArena from './game-arena';
 import PowerUp from './powerup';
 import RuneStone from './rune-stone';
@@ -11,9 +12,17 @@ import Wizard from './wizard';
 function initialize() {
     add(GameArena());
     add(Wizard());
-    add(PowerUp(3, 3));
-    add(Ability(2,2,1));
+    add(PowerUp(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
+    add(PowerUp(5, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(RuneStone());
     add(SpellCaster());
+
+    function onPowerupAcquired() {
+        add(PowerUp(
+            Math.floor(Math.random() * 6), Math.floor(Math.random() * 6),
+            Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)
+        ));
+    }
+    bus.on(POWERUP_ACQUIRED, onPowerupAcquired);
 }
 initialize();

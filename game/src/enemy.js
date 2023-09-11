@@ -19,6 +19,9 @@ function Enemy(cx, cy) {
     let timeInState = 0;
     let dead = false;
     let hp = 2;
+    let maxHp = hp;
+    let motion = 0;
+    let motionMax = 2;
     let onFire = 0;
 
     // VFX on spawn
@@ -88,6 +91,41 @@ function Enemy(cx, cy) {
                 ctx.stroke();
             });
 
+            // hp / motion bars
+            for (let i = 0; i < maxHp; i++) {
+                retainTransform(() => {
+                    ctx.translate(-22 * (maxHp - 1) / 2.0 + 22 * i, 0);
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#222';
+                    ctx.lineWidth = 10;
+                    ctx.moveTo(-5, 10);
+                    ctx.lineTo(0, 15);
+                    ctx.lineTo(5, 10);
+                    ctx.stroke();
+                    if (i < hp) {
+                        ctx.strokeStyle = '#f22';
+                        ctx.lineWidth = 6;
+                        ctx.stroke();
+                    }
+                });
+            }
+            for (let i = 0; i < motionMax; i++) {
+                retainTransform(() => {
+                    ctx.translate(-22 * (motionMax - 1) / 2.0 + 22 * i, 0);
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#222';
+                    ctx.lineWidth = 10;
+                    ctx.moveTo(-4, 27);
+                    ctx.lineTo(4, 27);
+                    ctx.stroke();
+                    if (i < motion || (i <= motion && Math.cos(anim * 15) > 0)) {
+                        ctx.strokeStyle = '#3af';
+                        ctx.lineWidth = 6;
+                        ctx.stroke();
+                    }
+                });
+            }
+
             // on fire
             if (onFire > 0) {
                 for (let i = 0; i < 9; i++) {
@@ -140,7 +178,11 @@ function Enemy(cx, cy) {
     }
 
     function onTurnEnd() {
-        issueMove(cx - 1, cy);
+        motion += 1;
+        if (motion >= motionMax) {
+            motion = 0;
+            issueMove(cx - 1, cy);
+        }
 
         if (onFire > 0) {
             onFire -= 1;
@@ -160,9 +202,10 @@ function Enemy(cx, cy) {
     function onAbilityUse([tx, ty, powerType]) {
         if (tx == cx && ty == cy) {
             if (powerType == 0) {
-                onFire = 2;
+                onFire = 3;
             }
             if (powerType == 1) {
+                motion = -1;
                 takeDamage(1);
             }
             if (powerType == 2) {

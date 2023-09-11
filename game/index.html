@@ -310,6 +310,9 @@
     let timeInState = 0;
     let dead = false;
     let hp = 2;
+    let maxHp = hp;
+    let motion = 0;
+    let motionMax = 2;
     let onFire = 0;
     add(pulse_sfx_default(cx, cy, 55, [0, 0, 0]));
     function render(ctx2) {
@@ -365,6 +368,39 @@
           ctx2.lineTo(2, 4);
           ctx2.stroke();
         });
+        for (let i = 0; i < maxHp; i++) {
+          retainTransform(() => {
+            ctx2.translate(-22 * (maxHp - 1) / 2 + 22 * i, 0);
+            ctx2.beginPath();
+            ctx2.strokeStyle = "#222";
+            ctx2.lineWidth = 10;
+            ctx2.moveTo(-5, 10);
+            ctx2.lineTo(0, 15);
+            ctx2.lineTo(5, 10);
+            ctx2.stroke();
+            if (i < hp) {
+              ctx2.strokeStyle = "#f22";
+              ctx2.lineWidth = 6;
+              ctx2.stroke();
+            }
+          });
+        }
+        for (let i = 0; i < motionMax; i++) {
+          retainTransform(() => {
+            ctx2.translate(-22 * (motionMax - 1) / 2 + 22 * i, 0);
+            ctx2.beginPath();
+            ctx2.strokeStyle = "#222";
+            ctx2.lineWidth = 10;
+            ctx2.moveTo(-4, 27);
+            ctx2.lineTo(4, 27);
+            ctx2.stroke();
+            if (i < motion || i <= motion && Math.cos(anim * 15) > 0) {
+              ctx2.strokeStyle = "#3af";
+              ctx2.lineWidth = 6;
+              ctx2.stroke();
+            }
+          });
+        }
         if (onFire > 0) {
           for (let i = 0; i < 9; i++) {
             const p = (i * 30 + anim * 100) % 50 / 50;
@@ -415,7 +451,11 @@
       timeInState = 0;
     }
     function onTurnEnd() {
-      issueMove(cx - 1, cy);
+      motion += 1;
+      if (motion >= motionMax) {
+        motion = 0;
+        issueMove(cx - 1, cy);
+      }
       if (onFire > 0) {
         onFire -= 1;
         takeDamage(1);
@@ -432,9 +472,10 @@
     function onAbilityUse([tx, ty, powerType]) {
       if (tx == cx && ty == cy) {
         if (powerType == 0) {
-          onFire = 2;
+          onFire = 3;
         }
         if (powerType == 1) {
+          motion = -1;
           takeDamage(1);
         }
         if (powerType == 2) {

@@ -14,22 +14,15 @@ const POWER_COLORS = [
 function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
     let t = 0;
-    let turn = 0;
 
     // VFX on spawn
-    add(PulseSFX(cx, cy, 50, POWER_COLORS[powerType]));
+    add(PulseSFX(cx, cy, 55, POWER_COLORS[powerType]));
 
     function update(dT) {
         anim += dT;
-        t += dT * 2.3;
-
-        if (powerType == 0 && turn >= 2) {
-            return true;
-        }
-        if (powerType == 1 && turn >= 2) {
-            return true;
-        }
-        if (powerType == 2 && t > 1) {
+        t += dT * 1;
+        
+        if (t > 1) {
             return true;
         }
     }
@@ -42,7 +35,7 @@ function Ability(cx, cy, powerType) {
                     const p = (i * 30 + anim * 100) % 50 / 50.0;
                     const q = 0.15 + p * 0.85;
                     const w = (1-p*p*p*p*p);
-                    ctx.fillStyle = `rgba(${255 * w}, ${(50+p*200) * w}, ${30 * w}, ${1-p})`;
+                    ctx.fillStyle = `rgba(${255 * w}, ${(50+p*200) * w}, ${30 * w}, ${(1-p)*(1-t*t*t)})`;
                     ctx.beginPath();
                     ctx.ellipse(
                         ((i * 83) % 130 - 65) * 0.5,
@@ -55,12 +48,13 @@ function Ability(cx, cy, powerType) {
         }
         else if (powerType == 1) {
             retainTransform(() => {
+                const p = 1 - t * t * t;
                 ctx.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
                 ctx.fillStyle = '#29e';
-                ctx.fillRect(-38, -38, 76, 76);
+                ctx.fillRect(-38 * p, -38 * p, 76 * p, 76 * p);
                 
                 ctx.strokeStyle = '#eef';
-                ctx.lineWidth = 5;
+                ctx.lineWidth = 5 * p;
                 ctx.beginPath();
                 ctx.moveTo(-25, 5);
                 ctx.lineTo(-20, -5);
@@ -95,12 +89,6 @@ function Ability(cx, cy, powerType) {
             });
         }
     }
-
-    function onRunestoneLand() {
-        turn += 1;
-    }
-
-    on(RUNESTONE_LAND, onRunestoneLand);
 
     return {
         update,

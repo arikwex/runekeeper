@@ -2,7 +2,7 @@ HITLIST
 =======
 
 Monday
-- Enemy knight damage against tower
+- enemy sort order
 - Enemy walk around obstacles
 
 - Ice should cancel the fire effect

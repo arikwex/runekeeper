@@ -118,11 +118,14 @@
       obj.inView = () => 1;
     }
     gameObjects.push(obj);
-    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
+    resort();
     obj.tags?.map((tag) => {
       gameObjectsByTag[tag] = gameObjectsByTag[tag] ?? [];
       gameObjectsByTag[tag].push(obj);
     });
+  }
+  function resort() {
+    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
   }
   function arrayRemove(list, valuesToEvict) {
     return list.filter((g) => !valuesToEvict.includes(g));
@@ -305,6 +308,7 @@
     let originX = cx;
     let originY = cy;
     const MOVE_DURATION = 0.35;
+    let self = {};
     const IDLE = 0;
     const MOVING = 1;
     const ATTACK = 2;
@@ -440,6 +444,8 @@
           cy = targetY;
           timeInState = 0;
           state = IDLE;
+          self.order = 30 + cy * 0.02;
+          resort();
         }
       }
       if (state == ATTACK && timeInState > 0.5) {
@@ -506,7 +512,7 @@
     on(RUNESTONE_MOVE, onRunestoneMove);
     on(TURN_END, onTurnEnd);
     on(ABILITY_USE, onAbilityUse);
-    return {
+    self = {
       update,
       render,
       tags: ["enemy", "obstacle"],
@@ -514,6 +520,9 @@
       getX: () => cx,
       getY: () => cy
     };
+    self.order = 30 + cy * 0.02;
+    resort();
+    return self;
   }
   var enemy_default = Enemy;
 
@@ -543,8 +552,8 @@
       if (enemies.length < 3) {
         for (let i = 0; i < 30; i++) {
           const offerY = Math.floor(Math.random() * 6);
-          if (!spotOccupied(0, offerY)) {
-            add(enemy_default(0, offerY));
+          if (!spotOccupied(5, offerY)) {
+            add(enemy_default(5, offerY));
             break;
           }
         }

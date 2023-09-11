@@ -16,8 +16,8 @@ function EnemySpawner() {
         if (enemies.length < 3) {
             for (let i = 0; i < 30; i++) {
                 const offerY = Math.floor(Math.random() * 6);
-                if (!spotOccupied(0, offerY)) {
-                    add(Enemy(0, offerY));
+                if (!spotOccupied(5, offerY)) {
+                    add(Enemy(5, offerY));
                     break;
                 }
             }

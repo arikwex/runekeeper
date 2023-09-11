@@ -2,7 +2,7 @@ import { emit, off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import DamageParticle from "./damage-particle";
-import { add } from "./engine";
+import { add, resort } from "./engine";
 import { ABILITY_USE, ENEMY_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 
@@ -13,6 +13,7 @@ function Enemy(cx, cy) {
     let originX = cx;
     let originY = cy;
     const MOVE_DURATION = 0.35;
+    let self = {};
 
     const IDLE = 0;
     const MOVING = 1;
@@ -165,6 +166,8 @@ function Enemy(cx, cy) {
                 cy = targetY;
                 timeInState = 0;
                 state = IDLE;
+                self.order = 30 + cy * 0.02;
+                resort();
             }
         }
 
@@ -244,7 +247,7 @@ function Enemy(cx, cy) {
     on(TURN_END, onTurnEnd);
     on(ABILITY_USE, onAbilityUse);
 
-    return {
+    self = {
         update,
         render,
         tags: ['enemy', 'obstacle'],
@@ -252,6 +255,11 @@ function Enemy(cx, cy) {
         getX: () => cx,
         getY: () => cy,
     }
+
+    self.order = 30 + cy * 0.02;
+    resort();
+    
+    return self;
 }
 
 export default Enemy;

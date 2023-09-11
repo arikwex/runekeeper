@@ -44,11 +44,15 @@ function tick(currentFrameMs) {
 function add(obj) {
     if (!obj.inView) { obj.inView=()=>1 }
     gameObjects.push(obj);
-    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
+    resort();
     obj.tags?.map((tag) => {
         gameObjectsByTag[tag] = (gameObjectsByTag[tag] ?? []);
         gameObjectsByTag[tag].push(obj);
     });
+}
+
+function resort() {
+    gameObjects.sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
 function arrayRemove(list, valuesToEvict) {
@@ -78,5 +82,6 @@ export {
     add,
     remove,
     clear,
+    resort,
     getObjectsByTag,
 };

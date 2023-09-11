@@ -162,6 +162,7 @@ function Enemy(cx, cy) {
         }
 
         if (dead) {
+            off(RUNESTONE_MOVE, onRunestoneMove);
             off(TURN_END, onTurnEnd);
             off(ABILITY_USE, onAbilityUse);
             return true;
@@ -177,8 +178,11 @@ function Enemy(cx, cy) {
         timeInState = 0;
     }
 
-    function onTurnEnd() {
+    function onRunestoneMove() {
         motion += 1;
+    }
+
+    function onTurnEnd() {
         if (motion >= motionMax) {
             motion = 0;
             issueMove(cx - 1, cy);
@@ -214,6 +218,7 @@ function Enemy(cx, cy) {
         }
     }
 
+    on(RUNESTONE_MOVE, onRunestoneMove);
     on(TURN_END, onTurnEnd);
     on(ABILITY_USE, onAbilityUse);
 

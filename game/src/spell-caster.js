@@ -3,6 +3,7 @@ import { canvas, renderLines, retainTransform } from './canvas';
 import { BLACK, DARK_GRAY } from './color';
 import { SIGIL_DRAWN } from './events';
 import { classify } from './rune-model';
+import { COLOR_MAP } from './runes';
 
 function SpellCaster() {    
     const scaledCanvas = document.createElement("canvas");
@@ -24,15 +25,6 @@ function SpellCaster() {
         5: 'caret',
         6: 'hourglass',
     };
-    const colorMap = {
-        0: [0.4, 0.4, 0.4],
-        1: [1.0, 0.3, 0.3],
-        2: [0.3, 0.65, 1.0],
-        3: [0.4, 1.0, 0.4],
-        4: [1.0, 1.0, 0.3],
-        5: [1.0, 0.65, 0.3],
-        6: [1.0, 0.4, 1.0],
-    }
     const lines = [];
     let isDrawing = false;
     let selectedLines = [];
@@ -204,7 +196,7 @@ function SpellCaster() {
 
                 // Pulse
                 const p = Math.exp(-timeSinceSelect*3)*2;
-                const c = colorMap[selectedClass];
+                const c = COLOR_MAP[selectedClass];
                 ctx.strokeStyle = `rgba(${c[0]*255}, ${c[1]*255}, ${c[2]*255}, ${p * 0.6})`;
                 ctx.lineWidth = 20 + (1 - Math.exp(-timeSinceSelect*5)) * 80;
                 renderLines(ctx, selectedLines);

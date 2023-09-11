@@ -109,16 +109,14 @@ function RuneStone() {
             // rune
             ctx.strokeStyle = '#fff';
             ctx.beginPath();
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 6;
+            const DOTS = [[0, -7], [7, 6], [-7, 6]];
             for (let i = 0; i < 3; i++) {
-                const pt = CARET_RUNE[i];
+                const pt = DOTS[i];
                 const x = (pt[0] * c + pt[1] * s) * 1;
                 const y = (-pt[0] * s * 0.6 + pt[1] * c * 0.6) * 1;
-                if (i == 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 0.01, y);
             }
             ctx.stroke();
         });

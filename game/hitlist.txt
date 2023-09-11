@@ -2,8 +2,7 @@ HITLIST
 =======
 
 Sunday
-- Circle bonk vfx
-- Collecting a power orb (passing throug it) casts a spell on landing
+- Collecting a power orb (passing through it) casts a spell on landing
 - Fire orb
 - Ice orb
 - Show powerups on the rune stone somehow

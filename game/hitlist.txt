@@ -2,15 +2,22 @@ HITLIST
 =======
 
 Monday
+- Damage particle
+- Ice to slow enemy, 1 damage
+- Fire damage over time, 2 damage
+- Lightning 2 damage instantly
+- Enemy knight damage against tower
+- Enemy spawner
+- Enemy walk cadence display / mechanic
+
 - Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)
-- Enemy knight damage against tower
 - Audio SFX
 - Audio Music
 
 Tuesday
-- More enemies
+- More enemies types
 - Game progression
 - Score
 - Game Over

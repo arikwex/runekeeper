@@ -1,6 +1,7 @@
 import { off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
+import DamageParticle from "./damage-particle";
 import { add } from "./engine";
 import { ABILITY_USE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
@@ -17,6 +18,7 @@ function Enemy(cx, cy) {
     let state = IDLE;
     let timeInState = 0;
     let dead = false;
+    let hp = 2;
 
     // VFX on spawn
     add(PulseSFX(cx, cy, 55, [0, 0, 0]));
@@ -121,10 +123,18 @@ function Enemy(cx, cy) {
         issueMove(cx - 1, cy);
     }
 
+    function takeDamage(dmg) {
+        hp -= dmg;
+        add(PulseSFX(cx, cy, 95, [0, 0, 0]));
+        add(DamageParticle(cx, cy, dmg, [255, 0, 0]));
+        if (hp <= 0) {
+            dead = true;
+        }
+    }
+
     function onAbilityUse([tx, ty, powerType]) {
         if (tx == cx && ty == cy) {
-            dead = true;
-            add(PulseSFX(cx, cy, 95, [0, 0, 0]));
+            takeDamage(1);
         }
     }
 

@@ -16,7 +16,6 @@ function initialize() {
     add(PowerUp(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(PowerUp(4, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(PowerUp(1, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    // add(PowerUp(3, 1, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(Enemy(5, 2));
     add(RuneStone());
     add(SpellCaster());

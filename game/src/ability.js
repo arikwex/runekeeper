@@ -1,8 +1,8 @@
-import { on } from "./bus";
+import { emit, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { WHITE } from "./color";
 import { add } from "./engine";
-import { RUNESTONE_LAND } from "./events";
+import { ABILITY_USE, RUNESTONE_LAND } from "./events";
 import PulseSFX from "./pulse-sfx";
 
 const POWER_COLORS = [
@@ -21,6 +21,7 @@ function Ability(cx, cy, powerType) {
 
     // VFX on spawn
     add(PulseSFX(cx, cy, 55, POWER_COLORS[powerType]));
+    emit(ABILITY_USE, [cx, cy, powerType]);
 
     function update(dT) {
         anim += dT;

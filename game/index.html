@@ -146,6 +146,7 @@
   var POWERUP_ACQUIRED = 2;
   var RUNESTONE_LAND = 3;
   var TURN_END = 4;
+  var ABILITY_USE = 5;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -189,6 +190,7 @@
       renderOrder = 10;
     }
     add(pulse_sfx_default(cx, cy, 55, POWER_COLORS[powerType]));
+    emit(ABILITY_USE, [cx, cy, powerType]);
     function update(dT) {
       anim += dT;
       t += dT * 1;
@@ -279,6 +281,7 @@
     const MOVING = 1;
     let state = IDLE;
     let timeInState = 0;
+    let dead = false;
     add(pulse_sfx_default(cx, cy, 55, [0, 0, 0]));
     function render(ctx2) {
       retainTransform(() => {
@@ -347,6 +350,11 @@
           state = IDLE;
         }
       }
+      if (dead) {
+        off(TURN_END, onTurnEnd);
+        off(ABILITY_USE, onAbilityUse);
+        return true;
+      }
     }
     function issueMove(nx, ny) {
       originX = cx;
@@ -359,7 +367,13 @@
     function onTurnEnd() {
       issueMove(cx - 1, cy);
     }
+    function onAbilityUse([tx, ty, powerType]) {
+      if (tx == cx && ty == cy) {
+        dead = true;
+      }
+    }
     on(TURN_END, onTurnEnd);
+    on(ABILITY_USE, onAbilityUse);
     return {
       update,
       render,
@@ -586,7 +600,7 @@
   function RuneStone() {
     let anim = 0;
     let cx = 0;
-    let cy = 0;
+    let cy = 2;
     const mesh = [[-35, 0], [-15, 30], [15, 30], [35, 0], [15, -30], [-15, -30]];
     const MOVE_DURATION = 0.66;
     const IDLE = 0;

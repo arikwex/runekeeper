@@ -1,8 +1,8 @@
-import { on } from "./bus";
+import { off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import { add } from "./engine";
-import { RUNESTONE_MOVE, TURN_END } from "./events";
+import { ABILITY_USE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 
 function Enemy(cx, cy) {
@@ -16,6 +16,7 @@ function Enemy(cx, cy) {
     const MOVING = 1;
     let state = IDLE;
     let timeInState = 0;
+    let dead = false;
 
     // VFX on spawn
     add(PulseSFX(cx, cy, 55, [0, 0, 0]));
@@ -99,6 +100,12 @@ function Enemy(cx, cy) {
                 state = IDLE;
             }
         }
+
+        if (dead) {
+            off(TURN_END, onTurnEnd);
+            off(ABILITY_USE, onAbilityUse);
+            return true;
+        }
     }
 
     function issueMove(nx, ny) {
@@ -111,11 +118,17 @@ function Enemy(cx, cy) {
     }
 
     function onTurnEnd() {
-        // cx -= 1;
         issueMove(cx - 1, cy);
     }
 
+    function onAbilityUse([tx, ty, powerType]) {
+        if (tx == cx && ty == cy) {
+            dead = true;
+        }
+    }
+
     on(TURN_END, onTurnEnd);
+    on(ABILITY_USE, onAbilityUse);
 
     return {
         update,

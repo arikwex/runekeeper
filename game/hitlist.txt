@@ -5,9 +5,6 @@ Monday
 - Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)
-- Render knight character
-- Enemy knight motion towards base
-- Each sigil draw increment game tick
 - Enemy knight damage against tower
 - Audio SFX
 - Audio Music

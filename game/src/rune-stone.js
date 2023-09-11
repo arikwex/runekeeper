@@ -21,13 +21,13 @@ function RuneStone() {
     
     // cell units for game grid
     let cx = 0;
-    let cy = 0;
+    let cy = 2;
     const mesh = [[-35, 0], [-15, 30], [15, 30], [35, 0], [15, -30], [-15, -30]];
 
     // state
     const MOVE_DURATION = 0.66;
     const IDLE = 0;
-    const MOVING = 1
+    const MOVING = 1;
     let state = IDLE;
     let timeInState = 0;
     let targetCX = 0;

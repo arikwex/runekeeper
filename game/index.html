@@ -62,6 +62,7 @@
   var DARK_GRAY = "#474747";
   var GRAY = "#777";
   var MID_GRAY = "#a4a4a4";
+  var LIGHT_GRAY = "#cbcbcb";
   var WHITE = "#fff";
 
   // src/tags.js
@@ -144,6 +145,7 @@
   var RUNESTONE_MOVE = 1;
   var POWERUP_ACQUIRED = 2;
   var RUNESTONE_LAND = 3;
+  var TURN_END = 4;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -167,7 +169,8 @@
     }
     return {
       render,
-      update
+      update,
+      order: 4
     };
   }
   var pulse_sfx_default = PulseSFX;
@@ -181,6 +184,10 @@
   function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
     let t = 0;
+    let renderOrder = 50;
+    if (powerType == 1) {
+      renderOrder = 10;
+    }
     add(pulse_sfx_default(cx, cy, 55, POWER_COLORS[powerType]));
     function update(dT) {
       anim += dT;
@@ -255,10 +262,111 @@
     return {
       update,
       render,
-      order: -10
+      order: renderOrder
     };
   }
   var ability_default = Ability;
+
+  // src/enemy.js
+  function Enemy(cx, cy) {
+    let anim = Math.random() * 7;
+    let targetX = cx;
+    let targetY = cy;
+    let originX = cx;
+    let originY = cy;
+    const MOVE_DURATION = 0.35;
+    const IDLE = 0;
+    const MOVING = 1;
+    let state = IDLE;
+    let timeInState = 0;
+    add(pulse_sfx_default(cx, cy, 55, [0, 0, 0]));
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+        ctx2.fillStyle = "rgba(0,0,0,0.1)";
+        ctx2.beginPath();
+        ctx2.ellipse(0, 0, 26, 19, 0, 0, 2 * Math.PI);
+        ctx2.fill();
+        if (state == MOVING) {
+          const p = timeInState / MOVE_DURATION;
+          ctx2.translate(0, -120 * p * (1 - p));
+        }
+        ctx2.lineWidth = 10;
+        ctx2.fillStyle = GRAY;
+        ctx2.strokeStyle = GRAY;
+        const squish = Math.cos(anim * 10);
+        const squish2 = Math.cos(anim * 10 + 1);
+        ctx2.fillRect(-10 + squish, 0, 20 - 2 * squish, -34 - 2 * squish);
+        ctx2.strokeRect(-10 + squish, 0, 20 - 2 * squish, -34 - 2 * squish);
+        retainTransform(() => {
+          ctx2.translate(0, -39 - squish * 3);
+          ctx2.fillStyle = DARK_GRAY;
+          ctx2.strokeStyle = DARK_GRAY;
+          ctx2.fillRect(-6, 0, 12, -16);
+          ctx2.strokeRect(-6, 0, 12, -16);
+          ctx2.strokeStyle = "#c11";
+          ctx2.beginPath();
+          ctx2.moveTo(0, -62 + 41);
+          ctx2.lineTo(1, -70 + 41);
+          ctx2.lineTo(6, -74 + 41);
+          ctx2.lineTo(10, -70 + 41);
+          ctx2.stroke();
+          ctx2.strokeStyle = LIGHT_GRAY;
+          ctx2.beginPath();
+          ctx2.moveTo(-3, -49 + 41);
+          ctx2.lineTo(-3.01, -49 + 41);
+          ctx2.stroke();
+        });
+        ctx2.translate(-20, -18 + squish2 * 1);
+        ctx2.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
+        ctx2.strokeStyle = "#eee";
+        ctx2.beginPath();
+        ctx2.moveTo(0, 0);
+        ctx2.lineTo(-6, -45 + 13);
+        ctx2.stroke();
+        ctx2.strokeStyle = "#841";
+        ctx2.beginPath();
+        ctx2.moveTo(-5, 0);
+        ctx2.lineTo(5, -3);
+        ctx2.moveTo(0, 0);
+        ctx2.lineTo(2, 4);
+        ctx2.stroke();
+      });
+    }
+    function update(dT) {
+      anim += dT;
+      timeInState += dT;
+      if (state == MOVING) {
+        const p = timeInState / MOVE_DURATION;
+        cx = originX * (1 - p) + targetX * p;
+        cy = originY * (1 - p) + targetY * p;
+        if (timeInState > MOVE_DURATION) {
+          cx = targetX;
+          cy = targetY;
+          timeInState = 0;
+          state = IDLE;
+        }
+      }
+    }
+    function issueMove(nx, ny) {
+      originX = cx;
+      originY = cy;
+      targetX = nx;
+      targetY = ny;
+      state = MOVING;
+      timeInState = 0;
+    }
+    function onTurnEnd() {
+      issueMove(cx - 1, cy);
+    }
+    on(TURN_END, onTurnEnd);
+    return {
+      update,
+      render,
+      order: 30
+    };
+  }
+  var enemy_default = Enemy;
 
   // src/game-arena.js
   function GameArena() {
@@ -579,6 +687,10 @@
           state = IDLE;
           anim = 0;
           emit(RUNESTONE_LAND);
+          add(pulse_sfx_default(cx, cy, 50, [255, 255, 255]));
+          setTimeout(() => {
+            emit(TURN_END);
+          }, 550);
         }
       }
     }
@@ -953,7 +1065,7 @@
     add(powerup_default(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(powerup_default(4, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(powerup_default(1, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(powerup_default(3, 1, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
+    add(enemy_default(5, 2));
     add(rune_stone_default());
     add(spell_caster_default());
     function onPowerupAcquired() {

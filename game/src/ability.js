@@ -14,6 +14,10 @@ const POWER_COLORS = [
 function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
     let t = 0;
+    let renderOrder = 50;
+    if (powerType == 1) {
+        renderOrder = 10
+    }
 
     // VFX on spawn
     add(PulseSFX(cx, cy, 55, POWER_COLORS[powerType]));
@@ -93,7 +97,7 @@ function Ability(cx, cy, powerType) {
     return {
         update,
         render,
-        order: -10
+        order: renderOrder,
     };
 }
 

@@ -1,7 +1,9 @@
 import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
-import { RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN } from "./events";
+import { add } from "./engine";
+import { RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
+import PulseSFX from "./pulse-sfx";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 
 const ORDER_REMAP = { 5:0, 1:1, 3:2, 2:3, 4:4, 6:5 };
@@ -138,12 +140,10 @@ function RuneStone() {
                 state = IDLE;
                 anim = 0;
                 emit(RUNESTONE_LAND);
+                add(PulseSFX(cx, cy, 50, [255,255,255]));
+                setTimeout(() => { emit(TURN_END); }, 550);
             }
         }
-
-        // if (state == IDLE && timeInState > 0.5) {
-        //     moveToDest(Math.floor(Math.random() * 6), Math.floor(Math.random() * 6));
-        // }
     }
 
     function moveToDest(x, y) {

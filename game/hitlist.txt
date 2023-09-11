@@ -1,10 +1,6 @@
 HITLIST
 =======
 
-Sunday
-- Collecting a power orb (passing through it) casts a spell on landing
-- Render sort order
-
 Monday
 - Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions

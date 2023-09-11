@@ -19,6 +19,7 @@ function Enemy(cx, cy) {
     let timeInState = 0;
     let dead = false;
     let hp = 2;
+    let onFire = 0;
 
     // VFX on spawn
     add(PulseSFX(cx, cy, 55, [0, 0, 0]));
@@ -70,20 +71,39 @@ function Enemy(cx, cy) {
             });
 
             // sword
-            ctx.translate(-20, -18 + squish2 * 1);
-            ctx.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
-            ctx.strokeStyle = '#eee';
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(-6, -45+13);
-            ctx.stroke();
-            ctx.strokeStyle = '#841';
-            ctx.beginPath();
-            ctx.moveTo(-5, 0);
-            ctx.lineTo(5, -3);
-            ctx.moveTo(0, 0);
-            ctx.lineTo(2, 4);
-            ctx.stroke();
+            retainTransform(() => {
+                ctx.translate(-20, -18 + squish2 * 1);
+                ctx.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
+                ctx.strokeStyle = '#eee';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-6, -45+13);
+                ctx.stroke();
+                ctx.strokeStyle = '#841';
+                ctx.beginPath();
+                ctx.moveTo(-5, 0);
+                ctx.lineTo(5, -3);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(2, 4);
+                ctx.stroke();
+            });
+
+            // on fire
+            if (onFire > 0) {
+                for (let i = 0; i < 9; i++) {
+                    const p = (i * 30 + anim * 100) % 50 / 50.0;
+                    const q = 0.15 + p * 0.85;
+                    const w = (1-p*p*p*p*p);
+                    ctx.fillStyle = `rgba(${255 * w}, ${(50+p*200) * w}, ${30 * w}, ${(1-p)})`;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        ((i * 83) % 130 - 65) * 0.34,
+                        -p * 56 + ((i * 11) % 23 - 5) * 1.3,
+                        26 * (1-p) * q, 26 * (1-p) / q * p, 0, 0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
         })
     }
 
@@ -121,6 +141,11 @@ function Enemy(cx, cy) {
 
     function onTurnEnd() {
         issueMove(cx - 1, cy);
+
+        if (onFire > 0) {
+            onFire -= 1;
+            takeDamage(1);
+        }
     }
 
     function takeDamage(dmg) {
@@ -134,7 +159,15 @@ function Enemy(cx, cy) {
 
     function onAbilityUse([tx, ty, powerType]) {
         if (tx == cx && ty == cy) {
-            takeDamage(1);
+            if (powerType == 0) {
+                onFire = 2;
+            }
+            if (powerType == 1) {
+                takeDamage(1);
+            }
+            if (powerType == 2) {
+                takeDamage(2);
+            }
         }
     }
 

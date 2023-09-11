@@ -310,6 +310,7 @@
     let timeInState = 0;
     let dead = false;
     let hp = 2;
+    let onFire = 0;
     add(pulse_sfx_default(cx, cy, 55, [0, 0, 0]));
     function render(ctx2) {
       retainTransform(() => {
@@ -348,20 +349,41 @@
           ctx2.lineTo(-3.01, -49 + 41);
           ctx2.stroke();
         });
-        ctx2.translate(-20, -18 + squish2 * 1);
-        ctx2.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
-        ctx2.strokeStyle = "#eee";
-        ctx2.beginPath();
-        ctx2.moveTo(0, 0);
-        ctx2.lineTo(-6, -45 + 13);
-        ctx2.stroke();
-        ctx2.strokeStyle = "#841";
-        ctx2.beginPath();
-        ctx2.moveTo(-5, 0);
-        ctx2.lineTo(5, -3);
-        ctx2.moveTo(0, 0);
-        ctx2.lineTo(2, 4);
-        ctx2.stroke();
+        retainTransform(() => {
+          ctx2.translate(-20, -18 + squish2 * 1);
+          ctx2.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
+          ctx2.strokeStyle = "#eee";
+          ctx2.beginPath();
+          ctx2.moveTo(0, 0);
+          ctx2.lineTo(-6, -45 + 13);
+          ctx2.stroke();
+          ctx2.strokeStyle = "#841";
+          ctx2.beginPath();
+          ctx2.moveTo(-5, 0);
+          ctx2.lineTo(5, -3);
+          ctx2.moveTo(0, 0);
+          ctx2.lineTo(2, 4);
+          ctx2.stroke();
+        });
+        if (onFire > 0) {
+          for (let i = 0; i < 9; i++) {
+            const p = (i * 30 + anim * 100) % 50 / 50;
+            const q = 0.15 + p * 0.85;
+            const w = 1 - p * p * p * p * p;
+            ctx2.fillStyle = `rgba(${255 * w}, ${(50 + p * 200) * w}, ${30 * w}, ${1 - p})`;
+            ctx2.beginPath();
+            ctx2.ellipse(
+              (i * 83 % 130 - 65) * 0.34,
+              -p * 56 + (i * 11 % 23 - 5) * 1.3,
+              26 * (1 - p) * q,
+              26 * (1 - p) / q * p,
+              0,
+              0,
+              Math.PI * 2
+            );
+            ctx2.fill();
+          }
+        }
       });
     }
     function update(dT) {
@@ -394,6 +416,10 @@
     }
     function onTurnEnd() {
       issueMove(cx - 1, cy);
+      if (onFire > 0) {
+        onFire -= 1;
+        takeDamage(1);
+      }
     }
     function takeDamage(dmg) {
       hp -= dmg;
@@ -405,7 +431,15 @@
     }
     function onAbilityUse([tx, ty, powerType]) {
       if (tx == cx && ty == cy) {
-        takeDamage(1);
+        if (powerType == 0) {
+          onFire = 2;
+        }
+        if (powerType == 1) {
+          takeDamage(1);
+        }
+        if (powerType == 2) {
+          takeDamage(2);
+        }
       }
     }
     on(TURN_END, onTurnEnd);
@@ -618,7 +652,8 @@
     on(RUNESTONE_MOVE, onRunestoneMove);
     return {
       render,
-      update
+      update,
+      order: 15
     };
   }
   var powerup_default = PowerUp;

@@ -16,7 +16,7 @@ function Ability(cx, cy, powerType) {
     let t = 0;
     let renderOrder = 50;
     if (powerType == 1) {
-        renderOrder = 10
+        renderOrder = 10;
     }
 
     // VFX on spawn

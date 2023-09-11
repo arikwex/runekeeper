@@ -187,7 +187,8 @@ function PowerUp(cx, cy, powerType, shapeType) {
 
     return {
         render,
-        update
+        update,
+        order: 15,
     }
 }
 

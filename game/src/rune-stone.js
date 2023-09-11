@@ -74,7 +74,7 @@ function RuneStone() {
             // Rune
             if (state == MOVING) {
                 const p = timeInState / MOVE_DURATION;
-                ctx.translate(0, -180 * p * (1 - p));
+                ctx.translate(0, -90 * p * (1 - p));
             }
             const angle = anim;
             const c = Math.cos(angle);

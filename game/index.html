@@ -173,6 +173,35 @@
   }
   var game_arena_default = GameArena;
 
+  // src/powerup.js
+  function PowerUp(cx, cy) {
+    let anim = 0;
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+        ctx2.fillStyle = "#d22";
+        ctx2.beginPath();
+        ctx2.ellipse(0, 0, 18 + Math.cos(anim * 12) * 1, 18 - Math.cos(anim * 12) * 1, 0, 0, Math.PI * 2);
+        ctx2.fill();
+        for (let i = 0; i < 3; i++) {
+          const p = (i * 30 + anim * 50) % 50 / 50;
+          const q = 0.15 + p * 0.85;
+          ctx2.beginPath();
+          ctx2.ellipse((i * 30 + 20) % 24 - 12, -p * 36, 12 * (1 - p) * q, 16 * (1 - p) / q * p, 0, 0, Math.PI * 2);
+          ctx2.fill();
+        }
+      });
+    }
+    function update(dT) {
+      anim += dT;
+    }
+    return {
+      render,
+      update
+    };
+  }
+  var powerup_default = PowerUp;
+
   // src/events.js
   var SIGIL_DRAWN = 0;
 
@@ -233,7 +262,7 @@
         ctx2.fill();
         if (state == MOVING) {
           const p = timeInState / MOVE_DURATION;
-          ctx2.translate(0, -180 * p * (1 - p));
+          ctx2.translate(0, -90 * p * (1 - p));
         }
         const angle = anim;
         const c = Math.cos(angle);
@@ -670,6 +699,7 @@
   function initialize() {
     add(game_arena_default());
     add(wizard_default());
+    add(powerup_default(3, 3));
     add(rune_stone_default());
     add(spell_caster_default());
   }

@@ -1,12 +1,29 @@
 HITLIST
 =======
 
-- Render mage character
-- In-grid rune object to command around in the scene
+Sunday
+- Make a power orb to collect
+- Collecting a power orb (passing throug it) casts a spell on landing
+- Fire orb
+- Ice orb
+- Show powerups on the rune stone somehow
+
+Monday
+- Obstacles? Can't go through obstacles? (stop at adjacent cell?)
 - Render knight character
-- Render rune game objects
+- Enemy knight motion towards base
 - Each sigil draw increment game tick
-- Showcase current rune sequence
+- Enemy knight damage against tower
+- Audio SFX
+- Audio Music
+
+Tuesday
+- More enemies
+- Game progression
+- Score
+- Game Over
+
+
 - Improve / give love to spellcasting slab
 
 

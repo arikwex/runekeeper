@@ -2,7 +2,7 @@ HITLIST
 =======
 
 Sunday
-- Make a power orb to collect
+- Circle bonk vfx
 - Collecting a power orb (passing throug it) casts a spell on landing
 - Fire orb
 - Ice orb

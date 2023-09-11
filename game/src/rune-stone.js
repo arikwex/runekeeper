@@ -1,7 +1,7 @@
-import { on } from "./bus";
+import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
-import { SIGIL_DRAWN } from "./events";
+import { RUNESTONE_MOVE, SIGIL_DRAWN } from "./events";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 
 const ORDER_REMAP = { 5:0, 1:1, 3:2, 2:3, 4:4, 6:5 };
@@ -154,6 +154,7 @@ function RuneStone() {
         targetCY = y;
         state = MOVING;
         timeInState = 0;
+        emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY]);
     }
 
     let pivot = 0;

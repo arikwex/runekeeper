@@ -173,9 +173,41 @@
   }
   var game_arena_default = GameArena;
 
+  // src/events.js
+  var SIGIL_DRAWN = 0;
+  var RUNESTONE_MOVE = 1;
+
+  // src/pulse-sfx.js
+  function PulseSFX(cx, cy, scale, rgb) {
+    let t = 0;
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+        const p = t / 0.5;
+        const r = scale * (1 - Math.exp(-p * 4));
+        const alpha = 1 - p;
+        ctx2.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+        ctx2.lineWidth = 12 * (1 - p);
+        ctx2.beginPath();
+        ctx2.ellipse(0, 0, r, r * 0.8, 0, 0, Math.PI * 2);
+        ctx2.stroke();
+      });
+    }
+    function update(dT) {
+      t += dT;
+      return t > 0.5;
+    }
+    return {
+      render,
+      update
+    };
+  }
+  var pulse_sfx_default = PulseSFX;
+
   // src/powerup.js
   function PowerUp(cx, cy) {
     let anim = 0;
+    let remove2 = false;
     function render(ctx2) {
       retainTransform(() => {
         ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
@@ -194,16 +226,35 @@
     }
     function update(dT) {
       anim += dT;
+      return remove2;
     }
+    function onRunestoneMove([cx0, cy0, cx1, cy1]) {
+      console.log(cx0, cy0, cx1, cy1);
+      let distToHit = -1;
+      let totalDist = Math.abs(cy1 - cy0) + Math.abs(cx1 - cx0);
+      if (cx0 == cx && cx1 == cx && (cy >= cy0 && cy <= cy1 || cy >= cy1 && cy <= cy0)) {
+        console.log(cy - cy0);
+        distToHit = Math.abs(cy - cy0);
+      }
+      if (cy0 == cy && cy1 == cy && (cx >= cx0 && cx <= cx1 || cx >= cx1 && cx <= cx0)) {
+        console.log(cx - cx0);
+        distToHit = Math.abs(cx - cx0);
+      }
+      if (distToHit >= 0) {
+        setTimeout(() => {
+          add(pulse_sfx_default(cx, cy, 60, [230, 20, 20]));
+          remove2 = true;
+        }, distToHit / (totalDist + 0.01) * 660);
+        console.log(distToHit / (totalDist + 0.01));
+      }
+    }
+    on(RUNESTONE_MOVE, onRunestoneMove);
     return {
       render,
       update
     };
   }
   var powerup_default = PowerUp;
-
-  // src/events.js
-  var SIGIL_DRAWN = 0;
 
   // src/rune-stone.js
   var ORDER_REMAP = { 5: 0, 1: 1, 3: 2, 2: 3, 4: 4, 6: 5 };
@@ -330,6 +381,7 @@
       targetCY = y;
       state = MOVING;
       timeInState = 0;
+      emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY]);
     }
     let pivot = 0;
     function onSigilDrawn(idx) {
@@ -700,6 +752,7 @@
     add(game_arena_default());
     add(wizard_default());
     add(powerup_default(3, 3));
+    add(pulse_sfx_default(3, 3, 60, [230, 20, 20]));
     add(rune_stone_default());
     add(spell_caster_default());
   }

@@ -1,3 +1,4 @@
+import Ability from './ability';
 import * as bus from './bus';
 import { canvas } from './canvas';
 import { add } from './engine';
@@ -11,6 +12,7 @@ function initialize() {
     add(GameArena());
     add(Wizard());
     add(PowerUp(3, 3));
+    add(Ability(2,2,0));
     add(RuneStone());
     add(SpellCaster());
 }

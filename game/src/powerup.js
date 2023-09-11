@@ -79,6 +79,7 @@ function PowerUp(cx, cy) {
 
         // Apply hit
         if (distToHit >= 0) {
+            // TODO: This will probably need some love after introducing in-path collisions
             setTimeout(() => {
                 add(PulseSFX(cx, cy, 60, POWER_COLORS[powerType]));
                 remove = true;

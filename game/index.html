@@ -147,6 +147,7 @@
   var RUNESTONE_LAND = 3;
   var TURN_END = 4;
   var ABILITY_USE = 5;
+  var ENEMY_DAMAGE = 6;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -306,6 +307,7 @@
     const MOVE_DURATION = 0.35;
     const IDLE = 0;
     const MOVING = 1;
+    const ATTACK = 2;
     let state = IDLE;
     let timeInState = 0;
     let dead = false;
@@ -355,6 +357,10 @@
         retainTransform(() => {
           ctx2.translate(-20, -18 + squish2 * 1);
           ctx2.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
+          if (state == ATTACK) {
+            ctx2.translate(-Math.exp(-Math.pow((timeInState - 0.25) * 1.5, 2) * 25) * 20, 0);
+            ctx2.rotate(-Math.exp(-Math.pow((timeInState - 0.3) * 1.5, 2) * 30) * 1.2);
+          }
           ctx2.strokeStyle = "#eee";
           ctx2.beginPath();
           ctx2.moveTo(0, 0);
@@ -436,6 +442,10 @@
           state = IDLE;
         }
       }
+      if (state == ATTACK && timeInState > 0.5) {
+        state = IDLE;
+        timeInState = 0;
+      }
       if (dead) {
         off(RUNESTONE_MOVE, onRunestoneMove);
         off(TURN_END, onTurnEnd);
@@ -455,9 +465,16 @@
       motion += 1;
     }
     function onTurnEnd() {
-      if (motion >= motionMax) {
-        motion = 0;
-        issueMove(cx - 1, cy);
+      if (cx > 0) {
+        if (motion >= motionMax) {
+          motion = 0;
+          issueMove(cx - 1, cy);
+        }
+      } else {
+        state = ATTACK;
+        timeInState = 0;
+        emit(ENEMY_DAMAGE, 1);
+        add(damage_particle_default(-1.1, cy + 0.5, 1, [255, 0, 0]));
       }
       if (onFire > 0) {
         onFire -= 1;
@@ -526,8 +543,8 @@
       if (enemies.length < 3) {
         for (let i = 0; i < 30; i++) {
           const offerY = Math.floor(Math.random() * 6);
-          if (!spotOccupied(5, offerY)) {
-            add(enemy_default(5, offerY));
+          if (!spotOccupied(0, offerY)) {
+            add(enemy_default(0, offerY));
             break;
           }
         }
@@ -1197,9 +1214,17 @@
   // src/wizard.js
   function Wizard() {
     let anim = 0;
+    let hp = 10;
+    let dead = false;
     function render(ctx2) {
       retainTransform(() => {
         ctx2.translate(-120, 160);
+        if (hp > 0) {
+          ctx2.fillStyle = "#f11";
+          ctx2.textAlign = "center";
+          ctx2.font = `bold 30px arial`;
+          ctx2.fillText(`${hp} HP`, 0, 230);
+        }
         ctx2.fillStyle = GRAY;
         ctx2.strokeStyle = DARK_GRAY;
         ctx2.lineWidth = 10;
@@ -1214,27 +1239,44 @@
         ctx2.translate(0, -143);
         ctx2.fillStyle = MID_GRAY;
         renderAndFill(ctx2, [[-30, 0], [-15, 10], [15, 10], [30, 0], [15, -10], [-15, -10]]);
-        ctx2.translate(3, -2);
-        ctx2.fillStyle = BLACK;
-        ctx2.strokeStyle = BLACK;
-        ctx2.lineWidth = 4;
-        const squeeze = -Math.cos(anim * 10) * 0.05 + 0.95;
-        renderAndFill(ctx2, [[-20 * squeeze, 0], [12 * squeeze, 0], [1 * squeeze, -30], [-10 * squeeze, -10]]);
-        ctx2.fillStyle = PURPLE;
-        ctx2.strokeStyle = PURPLE;
-        ctx2.translate(0, -23 + Math.abs(Math.sin(anim * 5) * 2.5));
-        ctx2.rotate(Math.sin(anim * 10 - 1) * 0.06);
-        renderAndFill(ctx2, [[-20, 2], [-10, -1], [13, 0], [20, 4], [17, 0], [12, -5], [7, -13], [0, -23], [-10, -29], [-21, -20], [-12, -22], [-6, -10]]);
-        ctx2.lineWidth = 7;
-        ctx2.strokeStyle = WHITE;
-        renderLines(ctx2, [[8, -4], [8.01, -4]]);
-        renderLines(ctx2, [[-1, -4], [-1.01, -4]]);
-        renderLines(ctx2, [[2, -11], [2.01, -11]]);
+        if (hp > 0) {
+          ctx2.translate(3, -2);
+          ctx2.fillStyle = BLACK;
+          ctx2.strokeStyle = BLACK;
+          ctx2.lineWidth = 4;
+          const squeeze = -Math.cos(anim * 10) * 0.05 + 0.95;
+          renderAndFill(ctx2, [[-20 * squeeze, 0], [12 * squeeze, 0], [1 * squeeze, -30], [-10 * squeeze, -10]]);
+          ctx2.fillStyle = PURPLE;
+          ctx2.strokeStyle = PURPLE;
+          ctx2.translate(0, -23 + Math.abs(Math.sin(anim * 5) * 2.5));
+          ctx2.rotate(Math.sin(anim * 10 - 1) * 0.06);
+          renderAndFill(ctx2, [[-20, 2], [-10, -1], [13, 0], [20, 4], [17, 0], [12, -5], [7, -13], [0, -23], [-10, -29], [-21, -20], [-12, -22], [-6, -10]]);
+          ctx2.lineWidth = 7;
+          ctx2.strokeStyle = WHITE;
+          renderLines(ctx2, [[8, -4], [8.01, -4]]);
+          renderLines(ctx2, [[-1, -4], [-1.01, -4]]);
+          renderLines(ctx2, [[2, -11], [2.01, -11]]);
+        }
       });
     }
     function update(dT) {
       anim += dT;
     }
+    function onEnemyDamage(dmg) {
+      hp -= dmg;
+      if (hp <= 0) {
+        hp = 0;
+        if (!dead) {
+          dead = true;
+          for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+              add(pulse_sfx_default(-2, 1.5, 70, [255, 255, 255]));
+            }, i * 400);
+          }
+        }
+      }
+    }
+    on(ENEMY_DAMAGE, onEnemyDamage);
     return {
       update,
       render

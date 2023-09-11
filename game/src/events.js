@@ -4,3 +4,4 @@ export const POWERUP_ACQUIRED = 2;
 export const RUNESTONE_LAND = 3;
 export const TURN_END = 4;
 export const ABILITY_USE = 5;
+export const ENEMY_DAMAGE = 6;

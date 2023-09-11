@@ -1,9 +1,9 @@
-import { off, on } from "./bus";
+import { emit, off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import DamageParticle from "./damage-particle";
 import { add } from "./engine";
-import { ABILITY_USE, RUNESTONE_MOVE, TURN_END } from "./events";
+import { ABILITY_USE, ENEMY_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 
 function Enemy(cx, cy) {
@@ -13,9 +13,12 @@ function Enemy(cx, cy) {
     let originX = cx;
     let originY = cy;
     const MOVE_DURATION = 0.35;
+
     const IDLE = 0;
     const MOVING = 1;
+    const ATTACK = 2;
     let state = IDLE;
+
     let timeInState = 0;
     let dead = false;
     let hp = 2;
@@ -77,6 +80,10 @@ function Enemy(cx, cy) {
             retainTransform(() => {
                 ctx.translate(-20, -18 + squish2 * 1);
                 ctx.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
+                if (state == ATTACK) {
+                    ctx.translate(-Math.exp(-Math.pow((timeInState-0.25) * 1.5, 2) * 25) * 20, 0);
+                    ctx.rotate(-Math.exp(-Math.pow((timeInState-0.3) * 1.5, 2) * 30) * 1.2);
+                }
                 ctx.strokeStyle = '#eee';
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
@@ -161,6 +168,11 @@ function Enemy(cx, cy) {
             }
         }
 
+        if (state == ATTACK && timeInState > 0.5) {
+            state = IDLE;
+            timeInState = 0;
+        }
+
         if (dead) {
             off(RUNESTONE_MOVE, onRunestoneMove);
             off(TURN_END, onTurnEnd);
@@ -183,9 +195,19 @@ function Enemy(cx, cy) {
     }
 
     function onTurnEnd() {
-        if (motion >= motionMax) {
-            motion = 0;
-            issueMove(cx - 1, cy);
+        // Walk if you can
+        if (cx > 0) {
+            if (motion >= motionMax) {
+                motion = 0;
+                issueMove(cx - 1, cy);
+            }
+        }
+        // Otherwise attack!
+        else {
+            state = ATTACK;
+            timeInState = 0;
+            emit(ENEMY_DAMAGE, 1);
+            add(DamageParticle(-1.1, cy + 0.5, 1, [255, 0, 0]));
         }
 
         if (onFire > 0) {

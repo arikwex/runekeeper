@@ -1,4 +1,5 @@
 import { retainTransform } from "./canvas";
+import { WHITE } from "./color";
 
 function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
@@ -24,6 +25,30 @@ function Ability(cx, cy, powerType) {
                     );
                     ctx.fill();
                 }
+            });
+        }
+        else if (powerType == 1) {
+            retainTransform(() => {
+                ctx.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+                ctx.fillStyle = '#29e';
+                ctx.fillRect(-38, -38, 76, 76);
+                
+                ctx.strokeStyle = '#eef';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(-25, 5);
+                ctx.lineTo(-20, -5);
+                ctx.lineTo(-15, 5);
+                ctx.moveTo(-5, 25);
+                ctx.lineTo(0, 15);
+                ctx.lineTo(5, 25);
+                ctx.moveTo(-5, -15);
+                ctx.lineTo(0, -25);
+                ctx.lineTo(5, -15);
+                ctx.moveTo(25, 5);
+                ctx.lineTo(20, -5);
+                ctx.lineTo(15, 5);
+                ctx.stroke();
             });
         }
     }

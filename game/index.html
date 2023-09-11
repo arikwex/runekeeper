@@ -42,6 +42,16 @@
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
 
+  // src/color.js
+  var TAN = "#f2e5a5";
+  var LIGHT_BROWN = "#dbad81";
+  var PURPLE = "#683492";
+  var BLACK = "#000";
+  var DARK_GRAY = "#474747";
+  var GRAY = "#777";
+  var MID_GRAY = "#a4a4a4";
+  var WHITE = "#fff";
+
   // src/ability.js
   function Ability(cx, cy, powerType) {
     let anim = Math.random() * 5;
@@ -69,6 +79,28 @@
             );
             ctx2.fill();
           }
+        });
+      } else if (powerType == 1) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          ctx2.fillStyle = "#29e";
+          ctx2.fillRect(-38, -38, 76, 76);
+          ctx2.strokeStyle = "#eef";
+          ctx2.lineWidth = 5;
+          ctx2.beginPath();
+          ctx2.moveTo(-25, 5);
+          ctx2.lineTo(-20, -5);
+          ctx2.lineTo(-15, 5);
+          ctx2.moveTo(-5, 25);
+          ctx2.lineTo(0, 15);
+          ctx2.lineTo(5, 25);
+          ctx2.moveTo(-5, -15);
+          ctx2.lineTo(0, -25);
+          ctx2.lineTo(5, -15);
+          ctx2.moveTo(25, 5);
+          ctx2.lineTo(20, -5);
+          ctx2.lineTo(15, 5);
+          ctx2.stroke();
         });
       }
     }
@@ -165,16 +197,6 @@
     return gameObjectsByTag[tag] || [];
   }
   requestAnimationFrame(tick);
-
-  // src/color.js
-  var TAN = "#f2e5a5";
-  var LIGHT_BROWN = "#dbad81";
-  var PURPLE = "#683492";
-  var BLACK = "#000";
-  var DARK_GRAY = "#474747";
-  var GRAY = "#777";
-  var MID_GRAY = "#a4a4a4";
-  var WHITE = "#fff";
 
   // src/runes.js
   var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
@@ -826,7 +848,7 @@
     add(game_arena_default());
     add(wizard_default());
     add(powerup_default(3, 3));
-    add(ability_default(2, 2, 0));
+    add(ability_default(2, 2, 1));
     add(rune_stone_default());
     add(spell_caster_default());
   }

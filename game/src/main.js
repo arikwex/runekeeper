@@ -12,7 +12,7 @@ function initialize() {
     add(GameArena());
     add(Wizard());
     add(PowerUp(3, 3));
-    add(Ability(2,2,0));
+    add(Ability(2,2,1));
     add(RuneStone());
     add(SpellCaster());
 }

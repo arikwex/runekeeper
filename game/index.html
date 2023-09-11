@@ -370,6 +370,7 @@
     function onAbilityUse([tx, ty, powerType]) {
       if (tx == cx && ty == cy) {
         dead = true;
+        add(pulse_sfx_default(cx, cy, 95, [0, 0, 0]));
       }
     }
     on(TURN_END, onTurnEnd);

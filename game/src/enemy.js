@@ -124,6 +124,7 @@ function Enemy(cx, cy) {
     function onAbilityUse([tx, ty, powerType]) {
         if (tx == cx && ty == cy) {
             dead = true;
+            add(PulseSFX(cx, cy, 95, [0, 0, 0]));
         }
     }
 

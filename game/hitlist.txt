@@ -2,8 +2,6 @@ HITLIST
 =======
 
 Monday
-- Prevent enemy duplicate spawn
-- Prevent powerup duplicate spawn
 - Enemy knight damage against tower
 - Enemy walk around obstacles
 
@@ -16,7 +14,7 @@ Monday
 
 Tuesday
 - More enemies types
-- Game progression
+- Game progression (enemies, abilities, shielded enemies)
 - Score
 - Game Over
 

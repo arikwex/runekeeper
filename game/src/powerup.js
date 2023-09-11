@@ -188,7 +188,10 @@ function PowerUp(cx, cy, powerType, shapeType) {
     return {
         render,
         update,
+        tags: ['obstacle'],
         order: 15,
+        getX: () => cx,
+        getY: () => cy,
     }
 }
 

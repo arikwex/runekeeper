@@ -8,26 +8,35 @@ import { POWERUP_ACQUIRED } from './events';
 import GameArena from './game-arena';
 import PowerUp from './powerup';
 import RuneStone from './rune-stone';
+import { spotOccupied } from './sensor';
 import SpellCaster from './spell-caster';
 import Wizard from './wizard';
 
 function initialize() {
     add(GameArena());
     add(Wizard());
-    add(PowerUp(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(PowerUp(4, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(PowerUp(1, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    // add(Enemy(5, 2));
     add(RuneStone());
     add(SpellCaster());
     add(EnemySpawner());
 
-    function onPowerupAcquired() {
-        add(PowerUp(
-            Math.floor(Math.random() * 4+1), Math.floor(Math.random() * 4 + 1),
-            Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)
-        ));
+    function placePowerUp() {
+        const powerType = Math.floor(Math.random() * 3);
+        const shapeType = Math.floor(Math.random() * 5);
+        for (let i = 0; i < 300; i++) {
+            const sx = Math.floor(Math.random() * 4 + 1);
+            const sy = Math.floor(Math.random() * 4 + 1);
+            if (!spotOccupied(sx, sy)) {
+                add(PowerUp(sx, sy, powerType, shapeType));
+                return;
+            }
+        }
+        console.log('Failed to place!');
     }
-    bus.on(POWERUP_ACQUIRED, onPowerupAcquired);
+    
+    placePowerUp();
+    placePowerUp();
+    placePowerUp();
+
+    bus.on(POWERUP_ACQUIRED, placePowerUp);
 }
 initialize();

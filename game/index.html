@@ -171,7 +171,7 @@
     return {
       render,
       update,
-      order: 4
+      order: 15
     };
   }
   var pulse_sfx_default = PulseSFX;
@@ -493,10 +493,27 @@
       update,
       render,
       tags: ["enemy", "obstacle"],
-      order: 30
+      order: 30,
+      getX: () => cx,
+      getY: () => cy
     };
   }
   var enemy_default = Enemy;
+
+  // src/sensor.js
+  function findObstacles() {
+    return getObjectsByTag("obstacle");
+  }
+  function spotOccupied(x, y) {
+    const obstacles = findObstacles();
+    for (let i = 0; i < obstacles.length; i++) {
+      const obs = obstacles[i];
+      if (obs.getX() == x && obs.getY() == y) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   // src/enemy-spawner.js
   function EnemySpawner() {
@@ -504,13 +521,23 @@
     }
     function update(dT) {
     }
-    function onTurnEnd() {
+    function spawnOne() {
       const enemies = getObjectsByTag("enemy");
       if (enemies.length < 3) {
-        add(enemy_default(5, Math.floor(Math.random() * 6)));
+        for (let i = 0; i < 30; i++) {
+          const offerY = Math.floor(Math.random() * 6);
+          if (!spotOccupied(5, offerY)) {
+            add(enemy_default(5, offerY));
+            break;
+          }
+        }
       }
     }
+    function onTurnEnd() {
+      spawnOne();
+    }
     on(TURN_END, onTurnEnd);
+    spawnOne();
     return {
       update,
       render
@@ -719,7 +746,10 @@
     return {
       render,
       update,
-      order: 15
+      tags: ["obstacle"],
+      order: 15,
+      getX: () => cx,
+      getY: () => cy
     };
   }
   var powerup_default = PowerUp;
@@ -871,7 +901,10 @@
     on(SIGIL_DRAWN, onSigilDrawn);
     return {
       update,
-      render
+      render,
+      tags: ["obstacle"],
+      getX: () => cx,
+      getY: () => cy
     };
   }
   var rune_stone_default = RuneStone;
@@ -1213,21 +1246,26 @@
   function initialize() {
     add(game_arena_default());
     add(wizard_default());
-    add(powerup_default(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(powerup_default(4, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(powerup_default(1, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(rune_stone_default());
     add(spell_caster_default());
     add(enemy_spawner_default());
-    function onPowerupAcquired() {
-      add(powerup_default(
-        Math.floor(Math.random() * 4 + 1),
-        Math.floor(Math.random() * 4 + 1),
-        Math.floor(Math.random() * 3),
-        Math.floor(Math.random() * 5)
-      ));
+    function placePowerUp() {
+      const powerType = Math.floor(Math.random() * 3);
+      const shapeType = Math.floor(Math.random() * 5);
+      for (let i = 0; i < 300; i++) {
+        const sx = Math.floor(Math.random() * 4 + 1);
+        const sy = Math.floor(Math.random() * 4 + 1);
+        if (!spotOccupied(sx, sy)) {
+          add(powerup_default(sx, sy, powerType, shapeType));
+          return;
+        }
+      }
+      console.log("Failed to place!");
     }
-    on(POWERUP_ACQUIRED, onPowerupAcquired);
+    placePowerUp();
+    placePowerUp();
+    placePowerUp();
+    on(POWERUP_ACQUIRED, placePowerUp);
   }
   initialize();
 })();

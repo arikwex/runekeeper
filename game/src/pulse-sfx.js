@@ -25,7 +25,7 @@ function PulseSFX(cx, cy, scale, rgb) {
     return {
         render,
         update,
-        order: 4,
+        order: 15,
     };
 }
 

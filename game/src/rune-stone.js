@@ -176,6 +176,9 @@ function RuneStone() {
     return {
         update,
         render,
+        tags: ['obstacle'],
+        getX: () => cx,
+        getY: () => cy,
     }
 }
 

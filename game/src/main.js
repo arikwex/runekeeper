@@ -2,6 +2,7 @@ import Ability from './ability';
 import * as bus from './bus';
 import { canvas } from './canvas';
 import Enemy from './enemy';
+import EnemySpawner from './enemy-spawner';
 import { add } from './engine';
 import { POWERUP_ACQUIRED } from './events';
 import GameArena from './game-arena';
@@ -16,13 +17,14 @@ function initialize() {
     add(PowerUp(2, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(PowerUp(4, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
     add(PowerUp(1, 4, Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)));
-    add(Enemy(5, 2));
+    // add(Enemy(5, 2));
     add(RuneStone());
     add(SpellCaster());
+    add(EnemySpawner());
 
     function onPowerupAcquired() {
         add(PowerUp(
-            Math.floor(Math.random() * 6), Math.floor(Math.random() * 6),
+            Math.floor(Math.random() * 4+1), Math.floor(Math.random() * 4 + 1),
             Math.floor(Math.random() * 3), Math.floor(Math.random() * 5)
         ));
     }

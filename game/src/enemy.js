@@ -225,6 +225,7 @@ function Enemy(cx, cy) {
     return {
         update,
         render,
+        tags: ['enemy', 'obstacle'],
         order: 30
     }
 }

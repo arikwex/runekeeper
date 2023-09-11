@@ -2,14 +2,12 @@ HITLIST
 =======
 
 Monday
-- Damage particle
-- Ice to slow enemy, 1 damage
-- Fire damage over time, 2 damage
-- Lightning 2 damage instantly
+- Prevent enemy duplicate spawn
+- Prevent powerup duplicate spawn
 - Enemy knight damage against tower
-- Enemy spawner
-- Enemy walk cadence display / mechanic
+- Enemy walk around obstacles
 
+- Ice should cancel the fire effect
 - Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)

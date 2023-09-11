@@ -6,7 +6,7 @@ function DamageParticle(cx, cy, dmg, color) {
     function render(ctx) {
         retainTransform(() => {
             ctx.translate((cx + 0.5) * 80, (cy + 0.3) * 80 - (1-Math.exp(-anim*5)) * 70);
-            const alpha = 1 - anim;
+            const alpha = 1 - anim/2;
             ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
             ctx.textAlign = 'center';
             ctx.font = `bold 40px arial`;
@@ -16,7 +16,7 @@ function DamageParticle(cx, cy, dmg, color) {
 
     function update(dT) {
         anim += dT;
-        if (anim > 1) {
+        if (anim > 2) {
             return true;
         }
     }

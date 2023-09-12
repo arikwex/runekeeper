@@ -831,6 +831,9 @@
     WAVE_RUNE,
     HOURGLASS_RUNE
   ];
+  var OUTLINE_COLOR = "#828";
+  var FILL_COLOR = "#f7f";
+  var DOT_COLOR = "#fff";
   function RuneStone() {
     let anim = 0;
     let cx = 0;
@@ -895,8 +898,8 @@
           ];
         });
         ctx2.lineWidth = 10;
-        ctx2.strokeStyle = DARK_GRAY;
-        ctx2.fillStyle = GRAY;
+        ctx2.strokeStyle = OUTLINE_COLOR;
+        ctx2.fillStyle = FILL_COLOR;
         renderAndFill(ctx2, xfmMesh);
         ctx2.translate(0, -11);
         ctx2.lineWidth = 6;
@@ -910,9 +913,9 @@
         }
         ctx2.stroke();
         ctx2.lineWidth = 10;
-        ctx2.fillStyle = GRAY;
+        ctx2.fillStyle = FILL_COLOR;
         renderAndFill(ctx2, xfmMesh);
-        ctx2.strokeStyle = "#fff";
+        ctx2.strokeStyle = DOT_COLOR;
         ctx2.beginPath();
         ctx2.lineWidth = 6;
         const DOTS = [[0, -7], [7, 6], [-7, 6]];

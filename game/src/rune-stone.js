@@ -17,6 +17,10 @@ const runeOrder = [
     HOURGLASS_RUNE,
 ];
 
+const OUTLINE_COLOR = '#828';
+const FILL_COLOR = '#f7f';
+const DOT_COLOR = '#fff';
+
 function RuneStone() {
     let anim = 0;
     
@@ -97,8 +101,8 @@ function RuneStone() {
                 ];
             });
             ctx.lineWidth = 10;
-            ctx.strokeStyle = DARK_GRAY;
-            ctx.fillStyle = GRAY;
+            ctx.strokeStyle = OUTLINE_COLOR;
+            ctx.fillStyle = FILL_COLOR;
             renderAndFill(ctx, xfmMesh);
             ctx.translate(0, -11);
             
@@ -114,11 +118,11 @@ function RuneStone() {
             ctx.stroke();
 
             ctx.lineWidth = 10;
-            ctx.fillStyle = GRAY;
+            ctx.fillStyle = FILL_COLOR;
             renderAndFill(ctx, xfmMesh);
 
             // rune
-            ctx.strokeStyle = '#fff';
+            ctx.strokeStyle = DOT_COLOR;
             ctx.beginPath();
             ctx.lineWidth = 6;
             const DOTS = [[0, -7], [7, 6], [-7, 6]];

@@ -2,21 +2,13 @@ HITLIST
 =======
 
 Monday
-- Bonk into enemy to deal one damage
 - Track number of enemies killed 
-
-- Powerup code needs some love after introducing in-path collisions
-- Obstacles? Can't go through obstacles? (stop at adjacent cell?)
 - Audio SFX
 - Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
-
-Tuesday
-- More enemies types
-- Game progression (enemies, abilities, shielded enemies)
 - Score
 - Game Over
-
-
+- More enemies types
+- Game progression (enemies, abilities, shielded enemies)
 - Improve / give love to spellcasting slab
 
 

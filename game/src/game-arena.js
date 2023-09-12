@@ -10,7 +10,7 @@ function GameArena() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         });
 
-        ctx.strokeStyle =  TAN;
+        ctx.strokeStyle = '#fbcda1';
         ctx.lineWidth = 4;
         ctx.beginPath();
         const SIZE = 80;

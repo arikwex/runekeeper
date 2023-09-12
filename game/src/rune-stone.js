@@ -1,7 +1,7 @@
 import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
-import { add } from "./engine";
+import { add, getObjectsByTag } from "./engine";
 import { RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
@@ -36,15 +36,19 @@ function RuneStone() {
     let originCY = 0;
 
     function render(ctx) {
+        const caster = getObjectsByTag('caster')[0];
+
         retainTransform(() => {
             // sigil grid
             for (let i = 0; i < 6; i++) {
                 ctx.lineWidth = 4;
                 const SIZE = 80;
-                if (pivot == 1) {
+                const highlight = (caster.getIsDrawing() || caster.getInDrawArea());
+                if (highlight && caster.getDrawingOnLeft()) {
                     ctx.strokeStyle = WHITE;
                 } else {
-                    ctx.strokeStyle = '#ebbd91';
+                    ctx.strokeStyle = '#fbcda1';
+                    // ctx.strokeStyle = '#eea';
                 }
                 retainTransform(() => {
                     ctx.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
@@ -52,10 +56,11 @@ function RuneStone() {
                     renderLines(ctx, runeOrder[i]);
                 });
                 
-                if (pivot == 0) {
+                if (highlight && !caster.getDrawingOnLeft()) {
                     ctx.strokeStyle = WHITE;
                 } else {
-                    ctx.strokeStyle = '#ebbd91';
+                    ctx.strokeStyle = '#fbcda1';
+                    // ctx.strokeStyle = '#aee';
                 }
                 retainTransform(() => {
                     ctx.translate(SIZE / 2 + SIZE * i, SIZE * 6.5);
@@ -157,17 +162,17 @@ function RuneStone() {
     }
 
     let pivot = 0;
-    function onSigilDrawn(idx) {
+    function onSigilDrawn([idx, axis]) {
         if (idx == 0) {
             return;
         }
         const m = ORDER_REMAP[idx]
-        if (pivot == 0) {
+        if (axis == 1) {
             moveToDest(m, cy);
-            pivot = 1;
+            // pivot = 1;
         } else {
             moveToDest(cx, m);
-            pivot = 0;
+            // pivot = 0;
         }
     }
 

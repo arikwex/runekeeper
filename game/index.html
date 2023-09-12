@@ -55,7 +55,6 @@
   ctx.lineCap = "round";
 
   // src/color.js
-  var TAN = "#f2e5a5";
   var LIGHT_BROWN = "#dbad81";
   var PURPLE = "#683492";
   var BLACK = "#000";
@@ -607,7 +606,7 @@
         ctx2.fillStyle = LIGHT_BROWN;
         ctx2.fillRect(0, 0, canvas.width, canvas.height);
       });
-      ctx2.strokeStyle = TAN;
+      ctx2.strokeStyle = "#fbcda1";
       ctx2.lineWidth = 4;
       ctx2.beginPath();
       const SIZE = 80;
@@ -833,24 +832,26 @@
     let originCX = 0;
     let originCY = 0;
     function render(ctx2) {
+      const caster = getObjectsByTag("caster")[0];
       retainTransform(() => {
         for (let i = 0; i < 6; i++) {
           ctx2.lineWidth = 4;
           const SIZE = 80;
-          if (pivot == 1) {
+          const highlight = caster.getIsDrawing() || caster.getInDrawArea();
+          if (highlight && caster.getDrawingOnLeft()) {
             ctx2.strokeStyle = WHITE;
           } else {
-            ctx2.strokeStyle = "#ebbd91";
+            ctx2.strokeStyle = "#fbcda1";
           }
           retainTransform(() => {
             ctx2.translate(-SIZE / 2, SIZE / 2 + SIZE * i);
             ctx2.scale(1.5, 1.5);
             renderLines(ctx2, runeOrder[i]);
           });
-          if (pivot == 0) {
+          if (highlight && !caster.getDrawingOnLeft()) {
             ctx2.strokeStyle = WHITE;
           } else {
-            ctx2.strokeStyle = "#ebbd91";
+            ctx2.strokeStyle = "#fbcda1";
           }
           retainTransform(() => {
             ctx2.translate(SIZE / 2 + SIZE * i, SIZE * 6.5);
@@ -939,17 +940,15 @@
       emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY]);
     }
     let pivot = 0;
-    function onSigilDrawn(idx) {
+    function onSigilDrawn([idx, axis]) {
       if (idx == 0) {
         return;
       }
       const m = ORDER_REMAP[idx];
-      if (pivot == 0) {
+      if (axis == 1) {
         moveToDest(m, cy);
-        pivot = 1;
       } else {
         moveToDest(cx, m);
-        pivot = 0;
       }
     }
     on(SIGIL_DRAWN, onSigilDrawn);
@@ -1095,6 +1094,8 @@
     let selectedLines = [];
     let selectedClass = -1;
     let timeSinceSelect = 0;
+    let drawingOnLeft = false;
+    let inDrawArea = false;
     function touchifyEvent(evt) {
       const touches = evt.changedTouches;
       if (touches) {
@@ -1108,17 +1109,26 @@
       if (evt.clientY < canvas.height * 0.65 - 5) {
         return;
       }
+      drawingOnLeft = evt.clientX < canvas.width / 2;
       lines.length = 0;
       lines.push([evt.clientX, evt.clientY]);
       isDrawing = true;
     }
     function onMouseMove(evt) {
       touchifyEvent(evt);
+      drawingOnLeft = evt.clientX < canvas.width / 2;
+      inDrawArea = evt.clientY > canvas.height * 0.65 - 5;
       if (isDrawing && lines.length > 0) {
         const latestPt = lines[lines.length - 1];
         let dx = evt.clientX - latestPt[0];
         let dy = evt.clientY - latestPt[1];
-        if (evt.clientY < canvas.height * 0.65 - 5) {
+        if (!inDrawArea) {
+          return;
+        }
+        if (drawingOnLeft && evt.clientX > canvas.width / 2) {
+          return;
+        }
+        if (!drawingOnLeft && evt.clientX < canvas.width / 2) {
           return;
         }
         if (dx * dx + dy * dy > 20) {
@@ -1136,7 +1146,7 @@
       timeSinceSelect = 0;
       lines.length = 0;
       isDrawing = false;
-      emit(SIGIL_DRAWN, selectedClass);
+      emit(SIGIL_DRAWN, [selectedClass, drawingOnLeft ? 0 : 1]);
     }
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
@@ -1212,9 +1222,24 @@
         ctx2.setTransform(1, 0, 0, 1, 0, 0);
         ctx2.fillStyle = DARK_GRAY;
         ctx2.fillRect(0, canvas.height * 0.65, canvas.width, canvas.height * 0.36);
-        ctx2.strokeStyle = BLACK;
         ctx2.lineWidth = 10;
+        ctx2.strokeStyle = "#3d3d3d";
+        renderLines(ctx2, [[canvas.width / 2, canvas.height * 0.65], [canvas.width / 2, canvas.height]]);
+        ctx2.strokeStyle = BLACK;
         renderLines(ctx2, [[0, canvas.height * 0.65], [canvas.width, canvas.height * 0.65]]);
+        ctx2.lineWidth = 6;
+        let h = canvas.height * 0.65 + 30;
+        let w = canvas.width / 2 - 10;
+        ctx2.strokeStyle = "#664";
+        renderLines(ctx2, [[w - 30, h], [w - 30, h + 40]]);
+        renderLines(ctx2, [[w - 40, h + 10], [w - 30, h], [w - 20, h + 10]]);
+        renderLines(ctx2, [[w - 40, h + 30], [w - 30, h + 40], [w - 20, h + 30]]);
+        ctx2.strokeStyle = "#466";
+        h += 20;
+        w = canvas.width / 2;
+        renderLines(ctx2, [[w + 30, h], [w + 70, h]]);
+        renderLines(ctx2, [[w + 40, h - 10], [w + 30, h], [w + 40, h + 10]]);
+        renderLines(ctx2, [[w + 60, h - 10], [w + 70, h], [w + 60, h + 10]]);
         if (isDrawing) {
           ctx2.strokeStyle = "white";
           ctx2.lineWidth = 20;
@@ -1243,7 +1268,11 @@
     }
     return {
       update,
-      render
+      render,
+      tags: ["caster"],
+      getIsDrawing: () => isDrawing,
+      getDrawingOnLeft: () => drawingOnLeft,
+      getInDrawArea: () => inDrawArea
     };
   }
   var spell_caster_default = SpellCaster;

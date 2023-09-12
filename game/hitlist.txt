@@ -4,6 +4,7 @@ HITLIST
 Monday
 - enemy sort order
 - Enemy walk around obstacles
+- Bonk into enemy to deal one damage
 
 - Ice should cancel the fire effect
 - Respect existing items in the grid (dont spawn on obstacles)

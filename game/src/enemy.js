@@ -154,7 +154,7 @@ function Enemy(cx, cy) {
     }
 
     function update(dT) {
-        anim += dT;
+        anim += dT * 1.1;
         timeInState += dT;
 
         if (state == MOVING) {
@@ -258,7 +258,7 @@ function Enemy(cx, cy) {
 
     self.order = 30 + cy * 0.02;
     resort();
-    
+
     return self;
 }
 

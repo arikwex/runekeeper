@@ -2,7 +2,6 @@ HITLIST
 =======
 
 Monday
-- Track number of enemies killed / Score
 - Game Over (sound?)
 - More enemies types
 - Game progression (enemies, abilities, shielded enemies)

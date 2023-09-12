@@ -148,9 +148,9 @@ function Audio() {
         const W = 0.1 * sampleRate;
         for (let j = 0; j < W; j++) {
             drumBuffer[j] += 0.06 * (sin(j/(70 + j/300)) + Math.random() / 3) * (1 - j / W);
-            drumBuffer[parseInt(0.25 * pace) + j] += 0.05 * (saw(j/(1000 + j/2000)) + Math.random() / 3) * (1 - j / W);
+            drumBuffer[parseInt(0.25 * pace) + j] += 0.02 * (saw(j/(80 - j/2000)) + Math.random() / 3) * (1 - j / W);
             drumBuffer[parseInt(0.5 * pace) + j] += 0.06 * Math.random() * (1 - j / W) + 0.06 * (sin(j/(70 + j/300)) + Math.random() / 3) * (1 - j / W);
-            drumBuffer[parseInt(0.75 * pace) + j] += 0.05 * (saw(j/(1000 + j/2000)) + Math.random() / 3) * (1 - j / W);
+            drumBuffer[parseInt(0.75 * pace) + j] += 0.02 * (saw(j/(80 - j/2000)) + Math.random() / 3) * (1 - j / W);
         }
         await _yield();
 
@@ -184,7 +184,7 @@ function Audio() {
         // chords
         function chordNote(j, pitch) {
             const p = Math.pow(2, -pitch/12) * 20;
-            return 0.03 * (sin(j/(p + Math.exp(-j/U * 4) * 3))) * (1 - j / (U * 12)) * (sqr(j / 1550) * 0.5 + 0.5);
+            return 0.04 * (sin(j/(p + Math.exp(-j/U * 4) * 5))) * clamp(1 - j / (U * 12), 0, 1) * (Math.pow(sin(j / 1550) * 0.5 + 0.5, 3));
         }
         const chordMusicBuffer = audioCtx.createBuffer(1, 16 * pace, sampleRate);
         const chordBuffer = chordMusicBuffer.getChannelData(0);
@@ -202,7 +202,7 @@ function Audio() {
         // lead
         function leadNote(j, pitch) {
             const p = Math.pow(2, -pitch/12) * 20;
-            return 0.04 * saw(j/(p + sin(j/1000)*0.01)) * (1 - j / (U * 2));
+            return 0.034 * saw(j/(p + sin(j/1000)*0.01)) * (1 - j / (U * 2));
         }
         const leadMusicBuffer = audioCtx.createBuffer(1, 16 * pace, sampleRate);
         const leadBuffer = leadMusicBuffer.getChannelData(0);

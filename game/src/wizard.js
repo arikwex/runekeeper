@@ -1,8 +1,8 @@
-import { on } from "./bus";
+import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_PURPLE, MID_GRAY, PURPLE, WHITE } from "./color";
 import { add } from "./engine";
-import { ENEMY_DAMAGE } from "./events";
+import { ENEMY_DAMAGE, GAME_OVER } from "./events";
 import PulseSFX from "./pulse-sfx";
 
 function Wizard() {
@@ -79,6 +79,7 @@ function Wizard() {
                     }, i * 400);
                 }
                 // BOP: you dead
+                emit(GAME_OVER);
             }
         }
     }

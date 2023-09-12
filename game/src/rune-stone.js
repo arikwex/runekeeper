@@ -2,7 +2,7 @@ import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
 import { add, getObjectsByTag, resort } from "./engine";
-import { ENEMY_BONK, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
+import { ENEMY_BONK, GAME_OVER, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 import { spotHasEnemy, spotOccupied } from "./sensor";
@@ -23,6 +23,7 @@ const DOT_COLOR = '#fff';
 
 function RuneStone() {
     let anim = 0;
+    let gameOver = false;
     
     // cell units for game grid
     let cx = 0;
@@ -204,6 +205,9 @@ function RuneStone() {
     }
 
     function onSigilDrawn([idx, axis]) {
+        if (gameOver) {
+            return;
+        }
         if (idx == 0) {
             return;
         }
@@ -245,7 +249,12 @@ function RuneStone() {
         }
     }
 
+    function onGG() {
+        gameOver = true;
+    }
+
     on(SIGIL_DRAWN, onSigilDrawn);
+    on(GAME_OVER, onGG);
 
     self = {
         update,

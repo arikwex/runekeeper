@@ -1,10 +1,11 @@
 import { on } from "./bus";
 import { canvas, renderLines, retainTransform } from "./canvas";
 import { LIGHT_BROWN, TAN } from "./color";
-import { SCORED } from "./events";
+import { GAME_OVER, SCORED } from "./events";
 
 function GameArena() {
     let score = 0;
+    let gameOver = false;
 
     function render(ctx) {
         retainTransform(() => {
@@ -26,10 +27,17 @@ function GameArena() {
         ctx.stroke();
 
         // draw score
-        ctx.fillStyle = "#222";
-        ctx.textAlign = "center";
-        ctx.font = `bold 30px arial`;
-        ctx.fillText(`${score} ${score == 1 ? 'ENEMY' : 'ENEMIES'} SLAIN`, SIZE * 3, -SIZE * 0.4);
+        if (!gameOver) {
+            ctx.fillStyle = "#222";
+            ctx.textAlign = "center";
+            ctx.font = `bold 30px arial`;
+            ctx.fillText(`${score} ${score == 1 ? 'ENEMY' : 'ENEMIES'} SLAIN`, SIZE * 3, -SIZE * 0.4);
+        } else {
+            ctx.fillStyle = "#f00";
+            ctx.textAlign = "center";
+            ctx.font = `bold 30px arial`;
+            ctx.fillText(`GAME OVER! (score = ${score})`, SIZE * 3, -SIZE * 0.4);
+        }
     }
 
     function update(dT) {
@@ -39,7 +47,12 @@ function GameArena() {
     function onScored() {
         score += 1;
     }
+
+    function onGG() {
+        gameOver = true;
+    }
     on(SCORED, onScored);
+    on(GAME_OVER, onGG);
 
     return {
         update,

@@ -231,17 +231,17 @@ function Enemy(cx, cy) {
                     options.push([cx + 1, cy - 1]);
                 }
                 // Forward move
-                for (let i = 0; i < options.length; i++) {
-                    const opt = options[i];
-                    if (opt[1] >= 0 && opt[1] <=5 && opt[0] <=5 && !spotOccupied(opt[0], opt[1])) {
-                        motion = 0;
-                        setTimeout(() => {
+                setTimeout(() => {
+                    for (let i = 0; i < options.length; i++) {
+                        const opt = options[i];
+                        if (opt[1] >= 0 && opt[1] <=5 && opt[0] <=5 && !spotOccupied(opt[0], opt[1])) {
+                            motion = 0;
                             issueMove(opt[0], opt[1]);
-                        }, cy * 50 + cx * 30);
-                        // Stop after making a valid move
-                        break;
+                            // Stop after making a valid move
+                            break;
+                        }
                     }
-                }
+                }, cy * 30 + cx * 25);
             }
         }
         // Otherwise attack!

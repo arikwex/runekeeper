@@ -182,6 +182,7 @@
   var ENEMY_TAKE_DAMAGE = 9;
   var ENEMY_MOVE = 10;
   var SCORED = 11;
+  var GAME_OVER = 12;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -433,16 +434,16 @@
             options.push([cx + 1, cy + 1]);
             options.push([cx + 1, cy - 1]);
           }
-          for (let i = 0; i < options.length; i++) {
-            const opt = options[i];
-            if (opt[1] >= 0 && opt[1] <= 5 && opt[0] <= 5 && !spotOccupied(opt[0], opt[1])) {
-              motion = 0;
-              setTimeout(() => {
+          setTimeout(() => {
+            for (let i = 0; i < options.length; i++) {
+              const opt = options[i];
+              if (opt[1] >= 0 && opt[1] <= 5 && opt[0] <= 5 && !spotOccupied(opt[0], opt[1])) {
+                motion = 0;
                 issueMove(opt[0], opt[1]);
-              }, cy * 50 + cx * 30);
-              break;
+                break;
+              }
             }
-          }
+          }, cy * 30 + cx * 25);
         }
       } else {
         state = ATTACK;
@@ -528,6 +529,7 @@
   // src/game-arena.js
   function GameArena() {
     let score = 0;
+    let gameOver = false;
     function render(ctx2) {
       retainTransform(() => {
         ctx2.setTransform(1, 0, 0, 1, 0, 0);
@@ -545,17 +547,28 @@
         ctx2.lineTo(6 * SIZE, x * SIZE);
       }
       ctx2.stroke();
-      ctx2.fillStyle = "#222";
-      ctx2.textAlign = "center";
-      ctx2.font = `bold 30px arial`;
-      ctx2.fillText(`${score} ${score == 1 ? "ENEMY" : "ENEMIES"} SLAIN`, SIZE * 3, -SIZE * 0.4);
+      if (!gameOver) {
+        ctx2.fillStyle = "#222";
+        ctx2.textAlign = "center";
+        ctx2.font = `bold 30px arial`;
+        ctx2.fillText(`${score} ${score == 1 ? "ENEMY" : "ENEMIES"} SLAIN`, SIZE * 3, -SIZE * 0.4);
+      } else {
+        ctx2.fillStyle = "#f00";
+        ctx2.textAlign = "center";
+        ctx2.font = `bold 30px arial`;
+        ctx2.fillText(`GAME OVER! (score = ${score})`, SIZE * 3, -SIZE * 0.4);
+      }
     }
     function update(dT) {
     }
     function onScored() {
       score += 1;
     }
+    function onGG() {
+      gameOver = true;
+    }
     on(SCORED, onScored);
+    on(GAME_OVER, onGG);
     return {
       update,
       render,
@@ -860,6 +873,7 @@
   var DOT_COLOR = "#fff";
   function RuneStone() {
     let anim = 0;
+    let gameOver = false;
     let cx = 0;
     let cy = 2;
     const mesh = [[-35, 0], [-15, 30], [15, 30], [35, 0], [15, -30], [-15, -30]];
@@ -1015,6 +1029,9 @@
       emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY, hitCoord != null ? [bonkCX, bonkCY] : null]);
     }
     function onSigilDrawn([idx, axis]) {
+      if (gameOver) {
+        return;
+      }
       if (idx == 0) {
         return;
       }
@@ -1053,7 +1070,11 @@
         }
       }
     }
+    function onGG() {
+      gameOver = true;
+    }
     on(SIGIL_DRAWN, onSigilDrawn);
+    on(GAME_OVER, onGG);
     self = {
       update,
       render,
@@ -1443,6 +1464,7 @@
               add(pulse_sfx_default(-2, 1.5, 70, [255, 255, 255]));
             }, i * 400);
           }
+          emit(GAME_OVER);
         }
       }
     }

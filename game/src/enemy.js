@@ -3,7 +3,7 @@ import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import DamageParticle from "./damage-particle";
 import { add, resort } from "./engine";
-import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
+import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_MOVE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { spotOccupied } from "./sensor";
 
@@ -155,7 +155,7 @@ function Enemy(cx, cy) {
     }
 
     function update(dT) {
-        anim += dT * 1.1;
+        anim += dT * 1.52;
         timeInState += dT;
 
         if (state == MOVING) {
@@ -192,6 +192,7 @@ function Enemy(cx, cy) {
         targetY = ny;
         state = MOVING;
         timeInState = 0;
+        emit(ENEMY_MOVE);
     }
 
     function onRunestoneMove() {
@@ -233,7 +234,9 @@ function Enemy(cx, cy) {
                     const opt = options[i];
                     if (opt[1] >= 0 && opt[1] <=5 && opt[0] <=5 && !spotOccupied(opt[0], opt[1])) {
                         motion = 0;
-                        issueMove(opt[0], opt[1]);
+                        setTimeout(() => {
+                            issueMove(opt[0], opt[1]);
+                        }, cy * 50 + cx * 30);
                         // Stop after making a valid move
                         break;
                     }

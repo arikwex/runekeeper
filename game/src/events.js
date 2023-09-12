@@ -8,3 +8,4 @@ export const ENEMY_DAMAGE = 6;
 export const ENEMY_BONK = 7;
 export const ABILITY_BEAT = 8;
 export const ENEMY_TAKE_DAMAGE = 9;
+export const ENEMY_MOVE = 10;

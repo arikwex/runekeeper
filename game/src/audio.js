@@ -1,5 +1,5 @@
 import * as bus from './bus'
-import { ABILITY_BEAT, ABILITY_USE, ENEMY_BONK, ENEMY_TAKE_DAMAGE, POWERUP_ACQUIRED, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN } from './events';
+import { ABILITY_BEAT, ABILITY_USE, ENEMY_BONK, ENEMY_DAMAGE, ENEMY_MOVE, ENEMY_TAKE_DAMAGE, POWERUP_ACQUIRED, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN } from './events';
 
 function clamp(v, a, b) {
     return Math.min(Math.max(v, a), b);
@@ -10,11 +10,12 @@ function Audio() {
     sampleRate = audioCtx.sampleRate;
 
     // Sounds to be loaded on init
-    let attackSound;
     let attackHitSound;
     let runestoneLandedSound;
     let runestoneMoveSound;
     let powerupCollectSound;
+    let enemyMoveSound;
+    let enemySwordSound;
     
     let fireSound;
     let iceSound;
@@ -28,21 +29,12 @@ function Audio() {
     let sigilHourglass;
     let sigilGarbage;
 
-    let boneCollectSound;
-    let switchSound;
-    let grantSound;
-    let boingSound;
-
     // Musics
-    let musicFocusBuffer;
-    let musicRegionBuffers;
-    let musicDrumBuffer;
+    let musicBuffer;
     
-    let drumBuffer;
     let activeMusicSource;
     let gainNodeA;
     let gainNodeB;
-    let focusNode;
     let usingA = true;
 
     const sin = (i) => Math.sin(i);
@@ -78,7 +70,11 @@ function Audio() {
         attackHitSound = await generate(0.2, (i) => {
             return 0.15 * (sin(i/(20+i/150))*0.3 + Math.random());
         });
-        // setProgress(0.05);
+
+        // Enemy sword sounds
+        enemySwordSound = await generate(0.2, (i) => {
+            return 0.07 * saw(i/(0.3-220*Math.exp(-i/500)));
+        });
 
         // Runestone landed
         runestoneLandedSound = await generate(0.25, (i) => {
@@ -90,11 +86,10 @@ function Audio() {
             return 0.1 * sqr(i/(20+150*Math.exp(-i/1600)));
         });
 
-        // // Player dash sound
-        // dashSound = await generate(0.3, (i) => {
-        //     return 0.06 * (sin(i/(14+i*i/1e6)) + Math.random()/2);
-        // });
-        // setProgress(0.15);
+        // Enemy move
+        enemyMoveSound = await generate(0.3, (i) => {
+            return 0.06 * (sin(i/(14+i*i/1e6)) + Math.random()/2);
+        });
 
         // Collect powerup sound
         powerupCollectSound = await generate(0.3, (i) => {
@@ -119,8 +114,8 @@ function Audio() {
 
         // Sigil sounds
         function sigilNote(i, pitch, time) {
-            const q = Math.pow(2, -pitch/12) * 20;
-            return 0.15 * (saw(i / q) * sin(i / (q*2 + 3 * sin(i/200000)))) * (i / 44100 - time > 0 ? 1 : 0) * Math.exp(-(i / 44100 - time) * 7);
+            const q = Math.pow(2, -pitch/12) * 18;
+            return 0.1 * (saw(i / q) * sin(i / (q*2 + 3 * sin(i/200000)))) * (i / 44100 - time > 0 ? 1 : 0) * Math.exp(-(i / 44100 - time) * 7);
         }
         sigilCaret = await generate(2.0, (i) => {
             return sigilNote(i, 0, 0) + sigilNote(i, 7, 0.15) + sigilNote(i, 0, 0.3);
@@ -144,59 +139,105 @@ function Audio() {
             return sigilNote(i, -4, 0) + sigilNote(i, -10, 0.15) + sigilNote(i, -4, 0.3);
         });
 
-        // // Bone collect sound
-        // boneCollectSound = await generate(0.06, (i) => {
-        //     return 0.03 * saw(i/4);
-        // });
-
-        // // Switch sound
-        // switchSound = await generate(1.5, (i) => {
-        //     return 0.1 * (sqr(i/800) * 0.5 + 0.5) * saw(i/(110));
-        // });
-        // setProgress(0.25);
-
-        // // Grant ability sound AND Checkpoint sound
-        // grantSound = await generate(2, (i) => {
-        //     return 0.04 * sqr(i/(1+i/900));
-        // });
-
-        // // Boing when hitting web sound
-        // boingSound = await generate(0.6, (i) => {
-        //     return 0.06 * sin(i/(20+sin(i/900)+i/1300));
-        // });
-        // setProgress(0.3);
 
         // MUSIC GENERATION
-        // musicDrumBuffer = audioCtx.createBuffer(1, sampleRate, sampleRate);
-        // drumBuffer = musicDrumBuffer.getChannelData(0);
-        // const W = 0.1 * sampleRate;
-        // for (let j = 0; j < W; j++) {
-        //     drumBuffer[j] += 0.01 * (sin(j/(70 + j/300)) + Math.random() / 3) * (1 - j / W);
-        //     drumBuffer[parseInt(0.5 * sampleRate) + j] += 0.01 * Math.random() * (1 - j / W);
-        // }
-        // await _yield();
+        // drums
+        const pace = sampleRate * 0.82;//1.06;
+        const drumMusicBuffer = audioCtx.createBuffer(1, pace, sampleRate);
+        const drumBuffer = drumMusicBuffer.getChannelData(0);
+        const W = 0.1 * sampleRate;
+        for (let j = 0; j < W; j++) {
+            drumBuffer[j] += 0.06 * (sin(j/(70 + j/300)) + Math.random() / 3) * (1 - j / W);
+            drumBuffer[parseInt(0.25 * pace) + j] += 0.05 * (saw(j/(1000 + j/2000)) + Math.random() / 3) * (1 - j / W);
+            drumBuffer[parseInt(0.5 * pace) + j] += 0.06 * Math.random() * (1 - j / W) + 0.06 * (sin(j/(70 + j/300)) + Math.random() / 3) * (1 - j / W);
+            drumBuffer[parseInt(0.75 * pace) + j] += 0.05 * (saw(j/(1000 + j/2000)) + Math.random() / 3) * (1 - j / W);
+        }
+        await _yield();
 
-        // musicFocusBuffer = audioCtx.createBuffer(1, sampleRate*3, sampleRate);
-        // const focusBuffer = musicFocusBuffer.getChannelData(0);
-        // for (let j = 0; j < sampleRate*3; j++) {
-        //     const p = j / sampleRate;
-        //     focusBuffer[j] = clamp(Math.sin(j/120) * (10 + sin(j/10000+p*p*p*4) * 10), -1, 1) * p / 50;
-        // }
-        // await _yield();
-        // setProgress(0.35);
+        // bass
+        function bassNote(j, pitch) {
+            const p = Math.pow(2, -pitch/12) * 80;
+            return 0.25 * (sin(j/(p + j/9000))) * (1 - j / U);
+        }
+        const bassMusicBuffer = audioCtx.createBuffer(1, 16 * pace, sampleRate);
+        const bassBuffer = bassMusicBuffer.getChannelData(0);
+        const U = 0.25 * sampleRate;
+        const bs = pace * 0.25;
+        for (let o = 0; o < 4; o++) {
+            const os = o * bs * 16;
+            const br = [0, -5, -2, -7][o];
+            for (let j = 0; j < U; j++) {
+                bassBuffer[j + os] += bassNote(j, 0+br);
+                bassBuffer[j + bs * 3 + os] += bassNote(j, 5+br);
+                bassBuffer[j + bs * 4 + os] += bassNote(j, 7+br);
+                bassBuffer[j + bs * 5 + os] += bassNote(j, 10+br);
+                bassBuffer[j + bs * 7 + os] += bassNote(j, 12+br);
+                bassBuffer[j + bs * 9 + os] += bassNote(j, 12+br);
+                bassBuffer[j + bs * 10 + os] += bassNote(j, 10+br);
+                bassBuffer[j + bs * 11 + os] += bassNote(j, 7+br);
+                bassBuffer[j + bs * 12 + os] += bassNote(j, 12+br);
+                bassBuffer[j + bs * 14 + os] += bassNote(j, 10+br);
+            }
+        }
+        await _yield();
 
-        // // Generate 5 procedural songs
-        // const song1 = await genericSongBuilder([[0, 2, 3, 5, 7, 12], 1.3], 0, 0.35, 0.45);
-        // setProgress(0.7);
-        // const song2 = await genericSongBuilder([[0, 2, 3, 5, 7, 8, 11, 12], 0.5], 1, 0.45, 0.6);
-        // setProgress(0.75);
-        // const song3 = await genericSongBuilder([[0, 2, 3, 7, 8, 12], 0.9], 2, 0.6, 0.7);
-        // setProgress(0.8);
-        // const song4 = await genericSongBuilder([[0, 2, 3, 7, 8, 12], 1.2], 3, 0.7, 0.85);
-        // setProgress(0.9);
-        // const song5 = await genericSongBuilder([[0, 4, 5, 7, 12], 0.8], 4, 0.85, 0.99);
-        // setProgress(0.99);
-        // musicRegionBuffers = [song1, song2, song3, song4, song5];
+        // chords
+        function chordNote(j, pitch) {
+            const p = Math.pow(2, -pitch/12) * 20;
+            return 0.03 * (sin(j/(p + Math.exp(-j/U * 4) * 3))) * (1 - j / (U * 12)) * (sqr(j / 1550) * 0.5 + 0.5);
+        }
+        const chordMusicBuffer = audioCtx.createBuffer(1, 16 * pace, sampleRate);
+        const chordBuffer = chordMusicBuffer.getChannelData(0);
+        for (let o = 0; o < 4; o++) {
+            const os = o * bs * 16;
+            const cr = [[-2, 3, 7], [-2, 2, 7], [-2, 2, 5], [-4, 0, 3]][o];
+            for (let j = 0; j < U * 12; j++) {
+                chordBuffer[j + os] += chordNote(j, cr[0]);
+                chordBuffer[j + os] += chordNote(j, cr[1]);
+                chordBuffer[j + os] += chordNote(j, cr[2]);
+            }
+        }
+        await _yield();
+
+        // lead
+        function leadNote(j, pitch) {
+            const p = Math.pow(2, -pitch/12) * 20;
+            return 0.04 * saw(j/(p + sin(j/1000)*0.01)) * (1 - j / (U * 2));
+        }
+        const leadMusicBuffer = audioCtx.createBuffer(1, 16 * pace, sampleRate);
+        const leadBuffer = leadMusicBuffer.getChannelData(0);
+        for (let j = 0; j < U * 2; j++) {
+            leadBuffer[j] += leadNote(j, 7);
+            leadBuffer[j + bs * 3] += leadNote(j, 0);
+            leadBuffer[j + bs * 6] += leadNote(j, 3);
+            leadBuffer[j + bs * 7] += leadNote(j, 5);
+            leadBuffer[j + bs * 8] += leadNote(j, 7);
+            leadBuffer[j + bs * 11] += leadNote(j, 0);
+            leadBuffer[j + bs * 14] += leadNote(j, 3);
+            leadBuffer[j + bs * 15] += leadNote(j, 5);
+            leadBuffer[j + bs * 16] += leadNote(j, 2);
+            //
+            leadBuffer[j + bs * 32] += leadNote(j, 5);
+            leadBuffer[j + bs * (3+32)] += leadNote(j, -2);
+            leadBuffer[j + bs * (6+32)] += leadNote(j, 2);
+            leadBuffer[j + bs * (7+32)] += leadNote(j, 3);
+            leadBuffer[j + bs * (8+32)] += leadNote(j, 5);
+            leadBuffer[j + bs * (11+32)] += leadNote(j, -2);
+            leadBuffer[j + bs * (14+32)] += leadNote(j, 3);
+            leadBuffer[j + bs * (15+32)] += leadNote(j, 2);
+            leadBuffer[j + bs * (16+32)] += leadNote(j, 0);
+        }
+        await _yield();
+
+        // compose all music buffers
+        musicBuffer = audioCtx.createBuffer(1, 8 * 4 * pace, sampleRate);
+        const outBuffer = musicBuffer.getChannelData(0);
+        for (let i = 0; i < outBuffer.length; i++) {
+            outBuffer[i] += drumBuffer[i % drumBuffer.length];
+            outBuffer[i] += bassBuffer[i % bassBuffer.length];
+            outBuffer[i] += chordBuffer[i % chordBuffer.length];
+            outBuffer[i] += leadBuffer[i % leadBuffer.length];
+        }
 
         // bus events
         bus.on(ENEMY_BONK, play(attackHitSound));
@@ -204,6 +245,8 @@ function Audio() {
         bus.on(RUNESTONE_MOVE, play(runestoneMoveSound));
         bus.on(RUNESTONE_LAND, play(runestoneLandedSound));
         bus.on(POWERUP_ACQUIRED, play(powerupCollectSound));
+        bus.on(ENEMY_MOVE, play(enemyMoveSound));
+        bus.on(ENEMY_DAMAGE, play(enemySwordSound));
         bus.on(ABILITY_BEAT, (t) => {
             play(({
                 0: fireSound,
@@ -228,6 +271,8 @@ function Audio() {
         gainNodeA.connect(audioCtx.destination);
         gainNodeB = new GainNode(audioCtx);
         gainNodeB.connect(audioCtx.destination);
+
+        music(musicBuffer);
     }
 
     async function genericSongBuilder([melodySignature, beat], seed, prog1, prog2) {

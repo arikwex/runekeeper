@@ -51,7 +51,7 @@ function Wizard() {
                 ctx.fillStyle = PURPLE;
                 ctx.strokeStyle = PURPLE;
                 ctx.translate(0, -23 + Math.abs(Math.sin(anim * 5) * 2.5));
-                ctx.rotate(Math.sin(anim*10-1) * 0.06);
+                ctx.rotate(Math.sin(anim*10+3) * 0.08);
                 renderAndFill(ctx, [[-20, 2], [-10, -1], [13, 0], [20, 4], [17, 0], [12, -5], [7, -13], [0, -23], [-10, -29], [-21, -20], [-12, -22], [-6, -10]]);
                 // Eyes
                 ctx.lineWidth = 7;
@@ -64,7 +64,7 @@ function Wizard() {
     }
 
     function update(dT) {
-        anim += dT;
+        anim += dT * 1.52;
     }
 
     function onEnemyDamage(dmg) {

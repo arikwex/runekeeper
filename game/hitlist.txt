@@ -2,14 +2,9 @@ HITLIST
 =======
 
 Monday
-- Audio SFX
-    - sound-per-sigil (pitch)
-    - sound for garbage sigil
-    - enemy sword swing
-    - enemy move sound
 - Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
 - Track number of enemies killed / Score
-- Game Over
+- Game Over (sound?)
 - More enemies types
 - Game progression (enemies, abilities, shielded enemies)
 - Improve / give love to spellcasting slab

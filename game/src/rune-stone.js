@@ -1,10 +1,11 @@
 import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
-import { add, getObjectsByTag } from "./engine";
+import { add, getObjectsByTag, resort } from "./engine";
 import { RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
+import { spotHasEnemy, spotOccupied } from "./sensor";
 
 const ORDER_REMAP = { 5:0, 1:1, 3:2, 2:3, 4:4, 6:5 };
 const runeOrder = [
@@ -32,8 +33,11 @@ function RuneStone() {
     let timeInState = 0;
     let targetCX = 0;
     let targetCY = 0;
+    let bonkCX = -1;
+    let bonkCY = -1;
     let originCX = 0;
     let originCY = 0;
+    let self = {};
 
     function render(ctx) {
         const caster = getObjectsByTag('caster')[0];
@@ -138,9 +142,23 @@ function RuneStone() {
             anim = p * Math.PI * 2;
             cx = originCX * (1 - p) + targetCX * p;
             cy = originCY * (1 - p) + targetCY * p;
+            if (bonkCX > 0 || bonkCY > 0) {
+                const distSplit = Math.abs(originCX - targetCX) + Math.abs(originCY - targetCY);
+                const percentSplit = distSplit / (distSplit + 0.5);
+                if (p > percentSplit) {
+                    const q = (p - percentSplit) / (1 - percentSplit);
+                    cx = cx * (1-q) + bonkCX * q;
+                    cy = cy * (1-q) + bonkCY * q;
+                }
+            }
             if (p >= 1) {
-                cx = targetCX;
-                cy = targetCY;
+                if (bonkCX > 0 || bonkCY > 0) {
+                    cx = bonkCX;
+                    cy = bonkCY;
+                } else {
+                    cx = targetCX;
+                    cy = targetCY;
+                }
                 timeInState = IDLE;
                 state = IDLE;
                 anim = 0;
@@ -148,43 +166,91 @@ function RuneStone() {
                 add(PulseSFX(cx, cy, 50, [255,255,255]));
                 setTimeout(() => { emit(TURN_END); }, 550);
             }
+
+            self.order = 30 + cy * 0.02;
+            resort();
         }
     }
 
-    function moveToDest(x, y) {
+    function moveToDest(x, y, hitCoord) {
         originCX = cx;
         originCY = cy;
         targetCX = x;
         targetCY = y;
         state = MOVING;
         timeInState = 0;
-        emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY]);
+        if (hitCoord != null) {
+            // Move to target then bonk to landing spot
+            targetCX = hitCoord[0];
+            targetCY = hitCoord[1];
+            bonkCX = x;
+            bonkCY = y;
+            const distSplit = Math.abs(originCX - targetCX) + Math.abs(originCY - targetCY);
+            const percentSplit = distSplit / (distSplit + 0.5);
+            setTimeout(() => {
+                add(PulseSFX(targetCX, targetCY, 50, [255, 0, 255]));
+            }, MOVE_DURATION * 1000 * percentSplit);
+        } else {
+            // No bonk if clear path
+            bonkCX = -1;
+            bonkCY = -1;
+        }
+        emit(RUNESTONE_MOVE, [originCX, originCY, targetCX, targetCY, hitCoord != null ? [bonkCX, bonkCY] : null]);
     }
 
-    let pivot = 0;
     function onSigilDrawn([idx, axis]) {
         if (idx == 0) {
             return;
         }
-        const m = ORDER_REMAP[idx]
+        const m = ORDER_REMAP[idx];
         if (axis == 1) {
-            moveToDest(m, cy);
-            // pivot = 1;
+            // HORIZONTAL MOTION
+            const dir = Math.sign(m - cx);
+            let destX = cx;
+            let hitX = -1;
+            for (let tx = cx + dir; (dir > 0 && tx <= m) || (dir < 0 && tx >= m); tx += dir) {
+                if (spotHasEnemy(tx, cy)) {
+                    hitX = tx;
+                    break;
+                }
+                destX = tx;
+            }
+            if (hitX >= 0) {
+                moveToDest(destX, cy, [hitX,  cy]);
+            } else {
+                moveToDest(destX, cy, null);
+            }
         } else {
-            moveToDest(cx, m);
-            // pivot = 0;
+            // VERTICAL MOTION
+            const dir = Math.sign(m - cy);
+            let destY = cy;
+            let hitY = -1;
+            for (let ty = cy + dir; (dir > 0 && ty <= m) || (dir < 0 && ty >= m); ty += dir) {
+                if (spotHasEnemy(cx, ty)) {
+                    hitY = ty;
+                    break;
+                }
+                destY = ty;
+            }
+            if (hitY >= 0) {
+                moveToDest(cx, destY, [cx,  hitY]);
+            } else {
+                moveToDest(cx, destY, null);
+            }
         }
     }
 
     on(SIGIL_DRAWN, onSigilDrawn);
 
-    return {
+    self = {
         update,
         render,
+        order: 30 + cy * 0.02,
         tags: ['obstacle'],
         getX: () => cx,
         getY: () => cy,
     }
+    return self;
 }
 
 export default RuneStone;

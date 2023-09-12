@@ -64,7 +64,13 @@ function PowerUp(cx, cy, powerType, shapeType) {
         return remove;
     }
 
-    function onRunestoneMove([cx0, cy0, cx1, cy1]) {
+    function onRunestoneMove([cx0, cy0, cx1, cy1, bonkCoord]) {
+        // handle case of block/hit
+        if (bonkCoord != null) {
+            cx1 = bonkCoord[0];
+            cy1 = bonkCoord[1];
+        }
+
         // Check if runestone in the pathway
         let distToHit = -1;
         let totalDist = Math.abs(cy1 - cy0) + Math.abs(cx1 - cx0);

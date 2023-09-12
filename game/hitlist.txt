@@ -2,11 +2,9 @@ HITLIST
 =======
 
 Monday
-- Enemy walk around obstacles
 - Bonk into enemy to deal one damage
 - Track number of enemies killed 
 
-- Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)
 - Audio SFX

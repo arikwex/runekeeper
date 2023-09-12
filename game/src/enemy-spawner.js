@@ -14,10 +14,13 @@ function EnemySpawner() {
     function spawnOne() {
         const enemies = getObjectsByTag('enemy');
         if (enemies.length < 3) {
+            const MAX_ALLOWED = parseInt(Math.min(getObjectsByTag('game')[0].getScore() / 4, 2));
+            const enemyType = parseInt(Math.min(Math.floor(Math.random() * (MAX_ALLOWED + 1)), MAX_ALLOWED));
+            console.log(enemyType);
             for (let i = 0; i < 30; i++) {
                 const offerY = Math.floor(Math.random() * 6);
                 if (!spotOccupied(5, offerY)) {
-                    add(Enemy(5, offerY));
+                    add(Enemy(6, offerY, enemyType));
                     break;
                 }
             }

@@ -55,7 +55,9 @@ function SpellCaster() {
 
     function onMouseMove(evt) {
         touchifyEvent(evt);
-        drawingOnLeft = evt.clientX < canvas.width / 2;
+        if (!isDrawing) {
+            drawingOnLeft = evt.clientX < canvas.width / 2;
+        }
         inDrawArea = evt.clientY > canvas.height * 0.65 - 5;
         if (isDrawing && lines.length > 0) {
             const latestPt = lines[lines.length - 1];

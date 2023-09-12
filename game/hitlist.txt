@@ -2,7 +2,6 @@ HITLIST
 =======
 
 Monday
-- Game Over (sound?)
 - More enemies types
 - Game progression (enemies, abilities, shielded enemies)
 - Improve / give love to spellcasting slab

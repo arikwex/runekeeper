@@ -7,7 +7,7 @@ import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_MOVE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOV
 import PulseSFX from "./pulse-sfx";
 import { spotOccupied } from "./sensor";
 
-function Enemy(cx, cy) {
+function Enemy(cx, cy, enemyType) {
     let anim = Math.random() * 7;
     let targetX = cx;
     let targetY = cy;
@@ -23,10 +23,10 @@ function Enemy(cx, cy) {
 
     let timeInState = 0;
     let dead = false;
-    let hp = 2;
+    let hp = [1,2,3][enemyType];
     let maxHp = hp;
     let motion = 0;
-    let motionMax = 2;
+    let motionMax = [2,2,2][enemyType];
     let onFire = 0;
 
     // VFX on spawn
@@ -50,8 +50,16 @@ function Enemy(cx, cy) {
             
             // torso
             ctx.lineWidth = 10;
-            ctx.fillStyle = GRAY;
-            ctx.strokeStyle = GRAY;
+            if (enemyType == 0) {
+                ctx.fillStyle = '#973';
+                ctx.strokeStyle = '#973';
+            } else if (enemyType == 1) {
+                ctx.fillStyle = GRAY;
+                ctx.strokeStyle = GRAY;
+            } else if (enemyType == 2) {
+                ctx.fillStyle = '#383';
+                ctx.strokeStyle = '#383';
+            }
             const squish = Math.cos(anim * 10);
             const squish2 = Math.cos(anim * 10 + 1);
             ctx.fillRect(-10+squish, 0, 20-2*squish, -34-2*squish);
@@ -60,25 +68,57 @@ function Enemy(cx, cy) {
             // head
             retainTransform(() => {
                 ctx.translate(0, -39 - squish * 3);
-                ctx.fillStyle = DARK_GRAY;
-                ctx.strokeStyle = DARK_GRAY;
-                ctx.fillRect(-6, 0, 12, -16);
-                ctx.strokeRect(-6, 0, 12, -16);
-                ctx.strokeStyle = '#c11';
-                ctx.beginPath();
-                ctx.moveTo(0, -62+41);
-                ctx.lineTo(1, -70+41);
-                ctx.lineTo(6, -74+41);
-                ctx.lineTo(10, -70+41);
-                ctx.stroke();
-                ctx.strokeStyle = LIGHT_GRAY;
-                ctx.beginPath();
-                ctx.moveTo(-3, -49+41);
-                ctx.lineTo(-3.01, -49+41);
-                ctx.stroke();
+                if (enemyType == 0) {
+                    ctx.fillStyle = '#763';
+                    ctx.strokeStyle = '#763';
+                    ctx.fillRect(-6, 0, 12, -16);
+                    ctx.strokeRect(-6, 0, 12, -16);
+                    ctx.strokeStyle = LIGHT_GRAY;
+                    ctx.beginPath();
+                    ctx.moveTo(-3, -49+41);
+                    ctx.lineTo(-3.01, -49+41);
+                    ctx.stroke();
+                } else if (enemyType == 1) {
+                    ctx.fillStyle = DARK_GRAY;
+                    ctx.strokeStyle = DARK_GRAY;
+                    ctx.fillRect(-6, 0, 12, -16);
+                    ctx.strokeRect(-6, 0, 12, -16);
+                    ctx.strokeStyle = '#c11';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -62+41);
+                    ctx.lineTo(1, -70+41);
+                    ctx.lineTo(6, -74+41);
+                    ctx.lineTo(10, -70+41);
+                    ctx.stroke();
+                    ctx.strokeStyle = LIGHT_GRAY;
+                    ctx.beginPath();
+                    ctx.moveTo(-3, -49+41);
+                    ctx.lineTo(-3.01, -49+41);
+                    ctx.stroke();
+                } else if (enemyType == 2) {
+                    ctx.strokeStyle = '#eee';
+                    ctx.beginPath();
+                    ctx.moveTo(-8, -20);
+                    ctx.lineTo(-12, -24);
+                    ctx.stroke();
+                    ctx.fillStyle = '#263';
+                    ctx.strokeStyle = '#263';
+                    ctx.fillRect(-6, 0, 12, -16);
+                    ctx.strokeRect(-6, 0, 12, -16);
+                    ctx.strokeStyle = '#fa0';
+                    ctx.beginPath();
+                    ctx.moveTo(-3, -49+41);
+                    ctx.lineTo(-3.01, -49+41);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#eee';
+                    ctx.beginPath();
+                    ctx.moveTo(8, -20);
+                    ctx.lineTo(12, -24);
+                    ctx.stroke();
+                }
             });
 
-            // sword
+            // weapon
             retainTransform(() => {
                 ctx.translate(-20, -18 + squish2 * 1);
                 ctx.rotate(Math.cos(anim * 10 - 0.2) * 0.04);
@@ -86,18 +126,55 @@ function Enemy(cx, cy) {
                     ctx.translate(-Math.exp(-Math.pow((timeInState-0.25) * 1.5, 2) * 25) * 20, 0);
                     ctx.rotate(-Math.exp(-Math.pow((timeInState-0.3) * 1.5, 2) * 30) * 1.2);
                 }
-                ctx.strokeStyle = '#eee';
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(-6, -45+13);
-                ctx.stroke();
-                ctx.strokeStyle = '#841';
-                ctx.beginPath();
-                ctx.moveTo(-5, 0);
-                ctx.lineTo(5, -3);
-                ctx.moveTo(0, 0);
-                ctx.lineTo(2, 4);
-                ctx.stroke();
+                if (enemyType == 0) {
+                    ctx.rotate(-0.2);
+                    ctx.strokeStyle = '#841';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -30);
+                    ctx.lineTo(0, 16);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#eee';
+                    ctx.beginPath();
+                    ctx.moveTo(-2, -26);
+                    ctx.lineTo(0, -30);
+                    ctx.lineTo(2, -26);
+                    ctx.stroke();
+                } else if (enemyType == 1) {
+                    ctx.strokeStyle = '#eee';
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(-6, -45+13);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#841';
+                    ctx.beginPath();
+                    ctx.moveTo(-5, 0);
+                    ctx.lineTo(5, -3);
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(2, 4);
+                    ctx.stroke();
+                } else if (enemyType == 2) {
+                    ctx.translate(-4, 0);
+                    ctx.rotate(-0.2);
+                    ctx.strokeStyle = '#841';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -20);
+                    ctx.lineTo(0, 8);
+                    ctx.stroke();
+                    ctx.fillStyle = '#99b';
+                    ctx.beginPath();
+                    ctx.ellipse(0, -20, 14, 14, 0, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.lineWidth = 5;
+                    ctx.strokeStyle = '#77a';
+                    ctx.beginPath();
+                    ctx.moveTo(11, -20);
+                    ctx.lineTo(16, -20);
+                    ctx.moveTo(-11, -20);
+                    ctx.lineTo(-16, -20);
+                    ctx.moveTo(0, -31);
+                    ctx.lineTo(0, -36);
+                    ctx.stroke();
+                }
             });
 
             // hp / motion bars
@@ -298,6 +375,8 @@ function Enemy(cx, cy) {
 
     self.order = 30 + cy * 0.02;
     resort();
+
+    issueMove(cx-1, cy);
 
     return self;
 }

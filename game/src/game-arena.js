@@ -58,6 +58,8 @@ function GameArena() {
         update,
         render,
         order: -20,
+        tags: ['game'],
+        getScore: () => score,
     }
 }
 

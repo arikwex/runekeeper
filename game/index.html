@@ -238,7 +238,7 @@
   }
 
   // src/enemy.js
-  function Enemy(cx, cy) {
+  function Enemy(cx, cy, enemyType) {
     let anim = Math.random() * 7;
     let targetX = cx;
     let targetY = cy;
@@ -252,10 +252,10 @@
     let state = IDLE;
     let timeInState = 0;
     let dead = false;
-    let hp = 2;
+    let hp = [1, 2, 3][enemyType];
     let maxHp = hp;
     let motion = 0;
-    let motionMax = 2;
+    let motionMax = [2, 2, 2][enemyType];
     let onFire = 0;
     add(pulse_sfx_default(cx, cy, 55, [0, 0, 0]));
     function render(ctx2) {
@@ -270,30 +270,70 @@
           ctx2.translate(0, -120 * p * (1 - p));
         }
         ctx2.lineWidth = 10;
-        ctx2.fillStyle = GRAY;
-        ctx2.strokeStyle = GRAY;
+        if (enemyType == 0) {
+          ctx2.fillStyle = "#973";
+          ctx2.strokeStyle = "#973";
+        } else if (enemyType == 1) {
+          ctx2.fillStyle = GRAY;
+          ctx2.strokeStyle = GRAY;
+        } else if (enemyType == 2) {
+          ctx2.fillStyle = "#383";
+          ctx2.strokeStyle = "#383";
+        }
         const squish = Math.cos(anim * 10);
         const squish2 = Math.cos(anim * 10 + 1);
         ctx2.fillRect(-10 + squish, 0, 20 - 2 * squish, -34 - 2 * squish);
         ctx2.strokeRect(-10 + squish, 0, 20 - 2 * squish, -34 - 2 * squish);
         retainTransform(() => {
           ctx2.translate(0, -39 - squish * 3);
-          ctx2.fillStyle = DARK_GRAY;
-          ctx2.strokeStyle = DARK_GRAY;
-          ctx2.fillRect(-6, 0, 12, -16);
-          ctx2.strokeRect(-6, 0, 12, -16);
-          ctx2.strokeStyle = "#c11";
-          ctx2.beginPath();
-          ctx2.moveTo(0, -62 + 41);
-          ctx2.lineTo(1, -70 + 41);
-          ctx2.lineTo(6, -74 + 41);
-          ctx2.lineTo(10, -70 + 41);
-          ctx2.stroke();
-          ctx2.strokeStyle = LIGHT_GRAY;
-          ctx2.beginPath();
-          ctx2.moveTo(-3, -49 + 41);
-          ctx2.lineTo(-3.01, -49 + 41);
-          ctx2.stroke();
+          if (enemyType == 0) {
+            ctx2.fillStyle = "#763";
+            ctx2.strokeStyle = "#763";
+            ctx2.fillRect(-6, 0, 12, -16);
+            ctx2.strokeRect(-6, 0, 12, -16);
+            ctx2.strokeStyle = LIGHT_GRAY;
+            ctx2.beginPath();
+            ctx2.moveTo(-3, -49 + 41);
+            ctx2.lineTo(-3.01, -49 + 41);
+            ctx2.stroke();
+          } else if (enemyType == 1) {
+            ctx2.fillStyle = DARK_GRAY;
+            ctx2.strokeStyle = DARK_GRAY;
+            ctx2.fillRect(-6, 0, 12, -16);
+            ctx2.strokeRect(-6, 0, 12, -16);
+            ctx2.strokeStyle = "#c11";
+            ctx2.beginPath();
+            ctx2.moveTo(0, -62 + 41);
+            ctx2.lineTo(1, -70 + 41);
+            ctx2.lineTo(6, -74 + 41);
+            ctx2.lineTo(10, -70 + 41);
+            ctx2.stroke();
+            ctx2.strokeStyle = LIGHT_GRAY;
+            ctx2.beginPath();
+            ctx2.moveTo(-3, -49 + 41);
+            ctx2.lineTo(-3.01, -49 + 41);
+            ctx2.stroke();
+          } else if (enemyType == 2) {
+            ctx2.strokeStyle = "#eee";
+            ctx2.beginPath();
+            ctx2.moveTo(-8, -20);
+            ctx2.lineTo(-12, -24);
+            ctx2.stroke();
+            ctx2.fillStyle = "#263";
+            ctx2.strokeStyle = "#263";
+            ctx2.fillRect(-6, 0, 12, -16);
+            ctx2.strokeRect(-6, 0, 12, -16);
+            ctx2.strokeStyle = "#fa0";
+            ctx2.beginPath();
+            ctx2.moveTo(-3, -49 + 41);
+            ctx2.lineTo(-3.01, -49 + 41);
+            ctx2.stroke();
+            ctx2.strokeStyle = "#eee";
+            ctx2.beginPath();
+            ctx2.moveTo(8, -20);
+            ctx2.lineTo(12, -24);
+            ctx2.stroke();
+          }
         });
         retainTransform(() => {
           ctx2.translate(-20, -18 + squish2 * 1);
@@ -302,18 +342,55 @@
             ctx2.translate(-Math.exp(-Math.pow((timeInState - 0.25) * 1.5, 2) * 25) * 20, 0);
             ctx2.rotate(-Math.exp(-Math.pow((timeInState - 0.3) * 1.5, 2) * 30) * 1.2);
           }
-          ctx2.strokeStyle = "#eee";
-          ctx2.beginPath();
-          ctx2.moveTo(0, 0);
-          ctx2.lineTo(-6, -45 + 13);
-          ctx2.stroke();
-          ctx2.strokeStyle = "#841";
-          ctx2.beginPath();
-          ctx2.moveTo(-5, 0);
-          ctx2.lineTo(5, -3);
-          ctx2.moveTo(0, 0);
-          ctx2.lineTo(2, 4);
-          ctx2.stroke();
+          if (enemyType == 0) {
+            ctx2.rotate(-0.2);
+            ctx2.strokeStyle = "#841";
+            ctx2.beginPath();
+            ctx2.moveTo(0, -30);
+            ctx2.lineTo(0, 16);
+            ctx2.stroke();
+            ctx2.strokeStyle = "#eee";
+            ctx2.beginPath();
+            ctx2.moveTo(-2, -26);
+            ctx2.lineTo(0, -30);
+            ctx2.lineTo(2, -26);
+            ctx2.stroke();
+          } else if (enemyType == 1) {
+            ctx2.strokeStyle = "#eee";
+            ctx2.beginPath();
+            ctx2.moveTo(0, 0);
+            ctx2.lineTo(-6, -45 + 13);
+            ctx2.stroke();
+            ctx2.strokeStyle = "#841";
+            ctx2.beginPath();
+            ctx2.moveTo(-5, 0);
+            ctx2.lineTo(5, -3);
+            ctx2.moveTo(0, 0);
+            ctx2.lineTo(2, 4);
+            ctx2.stroke();
+          } else if (enemyType == 2) {
+            ctx2.translate(-4, 0);
+            ctx2.rotate(-0.2);
+            ctx2.strokeStyle = "#841";
+            ctx2.beginPath();
+            ctx2.moveTo(0, -20);
+            ctx2.lineTo(0, 8);
+            ctx2.stroke();
+            ctx2.fillStyle = "#99b";
+            ctx2.beginPath();
+            ctx2.ellipse(0, -20, 14, 14, 0, 0, Math.PI * 2);
+            ctx2.fill();
+            ctx2.lineWidth = 5;
+            ctx2.strokeStyle = "#77a";
+            ctx2.beginPath();
+            ctx2.moveTo(11, -20);
+            ctx2.lineTo(16, -20);
+            ctx2.moveTo(-11, -20);
+            ctx2.lineTo(-16, -20);
+            ctx2.moveTo(0, -31);
+            ctx2.lineTo(0, -36);
+            ctx2.stroke();
+          }
         });
         for (let i = 0; i < maxHp; i++) {
           retainTransform(() => {
@@ -492,6 +569,7 @@
     };
     self.order = 30 + cy * 0.02;
     resort();
+    issueMove(cx - 1, cy);
     return self;
   }
   var enemy_default = Enemy;
@@ -505,10 +583,13 @@
     function spawnOne() {
       const enemies = getObjectsByTag("enemy");
       if (enemies.length < 3) {
+        const MAX_ALLOWED = parseInt(Math.min(getObjectsByTag("game")[0].getScore() / 4, 2));
+        const enemyType = parseInt(Math.min(Math.floor(Math.random() * (MAX_ALLOWED + 1)), MAX_ALLOWED));
+        console.log(enemyType);
         for (let i = 0; i < 30; i++) {
           const offerY = Math.floor(Math.random() * 6);
           if (!spotOccupied(5, offerY)) {
-            add(enemy_default(5, offerY));
+            add(enemy_default(6, offerY, enemyType));
             break;
           }
         }
@@ -572,7 +653,9 @@
     return {
       update,
       render,
-      order: -20
+      order: -20,
+      tags: ["game"],
+      getScore: () => score
     };
   }
   var game_arena_default = GameArena;
@@ -994,6 +1077,8 @@
           timeInState = IDLE;
           state = IDLE;
           anim = 0;
+          targetCX = cx;
+          targetCY = cy;
           emit(RUNESTONE_LAND);
           add(pulse_sfx_default(cx, cy, 50, [255, 255, 255]));
           setTimeout(() => {
@@ -1080,8 +1165,8 @@
       render,
       order: 30 + cy * 0.02,
       tags: ["obstacle"],
-      getX: () => cx,
-      getY: () => cy
+      getX: () => targetCX,
+      getY: () => targetCY
     };
     return self;
   }
@@ -1241,7 +1326,9 @@
     }
     function onMouseMove(evt) {
       touchifyEvent(evt);
-      drawingOnLeft = evt.clientX < canvas.width / 2;
+      if (!isDrawing) {
+        drawingOnLeft = evt.clientX < canvas.width / 2;
+      }
       inDrawArea = evt.clientY > canvas.height * 0.65 - 5;
       if (isDrawing && lines.length > 0) {
         const latestPt = lines[lines.length - 1];

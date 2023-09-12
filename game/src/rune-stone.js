@@ -167,6 +167,8 @@ function RuneStone() {
                 timeInState = IDLE;
                 state = IDLE;
                 anim = 0;
+                targetCX = cx;
+                targetCY = cy;
                 emit(RUNESTONE_LAND);
                 add(PulseSFX(cx, cy, 50, [255,255,255]));
                 setTimeout(() => { emit(TURN_END); }, 550);
@@ -261,8 +263,8 @@ function RuneStone() {
         render,
         order: 30 + cy * 0.02,
         tags: ['obstacle'],
-        getX: () => cx,
-        getY: () => cy,
+        getX: () => targetCX,
+        getY: () => targetCY,
     }
     return self;
 }

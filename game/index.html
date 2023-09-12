@@ -181,6 +181,7 @@
   var ABILITY_BEAT = 8;
   var ENEMY_TAKE_DAMAGE = 9;
   var ENEMY_MOVE = 10;
+  var SCORED = 11;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -391,6 +392,7 @@
         off(RUNESTONE_MOVE, onRunestoneMove);
         off(TURN_END, onTurnEnd);
         off(ABILITY_USE, onAbilityUse);
+        emit(SCORED);
         return true;
       }
     }
@@ -525,6 +527,7 @@
 
   // src/game-arena.js
   function GameArena() {
+    let score = 0;
     function render(ctx2) {
       retainTransform(() => {
         ctx2.setTransform(1, 0, 0, 1, 0, 0);
@@ -542,9 +545,17 @@
         ctx2.lineTo(6 * SIZE, x * SIZE);
       }
       ctx2.stroke();
+      ctx2.fillStyle = "#222";
+      ctx2.textAlign = "center";
+      ctx2.font = `bold 30px arial`;
+      ctx2.fillText(`${score} ${score == 1 ? "ENEMY" : "ENEMIES"} SLAIN`, SIZE * 3, -SIZE * 0.4);
     }
     function update(dT) {
     }
+    function onScored() {
+      score += 1;
+    }
+    on(SCORED, onScored);
     return {
       update,
       render,

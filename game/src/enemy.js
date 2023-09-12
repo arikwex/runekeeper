@@ -3,7 +3,7 @@ import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import DamageParticle from "./damage-particle";
 import { add, resort } from "./engine";
-import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_MOVE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
+import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_MOVE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOVE, SCORED, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { spotOccupied } from "./sensor";
 
@@ -181,6 +181,7 @@ function Enemy(cx, cy) {
             off(RUNESTONE_MOVE, onRunestoneMove);
             off(TURN_END, onTurnEnd);
             off(ABILITY_USE, onAbilityUse);
+            emit(SCORED);
             return true;
         }
     }

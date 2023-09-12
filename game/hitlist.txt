@@ -2,13 +2,14 @@ HITLIST
 =======
 
 Monday
-- Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
 - Track number of enemies killed / Score
 - Game Over (sound?)
 - More enemies types
 - Game progression (enemies, abilities, shielded enemies)
 - Improve / give love to spellcasting slab
 
+
+- Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
 
 # Core symbols:
 - Fire Rune (circle)

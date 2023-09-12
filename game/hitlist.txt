@@ -2,16 +2,15 @@ HITLIST
 =======
 
 Monday
-- enemy sort order
 - Enemy walk around obstacles
 - Bonk into enemy to deal one damage
+- Track number of enemies killed 
 
-- Ice should cancel the fire effect
 - Respect existing items in the grid (dont spawn on obstacles)
 - Powerup code needs some love after introducing in-path collisions
 - Obstacles? Can't go through obstacles? (stop at adjacent cell?)
 - Audio SFX
-- Audio Music
+- Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
 
 Tuesday
 - More enemies types

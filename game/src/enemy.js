@@ -5,6 +5,7 @@ import DamageParticle from "./damage-particle";
 import { add, resort } from "./engine";
 import { ABILITY_USE, ENEMY_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
+import { spotOccupied } from "./sensor";
 
 function Enemy(cx, cy) {
     let anim = Math.random() * 7;
@@ -201,8 +202,42 @@ function Enemy(cx, cy) {
         // Walk if you can
         if (cx > 0) {
             if (motion >= motionMax) {
-                motion = 0;
-                issueMove(cx - 1, cy);
+                // Try to move forward by default
+                const options = [[cx - 1, cy]];
+                // Then forard diagonally
+                if (Math.random() > 0.5) {
+                    options.push([cx - 1, cy - 1]);
+                    options.push([cx - 1, cy + 1]);
+                } else {
+                    options.push([cx - 1, cy + 1]);
+                    options.push([cx - 1, cy - 1]);
+                }
+                // Then up/down
+                if (Math.random() > 0.5) {
+                    options.push([cx, cy - 1]);
+                    options.push([cx, cy + 1]);
+                } else {
+                    options.push([cx, cy + 1]);
+                    options.push([cx, cy - 1]);
+                }
+                // Then hop backwards if really needed
+                if (Math.random() > 0.5) {
+                    options.push([cx + 1, cy - 1]);
+                    options.push([cx + 1, cy + 1]);
+                } else {
+                    options.push([cx + 1, cy + 1]);
+                    options.push([cx + 1, cy - 1]);
+                }
+                // Forward move
+                for (let i = 0; i < options.length; i++) {
+                    const opt = options[i];
+                    if (opt[1] >= 0 && opt[1] <=5 && opt[0] <=5 && !spotOccupied(opt[0], opt[1])) {
+                        motion = 0;
+                        issueMove(opt[0], opt[1]);
+                        // Stop after making a valid move
+                        break;
+                    }
+                }
             }
         }
         // Otherwise attack!
@@ -252,8 +287,8 @@ function Enemy(cx, cy) {
         render,
         tags: ['enemy', 'obstacle'],
         order: 30,
-        getX: () => cx,
-        getY: () => cy,
+        getX: () => targetX,
+        getY: () => targetY,
     }
 
     self.order = 30 + cy * 0.02;

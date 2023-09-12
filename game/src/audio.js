@@ -1,5 +1,5 @@
 import * as bus from './bus'
-import { ABILITY_BEAT, ABILITY_USE, ENEMY_BONK, ENEMY_TAKE_DAMAGE, POWERUP_ACQUIRED, RUNESTONE_LAND, RUNESTONE_MOVE } from './events';
+import { ABILITY_BEAT, ABILITY_USE, ENEMY_BONK, ENEMY_TAKE_DAMAGE, POWERUP_ACQUIRED, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN } from './events';
 
 function clamp(v, a, b) {
     return Math.min(Math.max(v, a), b);
@@ -19,6 +19,14 @@ function Audio() {
     let fireSound;
     let iceSound;
     let zapSound;
+
+    let sigilCaret;
+    let sigilCircle;
+    let sigilBolt;
+    let sigilTriangle;
+    let sigilWave;
+    let sigilHourglass;
+    let sigilGarbage;
 
     let boneCollectSound;
     let switchSound;
@@ -109,6 +117,33 @@ function Audio() {
         });
         // setProgress(0.2);
 
+        // Sigil sounds
+        function sigilNote(i, pitch, time) {
+            const q = Math.pow(2, -pitch/12) * 20;
+            return 0.15 * (saw(i / q) * sin(i / (q*2 + 3 * sin(i/200000)))) * (i / 44100 - time > 0 ? 1 : 0) * Math.exp(-(i / 44100 - time) * 7);
+        }
+        sigilCaret = await generate(2.0, (i) => {
+            return sigilNote(i, 0, 0) + sigilNote(i, 7, 0.15) + sigilNote(i, 0, 0.3);
+        });
+        sigilCircle = await generate(2.0, (i) => {
+            return sigilNote(i, 2, 0) + sigilNote(i, 3, 0.15) + sigilNote(i, 5, 0.3);
+        });
+        sigilBolt = await generate(2.0, (i) => {
+            return sigilNote(i, 12, 0) + sigilNote(i, 6, 0.15) + sigilNote(i, 0, 0.3);
+        });
+        sigilTriangle = await generate(2.0, (i) => {
+            return sigilNote(i, 10, 0) + sigilNote(i, 10, 0.15) + sigilNote(i, 3, 0.3);
+        });
+        sigilWave = await generate(2.0, (i) => {
+            return sigilNote(i, 5, 0) + sigilNote(i, 4, 0.15) + sigilNote(i, 5, 0.3);
+        });
+        sigilHourglass = await generate(2.0, (i) => {
+            return sigilNote(i, 8, 0) + sigilNote(i, 1, 0.15) + sigilNote(i, 4, 0.3);
+        });
+        sigilGarbage = await generate(2.0, (i) => {
+            return sigilNote(i, -4, 0) + sigilNote(i, -10, 0.15) + sigilNote(i, -4, 0.3);
+        });
+
         // // Bone collect sound
         // boneCollectSound = await generate(0.06, (i) => {
         //     return 0.03 * saw(i/4);
@@ -175,6 +210,17 @@ function Audio() {
                 1: iceSound,
                 2: zapSound,
             })[t])();
+        });
+        bus.on(SIGIL_DRAWN, ([type, dir]) => {
+            play(({
+                0: sigilGarbage,
+                5: sigilCaret,
+                1: sigilCircle,
+                3: sigilBolt,
+                2: sigilTriangle,
+                4: sigilWave,
+                6: sigilHourglass,
+            })[type])();
         });
         
         // crossfade gain nodes

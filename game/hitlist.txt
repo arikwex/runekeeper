@@ -2,10 +2,13 @@ HITLIST
 =======
 
 Monday
-- Track number of enemies killed 
 - Audio SFX
+    - sound-per-sigil (pitch)
+    - sound for garbage sigil
+    - enemy sword swing
+    - enemy move sound
 - Audio Music (https://www.youtube.com/watch?v=-63lSjPuun8)
-- Score
+- Track number of enemies killed / Score
 - Game Over
 - More enemies types
 - Game progression (enemies, abilities, shielded enemies)

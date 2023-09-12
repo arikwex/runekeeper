@@ -2,7 +2,7 @@ import { emit, on } from "./bus";
 import { canvas, renderAndFill, renderLines, retainTransform } from "./canvas";
 import { BLACK, DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, TAN, WHITE } from "./color";
 import { add, getObjectsByTag, resort } from "./engine";
-import { RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
+import { ENEMY_BONK, RUNESTONE_LAND, RUNESTONE_MOVE, SIGIL_DRAWN, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { BOLT_RUNE, CARET_RUNE, CIRCLE_RUNE, HOURGLASS_RUNE, TRIANGLE_RUNE, WAVE_RUNE } from "./runes";
 import { spotHasEnemy, spotOccupied } from "./sensor";
@@ -192,6 +192,7 @@ function RuneStone() {
             const distSplit = Math.abs(originCX - targetCX) + Math.abs(originCY - targetCY);
             const percentSplit = distSplit / (distSplit + 0.5);
             setTimeout(() => {
+                emit(ENEMY_BONK);
                 add(PulseSFX(targetCX, targetCY, 50, [255, 0, 255]));
             }, MOVE_DURATION * 1000 * percentSplit);
         } else {

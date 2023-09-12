@@ -5,3 +5,6 @@ export const RUNESTONE_LAND = 3;
 export const TURN_END = 4;
 export const ABILITY_USE = 5;
 export const ENEMY_DAMAGE = 6;
+export const ENEMY_BONK = 7;
+export const ABILITY_BEAT = 8;
+export const ENEMY_TAKE_DAMAGE = 9;

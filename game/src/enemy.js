@@ -3,7 +3,7 @@ import { retainTransform } from "./canvas";
 import { DARK_GRAY, GRAY, LIGHT_GRAY, MID_GRAY, WHITE } from "./color";
 import DamageParticle from "./damage-particle";
 import { add, resort } from "./engine";
-import { ABILITY_USE, ENEMY_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
+import { ABILITY_USE, ENEMY_DAMAGE, ENEMY_TAKE_DAMAGE, RUNESTONE_MOVE, TURN_END } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { spotOccupied } from "./sensor";
 
@@ -258,6 +258,7 @@ function Enemy(cx, cy) {
         hp -= dmg;
         add(PulseSFX(cx, cy, 95, [0, 0, 0]));
         add(DamageParticle(cx, cy, dmg, [255, 0, 0]));
+        emit(ENEMY_TAKE_DAMAGE);
         if (hp <= 0) {
             dead = true;
         }

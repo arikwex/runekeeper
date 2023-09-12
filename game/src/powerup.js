@@ -3,7 +3,7 @@ import { emit, off, on } from "./bus";
 import { retainTransform } from "./canvas";
 import { WHITE } from "./color";
 import { add } from "./engine";
-import { POWERUP_ACQUIRED, RUNESTONE_MOVE } from "./events";
+import { ABILITY_BEAT, POWERUP_ACQUIRED, RUNESTONE_MOVE } from "./events";
 import PulseSFX from "./pulse-sfx";
 import { EX_SHAPE, HORIZONTAL_SHAPE, PLUS_SHAPE, SQUARE_SHAPE, VERTICAL_SHAPE } from "./runes";
 
@@ -88,8 +88,8 @@ function PowerUp(cx, cy, powerType, shapeType) {
             setTimeout(() => {
                 add(PulseSFX(cx, cy, 60, POWER_COLORS[powerType]));
                 remove = true;
-                off(RUNESTONE_MOVE, onRunestoneMove);
                 emit(POWERUP_ACQUIRED);
+                off(RUNESTONE_MOVE, onRunestoneMove);
             }, distToHit / (totalDist+0.01) * 600);
 
             setTimeout(() => {
@@ -110,6 +110,7 @@ function PowerUp(cx, cy, powerType, shapeType) {
     }
 
     function castPattern(a) {
+        const beats = {};
         for (let i = 0; i < a.length; i++) {
             const x = a[i][0];
             const y = a[i][1];
@@ -119,20 +120,25 @@ function PowerUp(cx, cy, powerType, shapeType) {
             setTimeout(() => {
                 add(Ability(x, y, powerType));
             }, a[i][2]);
+            beats[a[i][2]] = true;
         }
+        // Pulse sounds once per unique timing
+        Object.keys(beats).map((t) => {
+            setTimeout(() => emit(ABILITY_BEAT, powerType), t);
+        });
     }
 
     function applyAbility(x, y) {
         if (shapeType == 0) {
             castPattern([
                 [x-1, y, 0],
-                [x-1, y-1, 0],
+                [x-1, y-1, 150],
                 [x, y-1, 0],
-                [x+1, y-1, 0],
+                [x+1, y-1, 150],
                 [x+1, y, 0],
-                [x+1, y+1, 0],
+                [x+1, y+1, 150],
                 [x, y+1, 0],
-                [x-1, y+1, 0],
+                [x-1, y+1, 150],
             ]);
         }
         else if (shapeType == 1) {

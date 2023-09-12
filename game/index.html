@@ -64,6 +64,33 @@
   var LIGHT_GRAY = "#cbcbcb";
   var WHITE = "#fff";
 
+  // src/damage-particle.js
+  function DamageParticle(cx, cy, dmg, color) {
+    let anim = 0;
+    function render(ctx2) {
+      retainTransform(() => {
+        ctx2.translate((cx + 0.5) * 80, (cy + 0.3) * 80 - (1 - Math.exp(-anim * 5)) * 70);
+        const alpha = 1 - anim / 2;
+        ctx2.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+        ctx2.textAlign = "center";
+        ctx2.font = `bold 40px arial`;
+        ctx2.fillText(`-${dmg}`, 0, 0);
+      });
+    }
+    function update(dT) {
+      anim += dT;
+      if (anim > 2) {
+        return true;
+      }
+    }
+    return {
+      update,
+      render,
+      order: 100
+    };
+  }
+  var damage_particle_default = DamageParticle;
+
   // src/tags.js
   var TAG_CAMERA = 0;
 
@@ -150,6 +177,9 @@
   var TURN_END = 4;
   var ABILITY_USE = 5;
   var ENEMY_DAMAGE = 6;
+  var ENEMY_BONK = 7;
+  var ABILITY_BEAT = 8;
+  var ENEMY_TAKE_DAMAGE = 9;
 
   // src/pulse-sfx.js
   function PulseSFX(cx, cy, scale, rgb) {
@@ -178,126 +208,6 @@
     };
   }
   var pulse_sfx_default = PulseSFX;
-
-  // src/ability.js
-  var POWER_COLORS = [
-    [230, 30, 30],
-    [48, 128, 230],
-    [106, 250, 106]
-  ];
-  function Ability(cx, cy, powerType) {
-    let anim = Math.random() * 5;
-    let t = 0;
-    let renderOrder = 50;
-    if (powerType == 1) {
-      renderOrder = 10;
-    }
-    add(pulse_sfx_default(cx, cy, 55, POWER_COLORS[powerType]));
-    emit(ABILITY_USE, [cx, cy, powerType]);
-    function update(dT) {
-      anim += dT;
-      t += dT * 1;
-      if (t > 1) {
-        return true;
-      }
-    }
-    function render(ctx2) {
-      if (powerType == 0) {
-        retainTransform(() => {
-          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-          for (let i = 0; i < 12; i++) {
-            const p = (i * 30 + anim * 100) % 50 / 50;
-            const q = 0.15 + p * 0.85;
-            const w = 1 - p * p * p * p * p;
-            ctx2.fillStyle = `rgba(${255 * w}, ${(50 + p * 200) * w}, ${30 * w}, ${(1 - p) * (1 - t * t * t)})`;
-            ctx2.beginPath();
-            ctx2.ellipse(
-              (i * 83 % 130 - 65) * 0.5,
-              -p * 56 + (i * 11 % 23 - 5) * 2,
-              26 * (1 - p) * q,
-              26 * (1 - p) / q * p,
-              0,
-              0,
-              Math.PI * 2
-            );
-            ctx2.fill();
-          }
-        });
-      } else if (powerType == 1) {
-        retainTransform(() => {
-          const p = 1 - t * t * t;
-          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-          ctx2.fillStyle = "#29e";
-          ctx2.fillRect(-38 * p, -38 * p, 76 * p, 76 * p);
-          ctx2.strokeStyle = "#eef";
-          ctx2.lineWidth = 5 * p;
-          ctx2.beginPath();
-          ctx2.moveTo(-25, 5);
-          ctx2.lineTo(-20, -5);
-          ctx2.lineTo(-15, 5);
-          ctx2.moveTo(-5, 25);
-          ctx2.lineTo(0, 15);
-          ctx2.lineTo(5, 25);
-          ctx2.moveTo(-5, -15);
-          ctx2.lineTo(0, -25);
-          ctx2.lineTo(5, -15);
-          ctx2.moveTo(25, 5);
-          ctx2.lineTo(20, -5);
-          ctx2.lineTo(15, 5);
-          ctx2.stroke();
-        });
-      } else if (powerType == 2) {
-        retainTransform(() => {
-          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
-          ctx2.strokeStyle = "#131";
-          ctx2.lineWidth = 11 * (1 - t);
-          ctx2.beginPath();
-          ctx2.moveTo(-18 * Math.cos(Math.round(anim * 13) * 123), -55);
-          ctx2.lineTo(18 * Math.cos(Math.round(anim * 15) * 103), -40);
-          ctx2.lineTo(-11 * Math.cos(Math.round(anim * 17) * 93), -20);
-          ctx2.lineTo(11 * Math.cos(Math.round(anim * 13) * 133), -15);
-          ctx2.lineTo(6 * Math.cos(Math.round(anim * 11) * 97), 10);
-          ctx2.stroke();
-          ctx2.strokeStyle = "#1f1";
-          ctx2.lineWidth = 10 * (1 - t);
-          ctx2.stroke();
-        });
-      }
-    }
-    return {
-      update,
-      render,
-      order: renderOrder
-    };
-  }
-  var ability_default = Ability;
-
-  // src/damage-particle.js
-  function DamageParticle(cx, cy, dmg, color) {
-    let anim = 0;
-    function render(ctx2) {
-      retainTransform(() => {
-        ctx2.translate((cx + 0.5) * 80, (cy + 0.3) * 80 - (1 - Math.exp(-anim * 5)) * 70);
-        const alpha = 1 - anim / 2;
-        ctx2.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
-        ctx2.textAlign = "center";
-        ctx2.font = `bold 40px arial`;
-        ctx2.fillText(`-${dmg}`, 0, 0);
-      });
-    }
-    function update(dT) {
-      anim += dT;
-      if (anim > 2) {
-        return true;
-      }
-    }
-    return {
-      update,
-      render,
-      order: 100
-    };
-  }
-  var damage_particle_default = DamageParticle;
 
   // src/sensor.js
   function findObstacles() {
@@ -543,6 +453,7 @@
       hp -= dmg;
       add(pulse_sfx_default(cx, cy, 95, [0, 0, 0]));
       add(damage_particle_default(cx, cy, dmg, [255, 0, 0]));
+      emit(ENEMY_TAKE_DAMAGE);
       if (hp <= 0) {
         dead = true;
       }
@@ -638,6 +549,99 @@
   }
   var game_arena_default = GameArena;
 
+  // src/ability.js
+  var POWER_COLORS = [
+    [230, 30, 30],
+    [48, 128, 230],
+    [106, 250, 106]
+  ];
+  function Ability(cx, cy, powerType) {
+    let anim = Math.random() * 5;
+    let t = 0;
+    let renderOrder = 50;
+    if (powerType == 1) {
+      renderOrder = 10;
+    }
+    add(pulse_sfx_default(cx, cy, 55, POWER_COLORS[powerType]));
+    emit(ABILITY_USE, [cx, cy, powerType]);
+    function update(dT) {
+      anim += dT;
+      t += dT * 1;
+      if (t > 1) {
+        return true;
+      }
+    }
+    function render(ctx2) {
+      if (powerType == 0) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          for (let i = 0; i < 12; i++) {
+            const p = (i * 30 + anim * 100) % 50 / 50;
+            const q = 0.15 + p * 0.85;
+            const w = 1 - p * p * p * p * p;
+            ctx2.fillStyle = `rgba(${255 * w}, ${(50 + p * 200) * w}, ${30 * w}, ${(1 - p) * (1 - t * t * t)})`;
+            ctx2.beginPath();
+            ctx2.ellipse(
+              (i * 83 % 130 - 65) * 0.5,
+              -p * 56 + (i * 11 % 23 - 5) * 2,
+              26 * (1 - p) * q,
+              26 * (1 - p) / q * p,
+              0,
+              0,
+              Math.PI * 2
+            );
+            ctx2.fill();
+          }
+        });
+      } else if (powerType == 1) {
+        retainTransform(() => {
+          const p = 1 - t * t * t;
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          ctx2.fillStyle = "#29e";
+          ctx2.fillRect(-38 * p, -38 * p, 76 * p, 76 * p);
+          ctx2.strokeStyle = "#eef";
+          ctx2.lineWidth = 5 * p;
+          ctx2.beginPath();
+          ctx2.moveTo(-25, 5);
+          ctx2.lineTo(-20, -5);
+          ctx2.lineTo(-15, 5);
+          ctx2.moveTo(-5, 25);
+          ctx2.lineTo(0, 15);
+          ctx2.lineTo(5, 25);
+          ctx2.moveTo(-5, -15);
+          ctx2.lineTo(0, -25);
+          ctx2.lineTo(5, -15);
+          ctx2.moveTo(25, 5);
+          ctx2.lineTo(20, -5);
+          ctx2.lineTo(15, 5);
+          ctx2.stroke();
+        });
+      } else if (powerType == 2) {
+        retainTransform(() => {
+          ctx2.translate((cx + 0.5) * 80, (cy + 0.5) * 80);
+          ctx2.strokeStyle = "#131";
+          ctx2.lineWidth = 11 * (1 - t);
+          ctx2.beginPath();
+          ctx2.moveTo(-18 * Math.cos(Math.round(anim * 13) * 123), -55);
+          ctx2.lineTo(18 * Math.cos(Math.round(anim * 15) * 103), -40);
+          ctx2.lineTo(-11 * Math.cos(Math.round(anim * 17) * 93), -20);
+          ctx2.lineTo(11 * Math.cos(Math.round(anim * 13) * 133), -15);
+          ctx2.lineTo(6 * Math.cos(Math.round(anim * 11) * 97), 10);
+          ctx2.stroke();
+          ctx2.strokeStyle = "#1f1";
+          ctx2.lineWidth = 10 * (1 - t);
+          ctx2.stroke();
+        });
+      }
+    }
+    return {
+      update,
+      render,
+      order: renderOrder
+    };
+  }
+  var ability_default = Ability;
+
   // src/runes.js
   var CARET_RUNE = [[-7, 10], [0, -10], [7, 10]];
   var CIRCLE_RUNE = [[10, 0], [9, 4], [7, 7], [4, 9], [0, 10], [-4, 9], [-7, 7], [-9, 4], [-10, 0], [-9, -4], [-7, -7], [-4, -9], [0, -10], [4, -9], [7, -7], [9, -4], [10, 0]];
@@ -727,8 +731,8 @@
         setTimeout(() => {
           add(pulse_sfx_default(cx, cy, 60, POWER_COLORS2[powerType]));
           remove2 = true;
-          off(RUNESTONE_MOVE, onRunestoneMove);
           emit(POWERUP_ACQUIRED);
+          off(RUNESTONE_MOVE, onRunestoneMove);
         }, distToHit / (totalDist + 0.01) * 600);
         setTimeout(() => {
           applyAbility(cx1, cy1);
@@ -736,6 +740,7 @@
       }
     }
     function castPattern(a) {
+      const beats = {};
       for (let i = 0; i < a.length; i++) {
         const x = a[i][0];
         const y = a[i][1];
@@ -745,19 +750,23 @@
         setTimeout(() => {
           add(ability_default(x, y, powerType));
         }, a[i][2]);
+        beats[a[i][2]] = true;
       }
+      Object.keys(beats).map((t) => {
+        setTimeout(() => emit(ABILITY_BEAT, powerType), t);
+      });
     }
     function applyAbility(x, y) {
       if (shapeType == 0) {
         castPattern([
           [x - 1, y, 0],
-          [x - 1, y - 1, 0],
+          [x - 1, y - 1, 150],
           [x, y - 1, 0],
-          [x + 1, y - 1, 0],
+          [x + 1, y - 1, 150],
           [x + 1, y, 0],
-          [x + 1, y + 1, 0],
+          [x + 1, y + 1, 150],
           [x, y + 1, 0],
-          [x - 1, y + 1, 0]
+          [x - 1, y + 1, 150]
         ]);
       } else if (shapeType == 1) {
         castPattern([
@@ -981,6 +990,7 @@
         const distSplit = Math.abs(originCX - targetCX) + Math.abs(originCY - targetCY);
         const percentSplit = distSplit / (distSplit + 0.5);
         setTimeout(() => {
+          emit(ENEMY_BONK);
           add(pulse_sfx_default(targetCX, targetCY, 50, [255, 0, 255]));
         }, MOVE_DURATION * 1e3 * percentSplit);
       } else {
@@ -1429,6 +1439,179 @@
   }
   var wizard_default = Wizard;
 
+  // src/audio.js
+  function clamp(v, a, b) {
+    return Math.min(Math.max(v, a), b);
+  }
+  function Audio() {
+    audioCtx = new AudioContext();
+    sampleRate = audioCtx.sampleRate;
+    let attackSound;
+    let attackHitSound;
+    let runestoneLandedSound;
+    let runestoneMoveSound;
+    let powerupCollectSound;
+    let fireSound;
+    let iceSound;
+    let zapSound;
+    let boneCollectSound;
+    let switchSound;
+    let grantSound;
+    let boingSound;
+    let musicFocusBuffer;
+    let musicRegionBuffers;
+    let musicDrumBuffer;
+    let drumBuffer;
+    let activeMusicSource;
+    let gainNodeA;
+    let gainNodeB;
+    let focusNode;
+    let usingA = true;
+    const sin = (i) => Math.sin(i);
+    const saw = (i) => (i % 6.28 - 3.14) / 6.28;
+    const sqr = (i) => clamp(Math.sin(i) * 1e3, -1, 1);
+    async function _yield() {
+      return new Promise((r) => setTimeout(r, 0));
+    }
+    function setProgress(p) {
+      emit("load-progress", p);
+    }
+    async function generate(duration, fn) {
+      let audioBuffer = audioCtx.createBuffer(1, sampleRate * duration, sampleRate);
+      let buffer = audioBuffer.getChannelData(0);
+      let N = audioBuffer.length;
+      for (let i = 0; i < N; i++) {
+        buffer[i] = fn(i * 44100 / sampleRate) * (1 - i / N);
+      }
+      await _yield();
+      return audioBuffer;
+    }
+    async function init() {
+      attackSound = await generate(0.2, (i) => {
+        return 0.05 * saw(i / (0.3 - 220 * Math.exp(-i / 500)));
+      });
+      attackHitSound = await generate(0.2, (i) => {
+        return 0.15 * (sin(i / (20 + i / 150)) * 0.3 + Math.random());
+      });
+      runestoneLandedSound = await generate(0.25, (i) => {
+        return 0.1 * (sqr(i / (120 + i / 250)) * 0.3 + Math.random()) * (sqr(i / 600) * 0.5 + 0.5);
+      });
+      runestoneMoveSound = await generate(0.1, (i) => {
+        return 0.1 * sqr(i / (20 + 150 * Math.exp(-i / 1600)));
+      });
+      powerupCollectSound = await generate(0.3, (i) => {
+        return 0.08 * sin(i / (100 - i / 20));
+      });
+      fireSound = await generate(0.4, (i) => {
+        return 0.16 * Math.random();
+      });
+      iceSound = await generate(0.4, (i) => {
+        return 0.11 * (sqr(i / (30 + i / 500)) * (sqr(i / (1500 + i / 60)) * 0.5 + 0.5) * (sqr(i / (600 + i / 40)) * 0.5 + 0.5));
+      });
+      zapSound = await generate(0.5, (i) => {
+        return 0.15 * (saw(i / (3 + i / 250)) + Math.random() * 0.1);
+      });
+      on(ENEMY_BONK, play(attackHitSound));
+      on(ENEMY_TAKE_DAMAGE, play(attackHitSound));
+      on(RUNESTONE_MOVE, play(runestoneMoveSound));
+      on(RUNESTONE_LAND, play(runestoneLandedSound));
+      on(POWERUP_ACQUIRED, play(powerupCollectSound));
+      on(ABILITY_BEAT, (t) => {
+        play({
+          0: fireSound,
+          1: iceSound,
+          2: zapSound
+        }[t])();
+      });
+      gainNodeA = new GainNode(audioCtx);
+      gainNodeA.connect(audioCtx.destination);
+      gainNodeB = new GainNode(audioCtx);
+      gainNodeB.connect(audioCtx.destination);
+    }
+    async function genericSongBuilder([melodySignature, beat], seed, prog1, prog2) {
+      const song = [];
+      const drums = [];
+      const noteLength = [4, 2, 0.5, 3, 4][seed];
+      const noteSpace = [1, 0.5, 0.25, 2, 2][seed++];
+      const bassNotes = [-15, -20, -19, -12];
+      drums.push(
+        [seed * seed * 3 * 0.5 % 2, seed % 2],
+        [(seed * seed * 3 + seed * 9) * 0.5 % 2, (seed + 1) % 2],
+        [(seed * seed * 2 + seed * 11) * 0.5 % 2, (seed + 1) % 2]
+      );
+      setProgress(prog1);
+      for (let i = 0; i < 3; i++) {
+        const o = i * 8;
+        const q = [0, 3, -5][i];
+        for (let j = 0; j < 8; j++) {
+          song.push([bassNotes[(seed * 7 + i * 2 + (j >> 1) + j * j * 3) % 4] + q, j + o, 6, 1]);
+        }
+        for (let j = 0; j < 8 / noteSpace; j++) {
+          if ((j + j * j + i + seed * 3) % 7 < 4) {
+            song.push([-3 + q + melodySignature[(j + j * j * 2 + i * i * 2 + seed) % melodySignature.length], j * noteSpace + o, noteLength, 2]);
+          }
+        }
+      }
+      const targetBuffer = audioCtx.createBuffer(1, sampleRate * 8 * 3 * beat, sampleRate);
+      const buffer = targetBuffer.getChannelData(0);
+      for (let i = 0; i < song.length; i++) {
+        let note, start, duration, amp;
+        [note, start, duration, amp] = song[i];
+        const baseIdx = parseInt(start * beat * sampleRate);
+        const dur = duration * beat * sampleRate;
+        for (let i2 = 0; i2 < dur; i2++) {
+          let v = 0;
+          const envelope = i2 / dur;
+          v += amp == 1 ? clamp(sin(i2 / (6 * 2 ** (-note / 12) * 2 * 2) + sin(i2 / 8e3)) * (Math.exp(-envelope * 23) * 44 + 1), -1, 1) * 2 : saw(i2 / (4.03 * 6 * 2 ** (-note / 12) * 2)) * 7;
+          buffer[baseIdx + i2] += v * Math.min(envelope * Math.exp(-envelope * (10 + amp * 7)) * 100, 1) / 500;
+        }
+        await _yield();
+        setProgress(prog1 + (prog2 - prog1) * (i / song.length) * 0.8);
+      }
+      for (let q = 0; q < 44; q += 2) {
+        for (let j = 0; j < drums.length; j++) {
+          let type, drumStart;
+          [drumStart, type] = drums[j];
+          const noteOffset = parseInt(0.5 * sampleRate * type);
+          const startOffset = parseInt((drumStart + q) * sampleRate * beat);
+          for (let k = 0; k < sampleRate * 0.1; k++) {
+            buffer[k + startOffset] += drumBuffer[k + noteOffset];
+          }
+        }
+        await _yield();
+        setProgress(prog1 + (prog2 - prog1) * (0.8 + 0.2 * (q / 44)));
+      }
+      return targetBuffer;
+    }
+    function play(audioBuffer) {
+      return () => {
+        let source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start();
+      };
+    }
+    ;
+    function music(musicBuffer) {
+      let audioToStop = activeMusicSource;
+      activeMusicSource = audioCtx.createBufferSource();
+      activeMusicSource.buffer = musicBuffer;
+      activeMusicSource.loop = true;
+      activeMusicSource.connect(usingA ? gainNodeA : gainNodeB);
+      activeMusicSource.start();
+      setTimeout(() => {
+        audioToStop?.stop();
+      }, 700);
+      gainNodeA.gain.setTargetAtTime(usingA ? 1 : 0, audioCtx.currentTime, 0.5);
+      gainNodeB.gain.setTargetAtTime(usingA ? 0 : 1, audioCtx.currentTime, 0.5);
+      usingA = !usingA;
+    }
+    return {
+      init
+    };
+  }
+  var audio_default = Audio;
+
   // src/main.js
   function initialize() {
     add(game_arena_default());
@@ -1453,6 +1636,7 @@
     placePowerUp();
     placePowerUp();
     on(POWERUP_ACQUIRED, placePowerUp);
+    audio_default().init();
   }
   initialize();
 })();

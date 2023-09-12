@@ -1,7 +1,4 @@
-import Ability from './ability';
 import * as bus from './bus';
-import { canvas } from './canvas';
-import Enemy from './enemy';
 import EnemySpawner from './enemy-spawner';
 import { add } from './engine';
 import { POWERUP_ACQUIRED } from './events';
@@ -11,6 +8,7 @@ import RuneStone from './rune-stone';
 import { spotOccupied } from './sensor';
 import SpellCaster from './spell-caster';
 import Wizard from './wizard';
+import Audio from './audio';
 
 function initialize() {
     add(GameArena());
@@ -38,5 +36,7 @@ function initialize() {
     placePowerUp();
 
     bus.on(POWERUP_ACQUIRED, placePowerUp);
+
+    Audio().init();
 }
 initialize();

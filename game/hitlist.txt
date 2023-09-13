@@ -2,8 +2,7 @@ HITLIST
 =======
 
 Monday
-- More enemies types
-- Game progression (enemies, abilities, shielded enemies)
+- freeze anim
 - Improve / give love to spellcasting slab
 
 

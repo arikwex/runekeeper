@@ -177,6 +177,40 @@ function Enemy(cx, cy, enemyType) {
                 }
             });
 
+            // frozen
+            if (motion == -1) {
+                // onFire = 0;
+                for (let i = 0; i < 8; i++) {
+                    const p = (i * 30 + anim * 40) % 50 / 50.0;
+                    const w = (1-p*p*p*p*p);
+                    ctx.fillStyle = `rgba(${250-150*p}, ${(250-p*150)}, ${255}, ${(1-p*p)*p*4})`;
+                    retainTransform(() => {
+                        ctx.beginPath();
+                        ctx.translate(((i * 83) % 130 - 65) * 0.34, p*30+((i * 17) % 23 - 25) * 2.6);
+                        ctx.rotate(i+p*3.5);
+                        ctx.fillRect(-6, -6, 12, 12);
+                        ctx.fill();
+                    });
+                }
+            }
+
+            // on fire
+            if (onFire > 0) {
+                for (let i = 0; i < 9; i++) {
+                    const p = (i * 30 + anim * 100) % 50 / 50.0;
+                    const q = 0.15 + p * 0.85;
+                    const w = (1-p*p*p*p*p);
+                    ctx.fillStyle = `rgba(${255 * w}, ${(50+p*200) * w}, ${30 * w}, ${(1-p)})`;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        ((i * 83) % 130 - 65) * 0.34,
+                        -p * 56 + ((i * 11) % 23 - 5) * 1.3,
+                        26 * (1-p) * q, 26 * (1-p) / q * p, 0, 0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
+
             // hp / motion bars
             for (let i = 0; i < maxHp; i++) {
                 retainTransform(() => {
@@ -211,28 +245,15 @@ function Enemy(cx, cy, enemyType) {
                     }
                 });
             }
-
-            // on fire
-            if (onFire > 0) {
-                for (let i = 0; i < 9; i++) {
-                    const p = (i * 30 + anim * 100) % 50 / 50.0;
-                    const q = 0.15 + p * 0.85;
-                    const w = (1-p*p*p*p*p);
-                    ctx.fillStyle = `rgba(${255 * w}, ${(50+p*200) * w}, ${30 * w}, ${(1-p)})`;
-                    ctx.beginPath();
-                    ctx.ellipse(
-                        ((i * 83) % 130 - 65) * 0.34,
-                        -p * 56 + ((i * 11) % 23 - 5) * 1.3,
-                        26 * (1-p) * q, 26 * (1-p) / q * p, 0, 0, Math.PI * 2
-                    );
-                    ctx.fill();
-                }
-            }
         })
     }
 
     function update(dT) {
-        anim += dT * 1.52;
+        if (motion == -1) {
+            anim += dT * 0.4;
+        } else {
+            anim += dT * 1.52;
+        }
         timeInState += dT;
 
         if (state == MOVING) {

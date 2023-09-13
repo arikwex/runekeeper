@@ -2,7 +2,6 @@ HITLIST
 =======
 
 Monday
-- freeze anim
 - Improve / give love to spellcasting slab
 
 
